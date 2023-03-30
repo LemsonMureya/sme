@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h1>Confirm deletion of job "{{ job }}"</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete the job "{{ job }}"?</p>
+    <input type="submit" value="Delete">
+    <a href="{% url 'smeApp:job_detail' job.pk %}">Cancel</a>
+  </form>
+
+{% endblock %}

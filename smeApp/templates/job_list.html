@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Job List</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Client</th>
+        <th>PO Number</th>
+        <th>Status</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Total Cost</th>
+        <th>Payment Status</th>
+        <th>Payment Type</th>
+        <th>Assigned Worker</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for job in jobs %}
+        <tr>
+          <td><a href="{% url 'smeApp:job_detail' job.pk %}">{{ job.client.name }}</a></td>
+          <td>{{ job.po_number }}</td>
+          <td>{{ job.get_status_display }}</td>
+          <td>{{ job.get_category_display }}</td>
+          <td>{{ job.description }}</td>
+          <td>{{ job.start_date }}</td>
+          <td>{{ job.end_date }}</td>
+          <td>{{ job.total_cost }}</td>
+          <td>{{ job.payment_status }}</td>
+          <td>{{ job.payment_type }}</td>
+          <td>{{ job.assigned_worker }}</td>
+          <td>
+            <a href="{% url 'smeApp:job_edit' job.pk %}">Edit</a>
+            <a href="{% url 'smeApp:job_delete' job.pk %}">Delete</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'smeApp:job_add' %}">Add Job</a>
+{% endblock %}

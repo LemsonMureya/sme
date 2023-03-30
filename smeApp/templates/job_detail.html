@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ job.client.name }}</h1>
+  <p>Address: {{ job.address }}</p>
+  <p>Start date: {{ job.start_date }}</p>
+  <p>End date: {{ job.end_date }}</p>
+  <p>Total cost: {{ job.total_cost }}</p>
+  <p>Status: {{ job.status }}</p>
+  <p>Category: {{ job.category }}</p>
+  <p>Payment status: {{ job.payment_status }}</p>
+  <p>Payment type: {{ job.payment_type }}</p>
+  <p>Assigned worker: {{ job.assigned_worker }}</p>
+
+  <a href="{% url 'smeApp:job_edit' pk=job.pk %}">Edit</a>
+
+  <form action="{% url 'smeApp:job_delete' pk=job.pk %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Delete">
+  </form>
+
+  <a href="{% url 'smeApp:job_list' %}">Back to job list</a>
+{% endblock %}
