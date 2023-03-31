@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import CreateView
 from .forms import CustomUserCreationForm, CustomUserForm
 from django.contrib.auth.views import LoginView, LogoutView
-from .models import CustomUser, Job
+from .models import CustomUser, Job, Client
 # from django.views import View
 
 # Create your views here.
@@ -61,7 +61,24 @@ class CustomLoginView(LoginView):
 class JobListView(ListView):
     model = Job
     template_name = 'job_list.html'
-    context_object_name = 'jobs'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        status = self.request.GET.get('status')
+        if status:
+            queryset = queryset.filter(status=status)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_count'] = Job.objects.count()
+        context['ongoing_count'] = Job.objects.filter(status='ongoing').count()
+        context['cancelled_count'] = Job.objects.filter(status='cancelled').count()
+        context['finished_count'] = Job.objects.filter(status='finished').count()
+        context['postponed_count'] = Job.objects.filter(status='postponed').count()
+        context['work_order_count'] = Job.objects.filter(status='work_order').count()
+        context['quotes_count'] = Job.objects.filter(status='quotes').count()
+        return context
 
 class JobDetailView(DetailView):
     model = Job
@@ -72,7 +89,8 @@ class JobCreateView(CreateView):
     model = Job
     template_name = 'job_form.html'
     success_url = reverse_lazy('smeApp:job_list')
-    fields = '__all__'
+    fields = ['client', 'po_number', 'status', 'category', 'description', 'start_date', 'end_date', 'total_cost', 'payment_status', 'payment_type', 'assigned_worker']
+
 
 
 class JobUpdateView(UpdateView):
