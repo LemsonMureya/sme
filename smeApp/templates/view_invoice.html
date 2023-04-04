@@ -1,0 +1,11 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+    <h2>Invoice {{ invoice.invoice_number }}</h2>
+    <p>Client: {{ invoice.client.name }}</p>
+    <p>Email: {{ invoice.client.email }}</p>
+    <p>Invoice Date: {{ invoice.invoice_date }}</p>
+    <p>Due Date: {{ invoice.due_date }}</p>
+    <a href="{% url 'smeApp:preview_pdf' invoice.id %}">Preview Invoice</a>
+    <a href="{% url 'smeApp:generate_pdf' invoice_id=invoice.id %}">Download PDF</a>
+{% endblock %}

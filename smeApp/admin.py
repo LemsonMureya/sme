@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Client, Note, Job, Expense, Income
+from .models import CustomUser, Client, Note, Job, Expense, Income, CompanyProfile, Invoice, InvoiceItem
 
 
 class CustomUserAdmin(UserAdmin):
@@ -52,6 +52,32 @@ class IncomeAdmin(admin.ModelAdmin):
     search_fields = ('category', 'description', 'customer',)
     list_filter = ('category', 'customer')
 
+class CompanyProfileAdmin(admin.ModelAdmin):
+    list_display = ('name', 'industry', 'address_line_1', 'address_line_2', 'phone', 'email')
+    list_filter = ('industry',)
+    search_fields = ('name', 'industry', 'email')
+    ordering = ('name',)
+
+class InvoiceItemInline(admin.TabularInline):
+    model = InvoiceItem
+    extra = 1
+
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = ('invoice_number', 'user', 'company', 'client', 'invoice_date', 'due_date')
+    list_filter = ('invoice_date', 'due_date')
+    search_fields = ('invoice_number', 'user__email', 'company__name', 'client__name')
+    inlines = [InvoiceItemInline]
+    ordering = ('-invoice_date',)
+
+class InvoiceItemAdmin(admin.ModelAdmin):
+    list_display = ('item_name', 'item_description', 'quantity', 'unit_price', 'invoice')
+    list_filter = ('invoice',)
+    search_fields = ('item_name', 'item_description', 'invoice__invoice_number')
+    ordering = ('invoice', 'item_name',)
+
+admin.site.register(Invoice, InvoiceAdmin)
+admin.site.register(InvoiceItem, InvoiceItemAdmin)
+admin.site.register(CompanyProfile, CompanyProfileAdmin)
 admin.site.register(Expense, ExpenseAdmin)
 admin.site.register(Income, IncomeAdmin)
 admin.site.register(Client, ClientAdmin)

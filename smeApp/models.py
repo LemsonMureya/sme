@@ -5,6 +5,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.urls import reverse
 from django.utils.text import slugify
+from django.core.validators import FileExtensionValidator
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -21,6 +23,31 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
 
+class CompanyProfile(models.Model):
+    BUSINESS_CATEGORY_CHOICES = (
+        ('art_photography_creative', 'Art, Photography & Creative Services'),
+        ('construction_home_improvement', 'Construction & Home Improvement'),
+        ('consulting_professional', 'Consulting & Professional Services'),
+        ('financial_services_insurance', 'Financial Services & Insurance'),
+        ('hair_spa_aesthetics', 'Hair, Spa & Aesthetics'),
+        ('nonprofits_associations_groups', 'Non-profits, Associations & Groups'),
+        ('real_estate', 'Real Estate'),
+        ('retailers_resellers_sales', 'Retailers, Resellers & Sales'),
+        ('web_tech_media', 'Web, Tech & Media'),
+        ('other', 'Other'),
+    )
+
+    name = models.CharField(max_length=255)
+    address_line_1 = models.TextField(blank=True, null=True)
+    address_line_2 = models.TextField(blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    logo = models.ImageField(upload_to='company_logos/', validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif'])], blank=True, null=True)
+    industry = models.CharField(max_length=50, choices=BUSINESS_CATEGORY_CHOICES, default='other')
+
+    def __str__(self):
+        return self.name
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = [
         ('Employee', 'Employee'),
@@ -33,7 +60,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='Other')
-    company = models.CharField(max_length=255, blank=True)
+    company =  models.OneToOneField(CompanyProfile, on_delete=models.SET_NULL, null=True, blank=True)
     photo = models.ImageField(upload_to='user_photos/', blank=True, default='user_photos/default-avatar.png')
     verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -51,6 +78,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         db_table = 'users'
         verbose_name = 'user'
         verbose_name_plural = 'users'
+
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
@@ -207,3 +235,30 @@ class Income(models.Model):
 
     def __str__(self):
         return self.description
+
+class Invoice(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    invoice_number = models.CharField(max_length=50)
+    invoice_date = models.DateField()
+    due_date = models.DateField()
+
+    def get_total_amount(self):
+        total = 0
+        for item in self.invoiceitem_set.all():
+            total += item.quantity * item.unit_price
+        return total
+
+    def __str__(self):
+        return self.invoice_number
+
+class InvoiceItem(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+    item_name = models.CharField(max_length=100)
+    item_description = models.CharField(max_length=255)
+    quantity = models.IntegerField()
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.item_name

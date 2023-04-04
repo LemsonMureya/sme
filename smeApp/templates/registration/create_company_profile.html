@@ -1,0 +1,12 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>Create Company Profile</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+  </div>
+{% endblock %}

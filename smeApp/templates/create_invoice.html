@@ -1,0 +1,14 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+    <h2>Create Invoice</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ invoice_form.as_p }}
+        {{ invoice_item_formset.management_form }}
+        {% for form in invoice_item_formset %}
+            {{ form.as_table }}
+        {% endfor %}
+        <button type="submit">Create Invoice</button>
+    </form>
+{% endblock %}

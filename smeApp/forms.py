@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, Income, Expense, Job, Client
+from .models import CustomUser, Income, Expense, Job, Client, CompanyProfile, Invoice, InvoiceItem
 
 
 class CustomUserCreationForm(forms.ModelForm):
@@ -85,3 +85,26 @@ class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
         fields = ['category', 'description', 'amount', 'date_created', 'notes', 'receipt', 'vendor']
+
+class CompanyProfileForm(forms.ModelForm):
+    class Meta:
+        model = CompanyProfile
+        fields = [
+            'name',
+            'address_line_1',
+            'address_line_2',
+            'phone',
+            'email',
+            'logo',
+            'industry',
+        ]
+
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields = ['user', 'company', 'client', 'invoice_number', 'invoice_date', 'due_date']
+
+class InvoiceItemForm(forms.ModelForm):
+    class Meta:
+        model = InvoiceItem
+        fields = ['item_name', 'item_description', 'quantity', 'unit_price']

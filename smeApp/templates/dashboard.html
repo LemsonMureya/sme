@@ -101,8 +101,8 @@
                           </a>
                           <!-- more inner pages-->
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="../../dashboard/crm.html" data-bs-toggle="" aria-expanded="false">
-                            <div class="d-flex align-items-center"><span class="nav-link-text">CRM</span><span class="badge ms-2 badge badge-phoenix badge-phoenix-info ">New</span>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'smeApp:create_invoice' %}" data-bs-toggle="" aria-expanded="false">
+                            <div class="d-flex align-items-center"><span class="nav-link-text">Generate Invoice </span><span class="badge ms-2 badge badge-phoenix badge-phoenix-info ">New</span>
                             </div>
                           </a>
                           <!-- more inner pages-->
@@ -1531,7 +1531,7 @@
             <div class="navbar-logo">
 
               <button class="btn navbar-toggler navbar-toggler-humburger-icon hover-bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse" aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
-              <a class="navbar-brand me-1 me-sm-3" href="../../index.html">
+              <a class="navbar-brand me-1 me-sm-3" href="{% url 'smeApp:index' %}">
                 <div class="d-flex align-items-center">
                   <div class="d-flex align-items-center"><img src="{% static 'assets/img/icons/logo.png' %}" alt="phoenix" width="27" />
                     <p class="logo-text ms-2 d-none d-sm-block">phoenix</p>

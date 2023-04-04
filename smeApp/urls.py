@@ -13,13 +13,15 @@ from .views import(JobListView,
                     TransactionsView,
                     ExpensesDataView,
                     ClientsListView,
-                    ClientsList)
+                    ClientsList,
+                    CompanyProfileCreateView)
 
 app_name = 'smeApp'
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('create_company_profile/', CompanyProfileCreateView.as_view(), name='create_company_profile'),
     path('jobs/', JobListView.as_view(), name='job_list'),
     path('jobs/add/', JobCreateView.as_view(), name='job_add'),
     path('jobs/edit/<int:pk>/', JobUpdateView.as_view(), name='job_edit'),
@@ -37,6 +39,9 @@ urlpatterns = [
     path('expense/delete/<int:pk>/', ExpenseDeleteView.as_view(), name='expense-delete'),
     path('expenses_data/', ExpensesDataView.as_view(), name='expenses_data'),
     path('profit_loss_data/', views.ProfitLossDataView.as_view(), name='profit_loss_data'),
-
+    path('create_invoice/', views.CreateInvoiceView.as_view(), name='create_invoice'),
+    path('view_invoice/<int:invoice_id>/', views.ViewInvoiceView.as_view(), name='view_invoice'),
+    path('generate_pdf/<int:invoice_id>/', views.GeneratePDFView.as_view(), name='generate_pdf'),
+    path('preview_pdf/<int:invoice_id>/', views.PreviewPDFView.as_view(), name='preview_pdf'),
 
 ]
