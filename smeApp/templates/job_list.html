@@ -1,9 +1,6 @@
 {% extends 'dashboard.html' %}
 
 {% block content %}
-
-
-  <div class="content">
     <nav class="mb-2" aria-label="breadcrumb">
       <ol class="breadcrumb mb-0">
         <li class="breadcrumb-item"><a href="#!">Page 1</a></li>
@@ -64,17 +61,33 @@
         <div class="table-responsive scrollbar">
           <table class="table fs--1 mb-0 border-top border-200">
             <thead>
-  <tr>
-    <th class="sort white-space-nowrap align-middle ps-0" scope="col" data-sort="projectName" style="width:20%;">Client Name</th>
-    <th class="sort align-middle ps-3" scope="col" data-sort="assigness" style="width:10%;">Job #</th>
-    <th class="sort align-middle ps-3" scope="col" data-sort="start" style="width:10%;">Status</th>
-    <th class="sort align-middle ps-3" scope="col" data-sort="deadline" style="width:15%;">Contact Email</th>
-    <th class="sort align-middle ps-3" scope="col" data-sort="task" style="width:12%;">Payment Status</th>
-    <th class="sort align-middle ps-3" scope="col" data-sort="projectprogress" style="width:5%;">Deadline</th>
-    <!-- <th class="sort align-middle text-end" scope="col" data-sort="statuses" style="width:10%;">Assigned</th> -->
-    <th class="sort align-middle text-end" scope="col" data-sort="assigness" style="width:10%;">Budget</th>
-    <th class="sort align-middle text-end" scope="col" style="width:10%;">Action</th>
-  </tr>
+              <tr>
+              <th class="sort white-space-nowrap align-middle ps-0" scope="col" data-sort="projectName" style="width:20%;">
+                <i class="fas fa-user text-primary me-2"></i>Client Name
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="assigness" style="width:10%;">
+                <i class="fas fa-briefcase text-success me-2"></i>Job #
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="start" style="width:10%;">
+                <i class="fas fa-tasks text-info me-2"></i>Status
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="deadline" style="width:15%;">
+                <i class="fas fa-envelope text-warning me-2"></i>Contact Email
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="task" style="width:12%;">
+                <i class="fas fa-credit-card text-danger me-2"></i>Payment Status
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="projectprogress" style="width:5%;">
+                <i class="fas fa-calendar-alt text-warning me-2"></i>Deadline
+              </th>
+              <th class="sort align-middle text-end" scope="col" data-sort="assigness" style="width:10%;">
+                <i class="fas fa-dollar-sign text-success me-2"></i>Budget
+              </th>
+              <th class="sort align-middle text-end" scope="col" style="width:10%;">
+                <i class="fas fa-cog text-dark me-2"></i>Action
+              </th>
+            </tr>
+
 </thead>
 <tbody class="list" id="project-list-table-body">
   {% for job in object_list %}
@@ -82,14 +95,20 @@
       <td class="align-middle time white-space-nowrap ps-0 projectName py-4"><a class="text-decoration-none fw-bold fs-0" href="{% url 'smeApp:job_detail' job.pk %}">{{ job.client.name }}</a></td>
       <td class="align-middle white-space-nowrap assigness ps-3 py-4">{{ job.po_number }}</td>
       <td class="align-middle white-space-nowrap start ps-3 py-4">
-        {% if job.status == 'CR' %}
-          <span class="badge badge-phoenix fs--2 badge-phoenix-danger">{{ job.get_status_display }}</span>
-        {% elif job.status == 'IP' %}
+        {% if job.status == 'quote' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-primary">{{ job.get_status_display }}</span>
+        {% elif job.status == 'work_order' %}
           <span class="badge badge-phoenix fs--2 badge-phoenix-warning">{{ job.get_status_display }}</span>
-        {% elif job.status == 'FN' %}
+        {% elif job.status == 'ongoing' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-info">{{ job.get_status_display }}</span>
+        {% elif job.status == 'completed' %}
           <span class="badge badge-phoenix fs--2 badge-phoenix-success">{{ job.get_status_display }}</span>
-        {% else %}
+        {% elif job.status == 'cancelled' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-danger">{{ job.get_status_display }}</span>
+        {% elif job.status == 'postponed' %}
           <span class="badge badge-phoenix fs--2 badge-phoenix-secondary">{{ job.get_status_display }}</span>
+        {% else %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-light">{{ job.get_status_display }}</span>
         {% endif %}
       </td>
       <td class="align-middle white-space-nowrap deadline ps-3 py-4">{{ job.client.email }}</td>
@@ -141,5 +160,4 @@
         </div>
       </div>
     </footer>
-  </div>
 {% endblock %}

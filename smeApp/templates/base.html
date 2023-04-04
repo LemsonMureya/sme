@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 
@@ -25,6 +26,7 @@
     <link rel="manifest" href="{% static 'assets/img/favicons/manifest.json' %}">
     <meta name="msapplication-TileImage" content="../../assets/img/favicons/mstile-150x150.png">
     <meta name="theme-color" content="#ffffff">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{% static 'vendors/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
     <script src="{% static 'vendors/simplebar/simplebar.min.js' %}"></script>
     <script src="{% static 'assets/js/config.js' %}"></script>
@@ -106,7 +108,7 @@
                   <label class="mb-0 theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="moon"></span></label>
                   <label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="sun"></span></label>
                 </div>
-              </div><a class="text-700 hover-text-1100 px-2 d-none d-lg-inline lh-sm" href="#" data-bs-toggle="modal" data-bs-target="#searchBoxModal"><span data-feather="search" style="height: 20px; width: 20px;"></span></a><a class="btn btn-link text-900 order-1 order-lg-0 ps-3 me-2" href="../../pages/authentication/simple/sign-in.html">Sign in</a><a class="btn btn-phoenix-primary order-0" href="../../pages/authentication/simple/sign-up.html"><span class="fw-bold">Sign Up</span></a>
+              </div><a class="text-700 hover-text-1100 px-2 d-none d-lg-inline lh-sm" href="#" data-bs-toggle="modal" data-bs-target="#searchBoxModal"><span data-feather="search" style="height: 20px; width: 20px;"></span></a><a class="btn btn-link text-900 order-1 order-lg-0 ps-3 me-2" href="{% url 'login' %}">Sign in</a><a class="btn btn-phoenix-primary order-0" href="{% url 'register' %}"><span class="fw-bold">Sign Up</span></a>
             </div>
           </div>
         </nav>
@@ -130,7 +132,7 @@
             <div class="row align-items-center">
               <div class="col-12 col-lg-6 pt-8 pb-6 position-relative z-index-5 text-center text-lg-start">
                 <h1 class="fs-5 fs-md-6 fs-xl-7 fw-black mb-4"><span class="text-gradient-info me-3">Elegance</span>for<br />your web app</h1>
-                <p class="mb-5 pe-xl-10">Standard, modern and Elegant solution for your next web app so you don’t have to look further. Sign up or check the demo below.</p><a class="btn btn-lg btn-primary rounded-pill me-3" href="#!" role="button">Sign up</a><a class="btn btn-link me-2 fs-0 p-0 text-decoration-none" href="#!" role="button">Check Demo<span class="fa-solid fa-angle-right ms-2 fs--1"></span></a>
+                <p class="mb-5 pe-xl-10">Standard, modern and Elegant solution for your next web app so you don’t have to look further. Sign up or check the demo below.</p><a class="btn btn-lg btn-primary rounded-pill me-3" href="{% url 'register' %}" role="button">Sign up</a><a class="btn btn-link me-2 fs-0 p-0 text-decoration-none" href="#!" role="button">Check Demo<span class="fa-solid fa-angle-right ms-2 fs--1"></span></a>
               </div>
               <div class="col-12 col-lg-auto d-none d-lg-block">
                 <div class="hero-image-container position-absolute h-100 end-0 d-flex align-items-center">
@@ -779,8 +781,8 @@
                 <li><a class="text-300 dark__text-300" href="">Contact us</a></li>
                 <li><a class="text-300 dark__text-300" href="">Newsroom</a></li>
                 <li><a class="text-300 dark__text-300" href="">Opportunities</a></li>
-                <li><a class="text-300 dark__text-300" href="">Login</a></li>
-                <li><a class="text-300 dark__text-300" href="">Sign Up</a></li>
+                <li><a class="" href="{% url 'login' %}">Login</a></li>
+                <li><a class="text-300 dark__text-300" href="{% url 'register' %}">Sign Up</a></li>
                 <li><a class="text-300 dark__text-300" href="">Support</a></li>
                 <li><a class="text-300 dark__text-300" href="">FAQ</a></li>
               </ul>
@@ -812,6 +814,7 @@
                 <div class="dropdown-menu dropdown-menu-end py-2" aria-labelledby="support-chat-dropdown"><a class="dropdown-item" href="#!">Request a callback</a><a class="dropdown-item" href="#!">Search in chat</a><a class="dropdown-item" href="#!">Show history</a><a class="dropdown-item" href="#!">Report to Admin</a><a class="dropdown-item btn-support-chat" href="#!">Close Support</a></div>
               </div>
             </div>
+
             <div class="card-body chat p-0">
               <div class="d-flex flex-column-reverse scrollbar h-100 p-3">
                 <div class="text-end mt-6"><a class="mb-2 d-inline-flex align-items-center text-decoration-none text-1100 hover-bg-soft rounded-pill border border-primary py-2 ps-4 pe-3" href="#!">

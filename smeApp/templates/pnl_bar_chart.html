@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-md-4">
+        <h4>Filter</h4>
+        <div class="btn-group">
+          <a href="{% url 'smeApp:pnl_bar_chart' %}" class="btn btn-primary{% if request.GET.time_filter == 'all' %} active{% endif %}">All</a>
+          <a href="{% url 'smeApp:pnl_bar_chart' %}?time_filter=week" class="btn btn-primary{% if request.GET.time_filter == 'week' %} active{% endif %}">Week</a>
+          <a href="{% url 'smeApp:pnl_bar_chart' %}?time_filter=month" class="btn btn-primary{% if request.GET.time_filter == 'month' %} active{% endif %}">Month</a>
+          <a href="{% url 'smeApp:pnl_bar_chart' %}?time_filter=year" class="btn btn-primary{% if request.GET.time_filter == 'year' %} active{% endif %}">Year</a>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <h4 class="mb-3">Profit and Loss</h4>
+        <canvas id="pnl-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const pnlDataURL = "{% url 'smeApp:pnl_data' %}";
+    const pnlChartElement = document.getElementById('pnl-chart');
+    const filterAllButton = document.getElementById('filter-all');
+    const filterDayButton = document.getElementById('filter-day');
+    const filterWeekButton = document.getElementById('filter-week');
+    const filterMonthButton = document.getElementById('filter-month');
+    const filterYearButton = document.getElementById('filter-year');
+
+    const createPnlChart = (data) => {
+      return new Chart(pnlChartElement, {
+        type: 'bar',
+        data: {
+          labels: data.date_range,
+          datasets: [
+            {
+              label: 'Income',
+              data: Object.values(data.income_totals),
+              backgroundColor: 'rgba(0, 128, 0, 0.5)',
+              borderColor: 'rgba(0, 128, 0, 0.8)',
+              borderWidth: 1
+            },
+            {
+              label: 'Expense',
+              data: Object.values(data.expense_totals),
+              backgroundColor: 'rgba(255, 0, 0, 0.5)',
+              borderColor: 'rgba(255, 0, 0, 0.8)',
+              borderWidth: 1
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            xAxes: [{
+              stacked: true,
+              ticks: {
+                autoSkip: false,
+                maxRotation: 0
+              }
+            }],
+            yAxes: [{
+              stacked: true,
+              ticks: {
+                beginAtZero: true,
+                callback: function(value, index, values) {
+                  if(parseInt(value) >= 1000){
+                    return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  } else {
+                    return '$' + value;
+                  }
+                }
+              }
+            }]
+          }
+        },
+      });
+    };
+
+    const fetchPnlData = async (timeFilter = 'all') => {
+    const response = await fetch(`${pnlDataURL}?time_filter=${timeFilter}`);
+    return await response.json();
+    };
+
+    let pnlChart;
+    const updatePnlChart = async (timeFilter) => {
+    if (pnlChart) {
+    pnlChart.destroy();
+    }
+    const data = await fetchPnlData(timeFilter);
+    pnlChart = createPnlChart(data);
+    };
+
+    filterAllButton.addEventListener('click', () => updatePnlChart('all'));
+    filterDayButton.addEventListener('click', () => updatePnlChart('day'));
+    filterWeekButton.addEventListener('click', () => updatePnlChart('week'));
+    filterMonthButton.addEventListener('click', () => updatePnlChart('month'));
+    filterYearButton.addEventListener('click', () => updatePnlChart('year'));
+
+    updatePnlChart();
+
+    const refreshChartButton = document.getElementById('refresh-chart');
+    refreshChartButton.addEventListener('click', () => updatePnlChart());
+
+      </script>
+    {% endblock %}

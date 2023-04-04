@@ -1,0 +1,353 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+  <style>
+    .col-date { width: 15%; }
+    .col-merchant { width: 20%; }
+    .col-category { width: 15%; }
+    .col-total { width: 10%; }
+    .col-description { width: 25%; }
+    .col-actions { width: 15%; }
+  </style>
+
+</head>
+<body>
+  <div class="card">
+    <div class="card-body">
+  <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+    <h2>Transactions</h2>
+    <div>
+      <a href="{% url 'smeApp:add_expense' %}" class="btn btn-primary me-2">
+        <i class="fas fa-plus-circle"></i> Add Expense
+      </a>
+      <a href="{% url 'smeApp:add_income' %}" class="btn btn-primary">
+        <i class="fas fa-plus-circle"></i> Add Income
+      </a>
+    </div>
+  </div>
+</div>
+</div>
+<br>
+
+<div class="card">
+  <div class="card-body">
+  <div class="summary-container my-4">
+    <div class="row">
+      <div class="col-md-4">
+        <h4 class="mb-2">Total Expenses</h4>
+        <h3 class="text-danger">{{ total_expenses }}</h3>
+      </div>
+      <div class="col-md-4">
+        <h4 class="mb-2">Total Income</h4>
+        <h3 class="text-success">{{ total_incomes }}</h3>
+      </div>
+      <div class="col-md-4">
+        <h4 class="mb-2">Profit/Loss</h4>
+        <h3 class="{% if profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">{{ profit_loss }}</h3>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<br>
+
+  <div class="card">
+    <div class="card-body">
+    <h4>Expenses</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="col-date">Date</th>
+          <th class="col-merchant">Merchant</th>
+          <th class="col-category">Category</th>
+          <th class="col-total">Total</th>
+          <th class="col-description">Description</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for expense in expenses %}
+        <tr>
+          <td class="col-date">{{ expense.date_created }}</td>
+          <td class="col-merchant">{{ expense.merchant }}</td>
+          <td class="col-category">{{ expense.category }}</td>
+          <td class="col-total">{{ expense.amount }}</td>
+          <td class="col-description">{{ expense.description }}</td>
+          <td class="col-actions">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-transparent" type="button" id="expenseDropdown{{ expense.pk }}" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent;">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="expenseDropdown{{ expense.pk }}">
+              <li><a href="{% url 'smeApp:expense-update' expense.pk %}" class="dropdown-item">View</a></li>
+              <li><a href="{% url 'smeApp:expense-update' expense.pk %}" class="dropdown-item">Edit</a></li>
+              <li><a href="{% url 'smeApp:expense-delete' expense.pk %}" class="dropdown-item"><i class="fas fa-trash-alt text-danger"></i></a></li>
+            </ul>
+          </div>
+        </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    </div>
+    <br>
+
+  <div class="card">
+    <div class="card-body">
+    <h4>Incomes</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="col-date">Date</th>
+          <th class="col-merchant">Merchant</th>
+          <th class="col-category">Category</th>
+          <th class="col-total">Total</th>
+          <th class="col-description">Description</th>
+          <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for income in incomes %}
+        <tr>
+        <td class="col-date">{{ income.date_created }}</td>
+        <td class="col-merchant">{{ income.merchant }}</td>
+        <td class="col-category">{{ income.category }}</td>
+        <td class="col-total">{{ income.amount }}</td>
+        <td class="col-description">{{ income.description }}</td>
+        <td class="col-actions">
+        <div class="dropdown">
+            <button class="btn btn-sm btn-transparent" type="button" id="incomeDropdown{{ income.pk }}" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent;">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="incomeDropdown{{ income.pk }}">
+              <li><a href="{% url 'smeApp:income-update' income.pk %}" class="dropdown-item">View</a></li>
+              <li><a href="{% url 'smeApp:income-update' income.pk %}" class="dropdown-item">Edit</a></li>
+              <li><a href="{% url 'smeApp:income-delete' income.pk %}" class="dropdown-item"><i class="fas fa-trash-alt text-danger"></i></a></li>
+            </ul>
+          </div>
+        </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        </div>
+        </div>
+        <br>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card" style="width: 100%;">
+              <div class="card-body">
+                <h4 class="card-title">Expenses Chart</h4>
+                <div class="mb-3">
+                  <button id="filter-all" class="btn btn-sm btn-info">All</button>
+                  <button id="filter-day" class="btn btn-sm btn-info">Today</button>
+                  <button id="filter-month" class="btn btn-sm btn-info">This Month</button>
+                  <button id="filter-year" class="btn btn-sm btn-info">This Year</button>
+                </div>
+                <div class="chart-container">
+                  <canvas id="expenses-chart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card" style="width: 100%;">
+              <div class="card-body">
+                <h4 class="card-title">Profit/Loss Chart</h4>
+                <div class="mb-3">
+                  <button id="filter-pl-all" class="btn btn-sm btn-info">All</button>
+                  <button id="filter-pl-12-months" class="btn btn-sm btn-info">Last 12 Months</button>
+                  <button id="filter-pl-24-months" class="btn btn-sm btn-info">Last 24 Months</button>
+                </div>
+
+                <div class="chart-container">
+                  <canvas id="profit-loss-chart"></canvas>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="mb-3">
+          <button id="refresh-chart" class="btn btn-sm btn-info">Refresh</button>
+        </div> -->
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+
+
+      <script>
+    const expensesDataURL = "{% url 'smeApp:expenses_data' %}";
+    const expensesChartElement = document.getElementById('expenses-chart');
+    const filterAllButton = document.getElementById('filter-all');
+    const filterDayButton = document.getElementById('filter-day');
+    const filterMonthButton = document.getElementById('filter-month');
+    const filterYearButton = document.getElementById('filter-year');
+
+    const categoryColors = {
+      'Rent': 'hsl(40, 50%, 90%)',
+      'Repairs and Maintenance': 'hsl(80, 50%, 90%)',
+      'Payroll': 'hsl(120, 50%, 90%)',
+      'Meals and Entertainment': 'hsl(160, 50%, 90%)',
+      'Telephone': 'hsl(200, 50%, 90%)',
+      'Travel': 'hsl(240, 50%, 90%)',
+      'Utilities': 'hsl(280, 50%, 90%)',
+      'Advertising and Promotion': 'hsl(320, 50%, 90%)',
+      'Other': 'hsl(360, 50%, 90%)',
+    };
+
+    const createExpensesChart = (data) => {
+      const backgroundColors = data.map((item) => categoryColors[item.category]);
+      const totalExpenses = data.reduce((total, item) => total + item.total_amount, 0);
+
+      return new Chart(expensesChartElement, {
+        type: 'pie',
+        data: {
+          labels: data.map((item) => item.category),
+          datasets: [
+            {
+              data: data.map((item) => item.total_amount),
+              backgroundColor: backgroundColors,
+            },
+          ],
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsive: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const label = context.label;
+                  const value = context.parsed;
+                  const percentage = ((value / totalExpenses) * 100).toFixed(2);
+                  return `${label}: ${value}`;
+                },
+              },
+            },
+          },
+        },
+      });
+    };
+
+
+    const fetchExpensesData = async (timeFilter = 'all') => {
+      const response = await fetch(`${expensesDataURL}?time_filter=${timeFilter}`);
+      return await response.json();
+    };
+
+    let expensesChart;
+    const updateExpensesChart = async (timeFilter) => {
+      if (expensesChart) {
+        expensesChart.destroy();
+      }
+      const data = await fetchExpensesData(timeFilter);
+      expensesChart = createExpensesChart(data);
+    };
+
+    filterAllButton.addEventListener('click', () => updateExpensesChart('all'));
+    filterDayButton.addEventListener('click', () => updateExpensesChart('day'));
+    filterMonthButton.addEventListener('click', () => updateExpensesChart('month'));
+    filterYearButton.addEventListener('click', () => updateExpensesChart('year'));
+
+    updateExpensesChart();
+
+    const refreshChartButton = document.getElementById('refresh-chart');
+    refreshChartButton.addEventListener('click', () => updateExpensesChart());
+  </script>
+
+      <script>
+// Add this code below the existing JavaScript code in transactions.html
+          const profitLossDataURL = "{% url 'smeApp:profit_loss_data' %}";
+          const profitLossChartElement = document.getElementById('profit-loss-chart');
+          const filterPlAllButton = document.getElementById('filter-pl-all');
+          const filterPl12MonthsButton = document.getElementById('filter-pl-12-months');
+          const filterPl24MonthsButton = document.getElementById('filter-pl-24-months');
+
+          const createProfitLossChart = (expensesData, incomesData) => {
+          const labels = [...new Set([...expensesData.map(item => item.month), ...incomesData.map(item => item.month)])].sort();
+          const expensesDataMap = new Map(expensesData.map(item => [item.month, item.total_amount]));
+          const incomesDataMap = new Map(incomesData.map(item => [item.month, item.total_amount]));
+
+          const expenseAmounts = labels.map(month =>expensesDataMap.get(month) || 0);
+          const incomeAmounts = labels.map(month => incomesDataMap.get(month) || 0);
+
+          const profitLossChart = new Chart(profitLossChartElement, {
+                type: 'bar',
+                data: {
+                labels: labels.map(label => {
+                  const date = new Date(label);
+                  const monthName = date.toLocaleString('en-us', { month: 'short' });
+                  const year = date.getFullYear();
+                  return `${monthName} ${year}`;
+                }),
+
+          datasets: [
+              {
+              label: 'Expense',
+              data: expenseAmounts,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+              },
+              {
+              label: 'Income',
+              data: incomeAmounts,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+              }
+              ]
+              },
+              options: {
+                maintainAspectRatio: false,
+                responsive: true,
+              scales: {
+              y: {
+              beginAtZero: true
+              }
+              }
+              }
+              });
+
+            return profitLossChart;
+            };
+
+          let profitLossChart;
+
+          const loadProfitLossData = async (timeFilter = 'all') => {
+          const response = await fetch(`${profitLossDataURL}?time_filter=${timeFilter}`);
+          const data = await response.json();
+
+          if (profitLossChart) {
+              profitLossChart.destroy();
+              }
+
+              profitLossChart = createProfitLossChart(data.expenses, data.incomes);
+              };
+
+              filterPlAllButton.addEventListener('click', () => loadProfitLossData('all'));
+              filterPl12MonthsButton.addEventListener('click', () => loadProfitLossData('12_months'));
+              filterPl24MonthsButton.addEventListener('click', () => loadProfitLossData('24_months'));
+
+          loadProfitLossData();
+</script>
+</body>
+</html>
+{% endblock %}

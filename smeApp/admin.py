@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Client, Note, Job
+from .models import CustomUser, Client, Note, Job, Expense, Income
 
 
 class CustomUserAdmin(UserAdmin):
@@ -42,6 +42,18 @@ class JobAdmin(admin.ModelAdmin):
     search_fields = ('client__name', 'po_number',)
     list_filter = ('status', 'category', 'payment_status', 'payment_type')
 
+class ExpenseAdmin(admin.ModelAdmin):
+    list_display = ('category', 'description', 'amount', 'date_created', 'vendor')
+    search_fields = ('category', 'description', 'vendor',)
+    list_filter = ('category', 'vendor')
+
+class IncomeAdmin(admin.ModelAdmin):
+    list_display = ('category', 'description', 'amount', 'date_created', 'customer')
+    search_fields = ('category', 'description', 'customer',)
+    list_filter = ('category', 'customer')
+
+admin.site.register(Expense, ExpenseAdmin)
+admin.site.register(Income, IncomeAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Note, NoteAdmin)
 admin.site.register(Job, JobAdmin)

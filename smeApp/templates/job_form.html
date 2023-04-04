@@ -1,16 +1,229 @@
-{% extends 'base.html' %}
-
+{% extends 'dashboard.html' %}
+{% load static %}
 {% block content %}
-<section>
-  <div class="container">
-    <h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Job</h1>
-    <form method="post" enctype="multipart/form-data">
+
+<head>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <!-- <div class="container mt-4"> -->
+    <h2 class="mb-4">Create Job</h2>
+    <form method="post" enctype="multipart/form-data" class="row g-3 mb-6">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-primary">Save</button>
+      {% for field in form %}
+        {% if field.name != 'client' %}
+          {% if field.name == 'start_date' or field.name == 'end_date' %}
+            <div class="col-md-6 gy-6">
+              <div class="form-floating">
+                <input class="form-control flatpickr-date" type="text" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}">
+                <label for="{{ field.auto_id }}">{{ field.label }}</label>
+              </div>
+            </div>
+          {% else %}
+            <div class="col-md-6 gy-6">
+              <div class="form-floating">
+                {{ field }}
+                <label for="{{ field.auto_id }}">{{ field.label }}</label>
+              </div>
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="col-md-6 gy-6">
+            <div class="form-floating">
+              {{ field }}
+              <label for="{{ field.auto_id }}">{{ field.label }}</label>
+              <h5 style="padding: 7px;" ><i class="fas fa-plus-circle" id="add-client-icon" data-bs-toggle="modal" data-bs-target="#clientModal" style="cursor: pointer; margin-left: 5px; color: green;"></i> Add new client</h5>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="col-12 gy-6">
+        <div class="row g-3 justify-content-start">
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
     </form>
-
   </div>
-</section>
 
+  <!-- Client Modal -->
+  <div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="clientModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clientModalLabel">New Client</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="new-client-fields"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="save-client">Save Client</button>
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+  </div>
+</body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    flatpickr(".flatpickr-date", {
+      dateFormat: "Y-m-d", // Update the format according to your preference
+      disableMobile: true
+    });
+  });
+</script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const newClientFields = document.getElementById('new-client-fields');
+        const clientModalElement = document.getElementById('clientModal');
+        const clientModal = new bootstrap.Modal(clientModalElement);
+      // Function to create a new form field
+      function createFormField(name, labelText, inputType = 'text') {
+          const formGroup = document.createElement('div');
+          formGroup.className = 'mb-3';
+
+          const label = document.createElement('label');
+          label.htmlFor = `new_${name}`;
+          label.textContent = labelText;
+          formGroup.appendChild(label);
+
+          const input = document.createElement('input');
+          input.type = inputType;
+          input.name = `new_${name}`;
+          input.id = `new_${name}`;
+          input.className = 'form-control';
+          formGroup.appendChild(input);
+
+          return formGroup;
+      }
+
+      // Add new client form fields when the "Add Client" button is clicked or when the modal is opened
+      function setupNewClientFields() {
+          newClientFields.innerHTML = '';
+          const nameField = createFormField('name', 'Name');
+          newClientFields.appendChild(nameField);
+
+          const addressField = createFormField('address', 'Address');
+          newClientFields.appendChild(addressField);
+
+          const contactNameField = createFormField('contact_name', 'Contact Name');
+          newClientFields.appendChild(contactNameField);
+
+          const emailField = createFormField('email', 'Email', 'email');
+          newClientFields.appendChild(emailField);
+
+          const phoneField = createFormField('phone', 'Phone');
+          newClientFields.appendChild(phoneField);
+
+          // Add more fields as necessary
+          const roleField = document.createElement('div');
+          roleField.className = 'mb-3';
+
+          const roleLabel = document.createElement('label');
+          roleLabel.htmlFor = 'new_role';
+          roleLabel.textContent = 'Role';
+          roleField.appendChild(roleLabel);
+
+          const roleSelect = document.createElement('select');
+          roleSelect.name = 'new_role';
+          roleSelect.id = 'new_role';
+          roleSelect.className = 'form-control';
+          roleField.appendChild(roleSelect);
+
+          // Add the appropriate role options for your application
+          const roleOption1 = new Option('Job Contact', 'job_contact');
+          const roleOption2 = new Option('Property Owner', 'property_owner');
+          const roleOption3 = new Option('Tenant', 'tenant');
+          const roleOption4 = new Option('Manager', 'manager');
+          const roleOption5 = new Option('Vendor', 'vendor');
+          const roleOption6 = new Option('Other', 'Other');
+
+          roleSelect.add(roleOption1);
+          roleSelect.add(roleOption2);
+          roleSelect.add(roleOption3);
+          roleSelect.add(roleOption4);
+          roleSelect.add(roleOption5);
+          roleSelect.add(roleOption6);
+
+          newClientFields.appendChild(roleField);
+      }
+
+      async function fetchClients() {
+          try {
+              const response = await fetch("{% url 'smeApp:clients_list' %}");
+              if (response.ok) {
+                  const clients = await response.json();
+                  const clientSelect = document.getElementById('id_client');
+                  clients.forEach(client => {
+                      const option = new Option(client.name, client.id);
+                      clientSelect.add(option);
+                  });
+              } else {
+                  console.error("Error fetching clients:", response);
+              }
+          } catch (error) {
+              console.error("Error fetching clients:", error);
+          }
+      }
+
+      fetchClients();
+
+        // Add event listener for the Bootstrap 'show' event on the modal
+          clientModalElement.addEventListener('show.bs.modal', () => {
+              setupNewClientFields();
+          });
+
+          // Save client and close modal
+          const saveClientBtn = document.getElementById('save-client');
+          saveClientBtn.addEventListener('click', async () => {
+              const formData = new FormData();
+              formData.append('name', document.getElementById('new_name').value);
+              formData.append('address', document.getElementById('new_address').value);
+              formData.append('contact_name', document.getElementById('new_contact_name').value);
+              formData.append('email', document.getElementById('new_email').value);
+              formData.append('phone', document.getElementById('new_phone').value);
+              formData.append('role', document.getElementById('new_role').value);
+
+              try {
+                  const response = await fetch("{% url 'smeApp:client_create' %}", {
+                      method: 'POST',
+                      body: formData,
+                      headers: {
+                          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                      },
+                  });
+
+                  if (response.ok) {
+                      const newClient = await response.json();
+                      const clientSelect = document.getElementById('id_client');
+                      const newOption = new Option(newClient.name, newClient.id);
+                      clientSelect.add(newOption);
+                      clientSelect.value = newClient.id;
+                      clientModal.hide();
+                  } else {
+                      console.error("Error saving client:", response);
+                  }
+              } catch (error) {
+                  console.error("Error saving client:", error);
+              }
+          });
+
+          // Close modal and clear fields
+          const closeModalBtn = document.getElementById('close-modal');
+          closeModalBtn.addEventListener('click', () => {
+              clientModal.hide();
+              setupNewClientFields();
+          });
+        });
+        </script>
 {% endblock %}

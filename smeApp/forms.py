@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+from .models import CustomUser, Income, Expense, Job, Client
+
 
 class CustomUserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -28,3 +29,59 @@ class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'email', 'role']
+
+class JobForm(forms.ModelForm):
+    client = forms.ModelChoiceField(queryset=Client.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
+    po_number = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    status = forms.ChoiceField(choices=Job.STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+    category = forms.ChoiceField(choices=Job.CATEGORY_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+    description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    start_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
+    end_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
+    total_cost = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    payment_status = forms.ChoiceField(choices=Job.PAYMENT_STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+    payment_type = forms.ChoiceField(choices=Job.PAYMENT_TYPE_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+    assigned_worker = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Job
+        fields = ['client', 'po_number', 'status', 'category', 'description', 'start_date', 'end_date', 'total_cost', 'payment_status', 'payment_type', 'assigned_worker']
+
+class ClientForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    address = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    contact_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    phone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    role = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Client
+        fields = ['name', 'address', 'contact_name', 'email', 'phone', 'role']
+
+
+class IncomeForm(forms.ModelForm):
+    category = forms.ChoiceField(choices=Income.INCOME_CATEGORY_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+    description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    amount = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    date_created = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})) # Add a calendar widget
+    notes = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control'}))
+    invoice = forms.FileField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
+    customer = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Income
+        fields = ['category', 'description', 'amount', 'date_created', 'notes', 'invoice', 'customer']
+
+class ExpenseForm(forms.ModelForm):
+    category = forms.ChoiceField(choices=Expense.EXPENSE_CATEGORY_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+    description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    amount = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    date_created = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})) # Add a calendar widget
+    notes = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control'}))
+    receipt = forms.FileField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
+    vendor = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Expense
+        fields = ['category', 'description', 'amount', 'date_created', 'notes', 'receipt', 'vendor']

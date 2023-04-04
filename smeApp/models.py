@@ -1,7 +1,7 @@
 from django.db import models
-# from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.urls import reverse
 from django.utils.text import slugify
@@ -89,8 +89,6 @@ class Note(models.Model):
     def __str__(self):
         return self.related_object.client.name
 
-
-
 class Job(models.Model):
     STATUS_CHOICES = (
         ('quote', 'Quote'),
@@ -128,7 +126,6 @@ class Job(models.Model):
         ('other', 'Other'),
     )
 
-
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     po_number = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='quote')
@@ -146,3 +143,67 @@ class Job(models.Model):
 
     def __str__(self):
         return self.client.name
+
+class Expense(models.Model):
+    RENT = 'Rent'
+    REPAIRS_MAINTENANCE = 'Repairs and Maintenance'
+    PAYROLL = 'Payroll'
+    MEALS_ENTERTAINMENT = 'Meals and Entertainment'
+    TELEPHONE = 'Telephone'
+    TRAVEL = 'Travel'
+    UTILITIES = 'Utilities'
+    ADVERTISING_PROMOTION = 'Advertising and Promotion'
+    OTHER = 'Other'
+    EXPENSE_CATEGORY_CHOICES = [
+        (RENT, 'Rent'),
+        (REPAIRS_MAINTENANCE, 'Repairs and Maintenance'),
+        (PAYROLL, 'Payroll'),
+        (MEALS_ENTERTAINMENT, 'Meals and Entertainment'),
+        (TELEPHONE, 'Telephone'),
+        (TRAVEL, 'Travel'),
+        (UTILITIES, 'Utilities'),
+        (ADVERTISING_PROMOTION, 'Advertising and Promotion'),
+        (OTHER, 'Other'),
+    ]
+    category = models.CharField(
+        max_length=50,
+        choices=EXPENSE_CATEGORY_CHOICES,
+        default=OTHER,
+    )
+    description = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date_created = models.DateField(auto_now_add=False)
+    date_modified = models.DateField(auto_now=True)
+    notes = models.TextField(blank=True, null=True)
+    receipt = models.FileField(upload_to='receipts/', blank=True, null=True)
+    vendor = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.description
+
+class Income(models.Model):
+    SALE = 'Sale'
+    SERVICE = 'Service'
+    PRODUCT = 'Product'
+    OTHER = 'Other'
+    INCOME_CATEGORY_CHOICES = [
+        (SALE, 'Sale'),
+        (SERVICE, 'Service'),
+        (PRODUCT, 'Product'),
+        (OTHER, 'Other'),
+    ]
+    category = models.CharField(
+        max_length=20,
+        choices=INCOME_CATEGORY_CHOICES,
+        default=SALE,
+    )
+    description = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date_created = models.DateField(auto_now_add=False)
+    date_modified = models.DateField(auto_now=True)
+    notes = models.TextField(blank=True, null=True)
+    invoice = models.FileField(upload_to='invoices/', blank=True, null=True)
+    customer = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.description
