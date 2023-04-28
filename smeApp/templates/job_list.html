@@ -1,163 +1,450 @@
 {% extends 'dashboard.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
 
 {% block content %}
-    <nav class="mb-2" aria-label="breadcrumb">
-      <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="#!">Page 1</a></li>
-        <li class="breadcrumb-item"><a href="#!">Page 2</a></li>
-        <li class="breadcrumb-item active">Default</li>
-      </ol>
-    </nav>
-    <div class="mb-9">
-      <div id="projectSummary" data-list='{"valueNames":["projectName","assigness","start","deadline","task","projectprogress","status","action"],"page":6,"pagination":true}'>
-        <div class="row mb-4 gx-6 gy-3 align-items-center">
-          <div class="col-auto">
-            <h2 class="mb-0">Jobs<span class="fw-normal text-700 ms-3">({{ object_list|length }})</span></h2>
-          </div>
-          <div class="col-auto"><a class="btn btn-primary px-5" href="{% url 'smeApp:job_add' %}"><i class="fa-solid fa-plus me-2"></i>Add new job</a></div>
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+   <style>
+     .hide-on-desktop {
+       display: none;
+     }
+     .hide-on-mobile {
+       display: table-cell;
+     }
+
+     @media (max-width: 767px) {
+       .hide-on-mobile {
+         display: none;
+       }
+
+       .hide-on-desktop {
+         display: inline;
+       }
+     }
+     .position-static .me-1 {
+       font-size: 0.8rem;
+     }
+     .info-container {
+       flex: 1;
+     }
+     .info-container:hover {
+       color: #007bff;
+       text-decoration: underline;
+       cursor: pointer;
+     }
+     .mobile-hr {
+       display: none;
+     }
+     @media (max-width: 767px) {
+       .mobile-hr {
+         display: block;
+       }
+     }
+   </style>
+   <style>
+     .modern-button {
+       background-image: linear-gradient(90deg, #4C84FF 0%, #B768FF 100%);
+       border: none;
+       color: white;
+       text-align: center;
+       text-decoration: none;
+       display: inline-block;
+       font-size: 14px;
+       padding: 8px 16px;
+       margin: 4px 2px;
+       cursor: pointer;
+       border-radius: 25px;
+       transition: background-image 0.3s;
+     }
+
+     .modern-button:hover {
+       background-image: linear-gradient(90deg, #B768FF 0%, #4C84FF 100%);
+     }
+
+     @media screen and (max-width: 767px) {
+       .modern-button {
+         font-size: 14px;
+         padding: 8px 16px;
+         min-width: 40px;
+         font-weight: bold;
+       }
+
+       .modern-button.icon-only {
+         padding-left: 10px;
+         padding-right: 10px;
+       }
+
+       .modern-button.icon-only span {
+         display: none;
+       }
+     }
+   </style>
+   <style>
+     /* Custom CSS for mobile view */
+     @media (max-width: 767.98px) {
+       .projectName {
+         font-size: 1.0rem;
+         margin-bottom: 3px; /* Add more white space between elements */
+       }
+       .info-container {
+         display: flex;
+         flex-direction: column;
+       }
+       .client-info, .date-info {
+         display: flex;
+         justify-content: space-between;
+         width: 100%;
+       }
+       .info-container span {
+         font-size: 1rem;
+         font-weight: 400; /* Lighter font weight for a cleaner look */
+         color: #333; /* Change the font color to a dark grey */
+       }
+       .projectName a {
+         color: inherit; /* Removes the blue link color */
+         text-decoration: none; /* Removes the underline */
+       }
+       .clickable-row {
+         cursor: pointer;
+       }
+       .clickable-row:hover {
+         background-color: #f5f5f5; /* Subtle hover effect */
+       }
+       .clickable-row.active {
+         background-color: #e0e0e0; /* Change to desired background color when clicked */
+       }
+     }
+   </style>
+
+   <script>
+     function rowClicked(event, url) {
+       event.currentTarget.classList.add('active');
+       setTimeout(() => {
+         window.location = url;
+       }, 50); // Add a small delay before navigating to the new page
+     }
+   </script>
+
+</head>
+
+     <div class="row gx-6 gy-3 mb-4 align-items-center">
+       <div class="col-auto">
+         <h2 class="mb-0">Jobs<span class="fw-normal text-700 ms-3">({{ object_list|length }})</span></h2>
+       </div>
+       <!-- <div class="col-auto"><a class="btn btn-primary px-5" href="{% url 'smeApp:job_add' %}"><i class="fa-solid fa-plus me-2"></i>Add New Job</a></div> -->
+       <div class="mb-3">
+         <button class="btn btn-primary me-4 modern-button icon-only" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-plus me-2"></span>Add Job</button>
+         <button class="btn btn-link text-900 px-0"><span class="fa-solid fa-file-export fs--1 me-2"></span>Export</button>
+       </div>
+     </div>
+     {% include 'modal_form.html' %}
+
+     <div class="row justify-content-between align-items-end mb-4 g-3">
+       <div class="col-12 col-sm-auto">
+         <!-- <ul class="nav nav-links mx-n2">
+           <li class="nav-item"><a class="nav-link px-2 py-1 active" aria-current="page" href="{% url 'smeApp:job_list' %}">All<span class="text-700 fw-semi-bold">({{ all_count }})</span></a></li>
+           <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=ongoing">Ongoing<span class="text-700 fw-semi-bold">({{ ongoing_count }})</span></a></li>
+           <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=cancelled">Cancelled<span class="text-700 fw-semi-bold">({{ cancelled_count }})</span></a></li>
+           <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=finished">Completed<span class="text-700 fw-semi-bold">({{ completed_count }})</span></a></li>
+           <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=postponed">Postponed<span class="text-700 fw-semi-bold">({{ postponed_count }})</span></a></li>
+           <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=work_order">Work Order<span class="text-700 fw-semi-bold">({{ work_order_count }})</span></a></li>
+           <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=quotes">Quotes<span class="text-700 fw-semi-bold">({{ quotes_count }})</span></a></li>
+         </ul> -->
+       </div>
+       <div class="col-12 col-sm-auto">
+         <div class="d-flex align-items-center">
+           <div class="search-box me-3">
+             <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
+               <input class="form-control search-input search" type="search" placeholder="Search projects" aria-label="Search" />
+               <span class="fas fa-search search-box-icon"></span>
+
+             </form>
+           </div>
+            <a class="btn btn-phoenix-primary px-3 me-1 border-0 text-900 toggle-list-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="List view">
+              <span class="fa-solid fa-list fs--2"></span>
+            </a>
+            <a class="btn btn-phoenix-primary px-3 me-1 toggle-card-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Card view">
+             <svg width="9" height="9" viewbox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path d="M0 0.5C0 0.223857 0.223858 0 0.5 0H1.83333C2.10948 0 2.33333 0.223858 2.33333 0.5V1.83333C2.33333 2.10948 2.10948 2.33333 1.83333 2.33333H0.5C0.223857 2.33333 0 2.10948 0 1.83333V0.5Z" fill="currentColor"></path>
+               <path d="M3.33333 0.5C3.33333 0.223857 3.55719 0 3.83333 0H5.16667C5.44281 0 5.66667 0.223858 5.66667 0.5V1.83333C5.66667 2.10948 5.44281 2.33333 5.16667 2.33333H3.83333C3.55719 2.33333 3.33333 2.10948 3.33333 1.83333V0.5Z" fill="currentColor"></path>
+               <path d="M6.66667 0.5C6.66667 0.223857 6.89052 0 7.16667 0H8.5C8.77614 0 9 0.223858 9 0.5V1.83333C9 2.10948 8.77614 2.33333 8.5 2.33333H7.16667C6.89052 2.33333 6.66667 2.10948 6.66667 1.83333V0.5Z" fill="currentColor"></path>
+               <path d="M0 3.83333C0 3.55719 0.223858 3.33333 0.5 3.33333H1.83333C2.10948 3.33333 2.33333 3.55719 2.33333 3.83333V5.16667C2.33333 5.44281 2.10948 5.66667 1.83333 5.66667H0.5C0.223857 5.66667 0 5.44281 0 5.16667V3.83333Z" fill="currentColor"></path>
+               <path d="M3.33333 3.83333C3.33333 3.55719 3.55719 3.33333 3.83333 3.33333H5.16667C5.44281 3.33333 5.66667 3.55719 5.66667 3.83333V5.16667C5.66667 5.44281 5.44281 5.66667 5.16667 5.66667H3.83333C3.55719 5.66667 3.33333 5.44281 3.33333 5.16667V3.83333Z" fill="currentColor"></path>
+               <path d="M6.66667 3.83333C6.66667 3.55719 6.89052 3.33333 7.16667 3.33333H8.5C8.77614 3.33333 9 3.55719 9 3.83333V5.16667C9 5.44281 8.77614 5.66667 8.5 5.66667H7.16667C6.89052 5.66667 6.66667 5.44281 6.66667 5.16667V3.83333Z" fill="currentColor"></path>
+               <path d="M0 7.16667C0 6.89052 0.223858 6.66667 0.5 6.66667H1.83333C2.10948 6.66667 2.33333 6.89052 2.33333 7.16667V8.5C2.33333 8.77614 2.10948 9 1.83333 9H0.5C0.223857 9 0 8.77614 0 8.5V7.16667Z" fill="currentColor"></path>
+               <path d="M3.33333 7.16667C3.33333 6.89052 3.55719 6.66667 3.83333 6.66667H5.16667C5.44281 6.66667 5.66667 6.89052 5.66667 7.16667V8.5C5.66667 8.77614 5.44281 9 5.16667 9H3.83333C3.55719 9 3.33333 8.77614 3.33333 8.5V7.16667Z" fill="currentColor"></path>
+               <path d="M6.66667 7.16667C6.66667 6.89052 6.89052 6.66667 7.16667 6.66667H8.5C8.77614 6.66667 9 6.89052 9 7.16667V8.5C9 8.77614 8.77614 9 8.5 9H7.16667C6.89052 9 6.66667 8.77614 6.66667 8.5V7.16667Z" fill="currentColor"></path>
+             </svg></a><button class="btn px-3 btn-phoenix-secondary" type="button" data-bs-toggle="modal" data-bs-target="#filterModal" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa-solid fa-filter text-primary" data-fa-transform="down-3"></span></button>
+               <div class="modal fade" id="filterModal" tabindex="-1">
+
+           <div class="modal-dialog modal-dialog-centered">
+               <div class="modal-content">
+                   <form id="addEventForm" autocomplete="off">
+                       <div class="modal-header bg-light py-4">
+                           <h5 class="modal-title fw-bold fs-3">Filter</h5>
+                           <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                       </div>
+                       <div class="modal-body py-4 px-4">
+                           <div class="mb-3">
+                               <label class="form-label fw-bold mb-2 text-dark" for="createDate">Create Date</label>
+                               <div class="input-group custom-input-group">
+                                   <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                   <select class="form-select" id="createDate">
+                                       <option value="today" selected="selected">Today</option>
+                                       <option value="last7Days">Last 7 Days</option>
+                                       <option value="last30Days">Last 30 Days</option>
+                                       <option value="chooseATimePeriod">Choose a time period</option>
+                                   </select>
+                               </div>
+                           </div>
+                           <div class="mb-3">
+                               <label class="form-label fw-bold mb-2 text-dark" for="designation">Client Role</label>
+                               <div class="input-group custom-input-group">
+                                   <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                   <select class="form-select" id="designation">
+                                       <option value="VPAccounting" selected="selected">Manager</option>
+                                       <option value="ceo">CEO</option>
+                                       <option value="creativeDirector">Owner</option>
+                                       <option value="accountant">Contractor</option>
+                                   </select>
+                               </div>
+                           </div>
+                           <div class="mb-3">
+                               <label class="form-label fw-bold mb-2 text-dark" for="jobStatus">Job Status</label>
+                               <div class="input-group custom-input-group">
+                                   <span class="input-group-text"><i class="fas fa-tasks"></i></span>
+                                   <select class="form-select" id="jobStatus">
+                                       <option value="completed">Completed</option>
+                                       <option value="ongoing">Ongoing</option>
+                                       <option value="quote">Quote</option>
+                                       <option value="workOrder">Work Order</option>
+                                   </select>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="modal-footer d-flex justify-content-end align-items-center px-4 pb-4 pt-3">
+                           <button class="btn btn-outline-primary px-4 fs--2 my-0" type="submit"><span class="fas fa-sync-alt me-2 fs--2"></span>Reset</button>
+                           <button class="btn btn-primary px-9 fs--2 my-0" type="submit">Done</button>
+                       </div>
+                   </form>
+               </div>
+           </div>
         </div>
-        <div class="row g-3 justify-content-between align-items-end mb-4">
-          <div class="col-12 col-sm-auto">
-            <ul class="nav nav-links mx-n2">
-              <li class="nav-item"><a class="nav-link px-2 py-1 active" aria-current="page" href="{% url 'smeApp:job_list' %}">All<span class="text-700 fw-semi-bold">({{ all_count }})</span></a></li>
-              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=ongoing">Ongoing<span class="text-700 fw-semi-bold">({{ ongoing_count }})</span></a></li>
-              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=cancelled">Cancelled<span class="text-700 fw-semi-bold">({{ cancelled_count }})</span></a></li>
-              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=finished">Finished<span class="text-700 fw-semi-bold">({{ finished_count }})</span></a></li>
-              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=postponed">Postponed<span class="text-700 fw-semi-bold">({{ postponed_count }})</span></a></li>
-              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=work_order">Work Order<span class="text-700 fw-semi-bold">({{ work_order_count }})</span></a></li>
-              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=quotes">Quotes<span class="text-700 fw-semi-bold">({{ quotes_count }})</span></a></li>
-            </ul>
+       </div>
+     </div>
+
+  <div class="card-view">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3 mb-9">
+  {% for job in object_list %}
+    <div class="col">
+      <div class="card h-100 hover-actions-trigger">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <h4 class="mb-2 line-clamp-1 lh-sm flex-1 me-5">{{ job.description|title }}</h4>
+            <div class="hover-actions top-0 end-0 mt-4 me-4">
+              <button class="btn btn-primary btn-icon flex-shrink-0" onclick="location.href='{% url 'smeApp:job_detail' job.pk %}'"><span class="fa-solid fa-chevron-right"></span></button>
+            </div>
           </div>
+          {% if job.status == 'quote' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-primary"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'work order' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-warning"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'ongoing' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-info"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'completed' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-success"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'cancelled' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'postponed' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-secondary"><span class="badge-label">{{ job.status }}</span></span>
+          {% else %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-light"><span class="badge-label">{{ job.status }}</span></span>
+          {% endif %}
 
-          <div class="col-12 col-sm-auto">
-            <div class="d-flex align-items-center">
-              <div class="search-box me-3">
-                <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
-                  <input class="form-control search-input search" type="search" placeholder="Search projects" aria-label="Search" />
-                  <span class="fas fa-search search-box-icon"></span>
-
-                </form>
-              </div><a class="btn btn-phoenix-primary px-3 me-1 border-0 text-900" href="../../apps/project-management/project-list-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="List view"><span class="fa-solid fa-list fs--2"></span></a><a class="btn btn-phoenix-primary px-3 me-1" href="../../apps/project-management/project-board-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Board view">
-                <svg width="9" height="9" viewbox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0 0.5C0 0.223857 0.223858 0 0.5 0H1.83333C2.10948 0 2.33333 0.223858 2.33333 0.5V1.83333C2.33333 2.10948 2.10948 2.33333 1.83333 2.33333H0.5C0.223857 2.33333 0 2.10948 0 1.83333V0.5Z" fill="currentColor"></path>
-                  <path d="M3.33333 0.5C3.33333 0.223857 3.55719 0 3.83333 0H5.16667C5.44281 0 5.66667 0.223858 5.66667 0.5V1.83333C5.66667 2.10948 5.44281 2.33333 5.16667 2.33333H3.83333C3.55719 2.33333 3.33333 2.10948 3.33333 1.83333V0.5Z" fill="currentColor"></path>
-                  <path d="M6.66667 0.5C6.66667 0.223857 6.89052 0 7.16667 0H8.5C8.77614 0 9 0.223858 9 0.5V1.83333C9 2.10948 8.77614 2.33333 8.5 2.33333H7.16667C6.89052 2.33333 6.66667 2.10948 6.66667 1.83333V0.5Z" fill="currentColor"></path>
-                  <path d="M0 3.83333C0 3.55719 0.223858 3.33333 0.5 3.33333H1.83333C2.10948 3.33333 2.33333 3.55719 2.33333 3.83333V5.16667C2.33333 5.44281 2.10948 5.66667 1.83333 5.66667H0.5C0.223857 5.66667 0 5.44281 0 5.16667V3.83333Z" fill="currentColor"></path>
-                  <path d="M3.33333 3.83333C3.33333 3.55719 3.55719 3.33333 3.83333 3.33333H5.16667C5.44281 3.33333 5.66667 3.55719 5.66667 3.83333V5.16667C5.66667 5.44281 5.44281 5.66667 5.16667 5.66667H3.83333C3.55719 5.66667 3.33333 5.44281 3.33333 5.16667V3.83333Z" fill="currentColor"></path>
-                  <path d="M6.66667 3.83333C6.66667 3.55719 6.89052 3.33333 7.16667 3.33333H8.5C8.77614 3.33333 9 3.55719 9 3.83333V5.16667C9 5.44281 8.77614 5.66667 8.5 5.66667H7.16667C6.89052 5.66667 6.66667 5.44281 6.66667 5.16667V3.83333Z" fill="currentColor"></path>
-                  <path d="M0 7.16667C0 6.89052 0.223858 6.66667 0.5 6.66667H1.83333C2.10948 6.66667 2.33333 6.89052 2.33333 7.16667V8.5C2.33333 8.77614 2.10948 9 1.83333 9H0.5C0.223857 9 0 8.77614 0 8.5V7.16667Z" fill="currentColor"></path>
-                  <path d="M3.33333 7.16667C3.33333 6.89052 3.55719 6.66667 3.83333 6.66667H5.16667C5.44281 6.66667 5.66667 6.89052 5.66667 7.16667V8.5C5.66667 8.77614 5.44281 9 5.16667 9H3.83333C3.55719 9 3.33333 8.77614 3.33333 8.5V7.16667Z" fill="currentColor"></path>
-                  <path d="M6.66667 7.16667C6.66667 6.89052 6.89052 6.66667 7.16667 6.66667H8.5C8.77614 6.66667 9 6.89052 9 7.16667V8.5C9 8.77614 8.77614 9 8.5 9H7.16667C6.89052 9 6.66667 8.77614 6.66667 8.5V7.16667Z" fill="currentColor"></path>
-                </svg></a><a class="btn btn-phoenix-primary px-3" href="../../apps/project-management/project-card-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Card view">
-                <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0 0.5C0 0.223858 0.223858 0 0.5 0H3.5C3.77614 0 4 0.223858 4 0.5V3.5C4 3.77614 3.77614 4 3.5 4H0.5C0.223858 4 0 3.77614 0 3.5V0.5Z" fill="currentColor"></path>
-                  <path d="M0 5.5C0 5.22386 0.223858 5 0.5 5H3.5C3.77614 5 4 5.22386 4 5.5V8.5C4 8.77614 3.77614 9 3.5 9H0.5C0.223858 9 0 8.77614 0 8.5V5.5Z" fill="currentColor"></path>
-                  <path d="M5 0.5C5 0.223858 5.22386 0 5.5 0H8.5C8.77614 0 9 0.223858 9 0.5V3.5C9 3.77614 8.77614 4 8.5 4H5.5C5.22386 4 5 3.77614 5 3.5V0.5Z" fill="currentColor"></path>
-                  <path d="M5 5.5C5 5.22386 5.22386 5 5.5 5H8.5C8.77614 5 9 5.22386 9 5.5V8.5C9 8.77614 8.77614 9 8.5 9H5.5C5.22386 9 5 8.77614 5 8.5V5.5Z" fill="currentColor"></path>
-                </svg></a>
+          <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-user me-2 text-700 fs--1 fw-extra-bold"></span>
+            <p class="fw-bold mb-0 text-truncate lh-1">Client : <span class="fw-semi-bold text-primary ms-1">{{ job.client.name }}</span></p>
+          </div>
+          <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-credit-card me-2 text-700 fs--1 fw-extra-bold"></span>
+            <p class="fw-bold mb-0 lh-1">Budget : <span class="ms-1 text-1100">{{ job.total_cost }}</span></p>
+          </div>
+          <div class="d-flex align-items-center mb-4"><span class="me-2 text-700 fs--1 fw-extra-bold"></span>
+            <p class="fw-bold mb-0 lh-1"></p>
+          </div>
+          <div class="d-flex align-items-center mt-4">
+            <p class="mb-0 fw-bold fs--1">Start :<span class="fw-semi-bold text-600 ms-1">{{ job.start_date }}</span></p>
+          </div>
+          <div class="d-flex align-items-center mt-2">
+            <p class="mb-0 fw-bold fs--1">Due : <span class="fw-semi-bold text-600 ms-1">{{ job.end_date }}</span></p>
+          </div>
+          <div class="d-flex d-lg-block d-xl-flex justify-content-between align-items-center mt-3">
+               <div class="mt-lg-3 mt-xl-0"> <i class=""></i>
+                <p class="d-inline-block fw-bold mb-0 fw-bold fs--1">Job #: <span class="fw-semi-bold text-600 ms-1">{{ job.po_number }}</span></p>
+              </div>
             </div>
           </div>
         </div>
-        <div class="table-responsive scrollbar">
-          <table class="table fs--1 mb-0 border-top border-200">
-            <thead>
-              <tr>
-              <th class="sort white-space-nowrap align-middle ps-0" scope="col" data-sort="projectName" style="width:20%;">
-                <i class="fas fa-user text-primary me-2"></i>Client Name
-              </th>
-              <th class="sort align-middle ps-3" scope="col" data-sort="assigness" style="width:10%;">
-                <i class="fas fa-briefcase text-success me-2"></i>Job #
-              </th>
-              <th class="sort align-middle ps-3" scope="col" data-sort="start" style="width:10%;">
-                <i class="fas fa-tasks text-info me-2"></i>Status
-              </th>
-              <th class="sort align-middle ps-3" scope="col" data-sort="deadline" style="width:15%;">
-                <i class="fas fa-envelope text-warning me-2"></i>Contact Email
-              </th>
-              <th class="sort align-middle ps-3" scope="col" data-sort="task" style="width:12%;">
-                <i class="fas fa-credit-card text-danger me-2"></i>Payment Status
-              </th>
-              <th class="sort align-middle ps-3" scope="col" data-sort="projectprogress" style="width:5%;">
-                <i class="fas fa-calendar-alt text-warning me-2"></i>Deadline
-              </th>
-              <th class="sort align-middle text-end" scope="col" data-sort="assigness" style="width:10%;">
-                <i class="fas fa-dollar-sign text-success me-2"></i>Budget
-              </th>
-              <th class="sort align-middle text-end" scope="col" style="width:10%;">
-                <i class="fas fa-cog text-dark me-2"></i>Action
-              </th>
-            </tr>
-
-</thead>
-<tbody class="list" id="project-list-table-body">
-  {% for job in object_list %}
+      </div>
+    {% endfor %}
+  </div>
+  </div>
+  <!-- List View -->
+  <div class="list-view">
+    <div class="table-responsive scrollbar">
+      <table class="table fs--1 mb-0 border-top border-200">
+        <thead>
+          <tr>
+            <th class="white-space-nowrap fs--1 align-middle ps-0 hide-on-mobile" style="width:5%;">
+              <div class="form-check mb-0 fs-0">
+                <input class="form-check-input" type="checkbox" data-bulk-select='{"body":"deal-tables-body"}' />
+              </div>
+            </th>
+            <th class="d-md-table-cell sort white-space-nowrap align-middle ps-0 hide-on-mobile" scope="col" data-sort="projectName" style="width:20%;">
+              <i class="fas fa-user text-primary me-2"></i>Job Description
+            </th>
+            <!-- Add hide-on-mobile class to columns you want to hide on small screens -->
+            <th class="d-md-table-cell sort align-middle ps-3 hide-on-mobile" scope="col" data-sort="assigness" style="width:10%;">
+              <i class="fas fa-briefcase text-success me-2"></i>Job #
+            </th>
+            <th class="d-none d-md-table-cell sort align-middle ps-3 hide-on-mobile" scope="col" data-sort="start" style="width:10%;">
+              <i class="fas fa-tasks text-info me-2"></i>Status
+            </th>
+            <th class="d-none d-md-table-cell sort align-middle ps-3 hide-on-mobile" scope="col" data-sort="deadline" style="width:15%;">
+              <i class="fas fa-envelope text-warning me-2"></i>Contact Email
+            </th>
+            <th class="d-none d-md-table-cell sort align-middle ps-3 hide-on-mobile" scope="col" data-sort="task" style="width:12%;">
+              <i class="fas fa-credit-card text-danger me-2"></i>Payment Status
+            </th>
+            <th class="d-none d-md-table-cell sort align-middle ps-3 hide-on-mobile" scope="col" data-sort="projectprogress" style="width:5%;">
+              <i class="fas fa-calendar-alt text-warning me-2"></i>Deadline
+            </th>
+            <th class="d-none d-md-table-cell sort align-middle text-end hide-on-mobile" scope="col" data-sort="assigness" style="width:10%;">
+              <i class="fas fa-users text-success me-2"></i>Assignee
+            </th>
+            <th class="d-none d-md-table-cell sort align-middle text-end hide-on-mobile" scope="col" data-sort="assigness" style="width:10%;">
+              <i class="fas fa-dollar-sign text-success me-2"></i>Budget
+            </th>
+            <th class="d-none d-md-table-cell sort align-middle text-end hide-on-mobile" scope="col" style="width:10%;">
+              <i class="fas fa-cog textdark me-2"></i>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="list" id="project-list-table-body">
+    {% for job in object_list %}
     <tr class="position-static">
-      <td class="align-middle time white-space-nowrap ps-0 projectName py-4"><a class="text-decoration-none fw-bold fs-0" href="{% url 'smeApp:job_detail' job.pk %}">{{ job.client.name }}</a></td>
-      <td class="align-middle white-space-nowrap assigness ps-3 py-4">{{ job.po_number }}</td>
-      <td class="align-middle white-space-nowrap start ps-3 py-4">
-        {% if job.status == 'quote' %}
-          <span class="badge badge-phoenix fs--2 badge-phoenix-primary">{{ job.get_status_display }}</span>
-        {% elif job.status == 'work_order' %}
-          <span class="badge badge-phoenix fs--2 badge-phoenix-warning">{{ job.get_status_display }}</span>
-        {% elif job.status == 'ongoing' %}
-          <span class="badge badge-phoenix fs--2 badge-phoenix-info">{{ job.get_status_display }}</span>
-        {% elif job.status == 'completed' %}
-          <span class="badge badge-phoenix fs--2 badge-phoenix-success">{{ job.get_status_display }}</span>
-        {% elif job.status == 'cancelled' %}
-          <span class="badge badge-phoenix fs--2 badge-phoenix-danger">{{ job.get_status_display }}</span>
-        {% elif job.status == 'postponed' %}
-          <span class="badge badge-phoenix fs--2 badge-phoenix-secondary">{{ job.get_status_display }}</span>
-        {% else %}
-          <span class="badge badge-phoenix fs--2 badge-phoenix-light">{{ job.get_status_display }}</span>
-        {% endif %}
+      <td class="fs--1 align-middle">
+        <div class="form-check fs-0">
+          <input class="form-check-input" type="checkbox" />
+        </div>
       </td>
-      <td class="align-middle white-space-nowrap deadline ps-3 py-4">{{ job.client.email }}</td>
-      <td class="align-middle white-space-nowrap task ps-3 py-4">{{ job.payment_status }}</td>
-      <td class="align-middle white-space-nowrap ps-3 projectprogress">{{ job.end_date }}</td>
-      <!-- <td class="align-middle white-space-nowrap text-end statuses">{{ job.assigned_worker }}</td> -->
-      <td class="align-middle white-space-nowrap text-end statuses">{{ job.total_cost }}</td>
-      <td class="align-middle text-end white-space-nowrap pe-0 action">
-        <div class="font-sans-serif btn-reveal-trigger position-static">
-          <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--2" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-v fs--2"></span></button>
-          <div class="dropdown-menu dropdown-menu-end py-2">
-            <a class="dropdown-item" href="{% url 'smeApp:job_detail' job.pk %}">View</a>
-            <a class="dropdown-item" href="{% url 'smeApp:job_edit' job.pk %}">Edit</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-danger" href="{% url 'smeApp:job_delete' job.pk %}">Delete</a>
+      <td class="align-middle white-space-nowrap projectName ps-3 py-4 clickable-row" onclick="rowClicked(event, '{% url 'smeApp:job_detail' job.pk %}')">
+        <a class="text-decoration-none fw-bold fs-0" href="{% url 'smeApp:job_detail' job.pk %}" style="font-weight: 900; color: #200;">{{ job.description|truncatechars:29 }}</a>
+        <span class="hide-on-desktop" style="float: right; font-weight: 600; color: #777;"">{{ job.po_number }}</span>
+        <div class="hide-on-desktop">
+          <div class="info-container">
+            <div class="client-info">
+              <span style="font-weight: 600; color: #777; text-decoration: none;">{{ job.client.name }}</span>
+              <span style="font-weight: 600; color: #777; text-decoration: none;">{{ job.end_date }}</span>
+            </div>
           </div>
         </div>
       </td>
+          <!-- Add hide-on-mobile class to corresponding data rows -->
+          <td class="align-middle white-space-nowrap assigness ps-3 py-4 hide-on-mobile">{{ job.po_number }}</td>
+          <td class="align-middle white-space-nowrap start ps-3 py-4 hide-on-mobile">
+            {% if job.status == 'quote' %}
+            <span class="badge badge-phoenix fs--2 badge-phoenix-primary">{{ job.get_status_display }}</span>
+            {% elif job.status == 'work order' %}
+            <span class="badge badge-phoenix fs--2 badge-phoenix-warning">{{ job.get_status_display }}</span>
+            {% elif job.status == 'ongoing' %}
+            <span class="badge badge-phoenix fs--2 badge-phoenix-info">{{ job.get_status_display }}</span>
+            {% elif job.status == 'completed' %}
+            <span class="badge badge-phoenix fs--2 badge-phoenix-success">{{ job.get_status_display }}</span>
+            {% elif job.status == 'cancelled' %}
+            <span class="badge badge-phoenix fs--2 badge-phoenix-danger">{{ job.get_status_display }}</span>
+            {% elif job.status == 'postponed' %}
+            <span class="badge badge-phoenix fs--2 badge-phoenix-secondary">{{ job.get_status_display }}</span>
+            {% else %}
+            <span class="badge badge-phoenix fs--2 badge-phoenix-light">{{ job.get_status_display }}</span>
+            {% endif %}
+          </td>
+          <td class="align-middle white-space-nowrap deadline ps-3 py-4 hide-on-mobile">{{ job.client.email }}</td>
+          <td class="align-middle white-space-nowrap task ps-3 py-4 hide-on-mobile">{{ job.payment_status }}</td>
+          <td class="align-middle white-space-nowrap ps-3 projectprogress hide-on-mobile">{{ job.end_date }}</td>
+          <td class="align-middle white-space-nowrap text-end statuses hide-on-mobile">{{ job.assigned_worker }}</td>
+          <td class="align-middle white-space-nowrap text-end statuses hide-on-mobile">{{ job.total_cost }}</td>
+          <td class="align-middle text-end white-space-nowrap pe-0 action hide-on-mobile">
+              <div class="font-sans-serif btn-reveal-trigger position-static">
+              <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--2" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-v fs--2"></span></button>
+              <div class="dropdown-menu dropdown-menu-end py-2">
+              <a class="dropdown-item" href="{% url 'smeApp:job_detail' job.pk %}">View</a>
+              <a class="dropdown-item" href="{% url 'smeApp:job_edit' job.pk %}">Edit</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" href="{% url 'smeApp:job_delete' job.pk %}">Delete</a>
+             </div>
+           </div>
+        </td>
     </tr>
-  {% empty %}
+    {% empty %}
     <tr>
-      <td colspan="8" class="text-center">No jobs found.</td>
+      <td colspan="9" class="text-center">No jobs found.</td>
     </tr>
-  {% endfor %}
-</tbody>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="d-none d-md-table-cell d-flex flex-wrap align-items-center justify-content-between py-3 pe-0 fs--1 border-bottom border-200">
+  <div class="d-flex">
+    <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"></p><a class="fw-semi-bold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a class="fw-semi-bold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+  </div>
+  <div class="d-flex">
+    <button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+    <ul class="mb-0 pagination"></ul>
+    <button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
+  </div>
+</div>
 
 
-          </table>
-        </div>
-        <div class="d-flex flex-wrap align-items-center justify-content-between py-3 pe-0 fs--1 border-bottom border-200">
-          <div class="d-flex">
-            <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"></p><a class="fw-semi-bold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a class="fw-semi-bold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
-          </div>
-          <div class="d-flex">
-            <button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-            <ul class="mb-0 pagination"></ul>
-            <button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <footer class="footer position-absolute">
-      <div class="row g-0 justify-content-between align-items-center h-100">
-        <div class="col-12 col-sm-auto text-center">
-          <p class="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span class="d-none d-sm-inline-block"></span><span class="d-none d-sm-inline-block mx-1">|</span><br class="d-sm-none" />2023 &copy;<a class="mx-1" href="https://themewagon.com">Themewagon</a></p>
-        </div>
-        <div class="col-12 col-sm-auto text-center">
-          <p class="mb-0 text-600">v1.10.0</p>
-        </div>
-      </div>
-    </footer>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  var listView = document.querySelector('.list-view');
+  var cardView = document.querySelector('.card-view');
+  var toggleListViewButton = document.querySelector('.toggle-list-view');
+  var toggleCardViewButton = document.querySelector('.toggle-card-view');
+
+  function showListView() {
+    listView.style.display = 'block';
+    cardView.style.display = 'none';
+  }
+
+  function showCardView() {
+    listView.style.display = 'none';
+    cardView.style.display = 'block';
+  }
+
+  toggleListViewButton.addEventListener('click', function (event) {
+    event.preventDefault();
+    showListView();
+  });
+
+  toggleCardViewButton.addEventListener('click', function (event) {
+    event.preventDefault();
+    showCardView();
+  });
+});
+
+</script>
+
+
 {% endblock %}

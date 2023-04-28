@@ -5,8 +5,41 @@
     <h2>Create Company Profile</h2>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-primary">Create</button>
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label" for="{{ form.name.auto_id }}">Company Name</label>
+          <input type="text" class="form-control" id="{{ form.name.auto_id }}" name="{{ form.name.html_name }}" value="{{ form.name.value|default:'' }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="{{ form.address_line_1.auto_id }}">Address Line 1</label>
+          <input type="text" class="form-control" id="{{ form.address_line_1.auto_id }}" name="{{ form.address_line_1.html_name }}" value="{{ form.address_line_1.value|default:'' }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="{{ form.address_line_2.auto_id }}">Address Line 2</label>
+          <input type="text" class="form-control" id="{{ form.address_line_2.auto_id }}" name="{{ form.address_line_2.html_name }}" value="{{ form.address_line_2.value|default:'' }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="{{ form.phone.auto_id }}">Phone</label>
+          <input type="tel" class="form-control" id="{{ form.phone.auto_id }}" name="{{ form.phone.html_name }}" value="{{ form.phone.value|default:'' }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label" placeholder="myemail@gmail.com" for="{{ form.email.auto_id }}">Email</label>
+          <input type="email" class="form-control" id="{{ form.email.auto_id }}" name="{{ form.email.html_name }}" value="{{ form.email.value|default:'' }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="{{ form.logo.auto_id }}">Logo</label>
+          <input type="file" class="form-control" id="{{ form.logo.auto_id }}" name="{{ form.logo.html_name }}" value="{{ form.logo.value|default:'' }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="{{ form.industry.auto_id }}">Industry</label>
+          <select class="form-select" id="{{ form.industry.auto_id }}" name="{{ form.industry.html_name }}">
+            {% for choice in form.industry.field.choices %}
+              <option value="{{ choice.0 }}" {% if form.industry.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Create</button>
     </form>
   </div>
 {% endblock %}

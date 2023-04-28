@@ -20,6 +20,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR,"templates")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+BASE_URL = 'http://127.0.0.1:8000'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -29,7 +30,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,7 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'smeApp',
     'bootstrap4',
-    
+    'widget_tweaks',
+    'pwa',
+
 ]
 
 MIDDLEWARE = [
@@ -76,6 +79,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smeProject.wsgi.application'
 
+PWA_APP_NAME = 'smeApp'
+PWA_APP_DESCRIPTION = "Small and medium business management app"
+PWA_APP_THEME_COLOR = '#ffffff'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICON = 'assets/img/icons/logo-primary.png'
+PWA_APP_SPLASH_ICON = 'assets/img/icons/logo.png'
+PWA_APP_SPLASH_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_SPLASH_TITLE = 'smeApp'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -127,7 +143,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIR = os.path.join(BASE_DIR,"static")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 MEDIA_URL = '/media/'
 MEDIA_ROOT= os.path.join(os.path.dirname(BASE_DIR), "media_root")
 # Default primary key field type

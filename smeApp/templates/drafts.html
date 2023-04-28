@@ -1,0 +1,2756 @@
+<!-- profile template -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Card</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+</head>
+<body>
+  <div class="container mx-auto px-2 md:px-4">
+      <div class="flex flex-wrap">
+          <!-- Desktop Card -->
+          <div class="hidden md:block w-full md:w-1/3 lg:w-1/4 p-2">
+              <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                  <img src="https://via.placeholder.com/300x200" alt="Sample image" class="w-full h-48 object-cover">
+                  <div class="p-4">
+                      <h4 class="text-xl font-semibold mb-2">User Name</h4>
+                      <p class="text-gray-700">User Details</p>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Mobile Rows -->
+          <div class="block md:hidden w-full">
+              <!-- User Row 1 -->
+              <a href="#" class="block">
+                  <div class="flex items-center justify-between bg-white border-b border-gray-300 p-4 cursor-pointer">
+                      <div>
+                          <h4 class="text-lg font-semibold">User Name 1</h4>
+                          <p class="text-sm text-gray-700">User Details 1</p>
+                      </div>
+                      <div>
+                          <i class="fas fa-chevron-right"></i>
+                      </div>
+                  </div>
+              </a>
+              <!-- User Row 2 -->
+              <a href="#" class="block">
+                  <div class="flex items-center justify-between bg-white border-b border-gray-300 p-4 cursor-pointer">
+                      <div>
+                          <h4 class="text-lg font-semibold">User Name 2</h4>
+                          <p class="text-sm text-gray-700">User Details 2</p>
+                      </div>
+                      <div>
+                          <i class="fas fa-chevron-right"></i>
+                      </div>
+                  </div>
+              </a>
+              <!-- User Row 3 -->
+              <a href="#" class="block">
+                  <div class="flex items-center justify-between bg-white p-4 cursor-pointer">
+                      <div>
+                          <h4 class="text-lg font-semibold">User Name 3</h4>
+                          <p class="text-sm text-gray-700">User Details 3</p>
+                      </div>
+                      <div>
+                          <i class="fas fa-chevron-right"></i>
+                      </div>
+                  </div>
+              </a>
+          </div>
+      </div>
+  </div>
+
+
+  <div class="container mx-auto px-0 md:px-1">
+      <h1 class="text-3xl font-semibold my-6">Main Dashboard</h1>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
+          {% for key, value in dashboard_data.items %}
+              <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-4">
+                  <div class="bg-gray-200 p-4 card-padding">
+                      <div class="text-lg text-gray-700 font-semibold whitespace-pre-line flex flex-col items-center justify-center">
+                          {% if key == "Total Clients" %}
+                              <i class="fas fa-user text-blue-500 icon-text icon-style"></i>
+                          {% elif key == "Total Invoices" %}
+                              <i class="fas fa-file-invoice text-green-500 icon-text icon-style"></i>
+                          {% elif key == "Total Jobs" %}
+                              <i class="fas fa-briefcase text-indigo-500 icon-text icon-style"></i>
+                          {% elif key == "Total Expenses" %}
+                              <i class="fas fa-money-bill-alt text-pink-500 icon-text icon-style"></i>
+                          {% elif key == "Total Incomes" %}
+                              <i class="fas fa-hand-holding-usd text-teal-500 icon-text icon-style"></i>
+                          {% elif key == "Total Inventory" %}
+                              <i class="fas fa-cubes text-purple-500 icon-text icon-style"></i>
+                          {% elif key == "Total Purchases" %}
+                              <i class="fas fa-file-invoice-dollar text-orange-500 icon-text icon-style"></i>
+                          {% elif key == "Total Sales" %}
+                              <i class="fas fa-shopping-cart text-indigo-500 icon-text icon-style"></i>
+                          {% endif %}
+                          <span class="card-text">{{ key|cut:"Total" }}</span>
+                      </div>
+                  </div>
+                  <div class="p-2 md:p-4 flex items-center justify-center">
+                      <h2 class="text-2xl font-semibold whitespace-pre-line">{{ value }}</h2>
+                  </div>
+                  <div class="flex justify-end px-2 py-1">
+                      <i class="fas fa-arrow-right text-gray-400 hover:text-gray-700"></i>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+  </div>
+
+
+
+</body>
+</html>
+
+
+{% extends 'dashboard.html' %}
+
+{% load static %}
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.16/dist/browser-image-compression.min.js"></script>
+
+  <style>
+    .attachment-thumbnail {
+    max-width: 100px;
+    max-height: 100px;
+  }
+  </style>
+
+</head>
+
+<div class="container my-4">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">{{ job.client.name }}</h3>
+      <p class="card-text">Address: {{ job.client.address }}</p>
+      <p class="card-text">Phone: {{ job.client.phone }}</p>
+      <p class="card-text">Start date: {{ job.start_date }}</p>
+      <p>End date: {{ job.end_date }}</p>
+      <p>Total cost: {{ job.total_cost }}</p>
+      <p>Status: {{ job.status }}</p>
+      <p>Category: {{ job.category }}</p>
+      <p>Payment status: {{ job.payment_status }}</p>
+      <p>Payment type: {{ job.payment_type }}</p>
+      <p>Assigned worker: {{ job.assigned_worker }}</p>
+      <div class="d-flex">
+        <a href="{% url 'smeApp:job_edit' pk=job.pk %}" class="btn btn-primary me-2">Edit</a>
+        <a href="{% url 'smeApp:job_delete' pk=job.pk %}" class="btn btn-danger me-2">Delete</a>
+        <a href="{% url 'smeApp:job_list' %}" class="btn btn-secondary">Back to job list</a>
+      </div>
+    </div>
+  </div>
+    <div class="my-4">
+      <h4>Notes</h4>
+      <ul class="list-group">
+        {% for note in notes %}
+        <li class="list-group-item d-flex align-items-center" id="note-{{note.pk}}">
+            {% if note.attachment %}
+              {% with ext=note.attachment.url|lower %}
+                {% if ".jpg" in ext or ".jpeg" in ext or ".png" in ext or ".gif" in ext %}
+                  <a href="{{ note.attachment.url }}" target="_blank">
+                    <img src="{{ note.attachment.url }}" class="attachment-thumbnail me-2" alt="attachment">
+                  </a>
+                {% else %}
+                  <a href="{{ note.attachment.url }}" target="_blank" class="me-2">Download Attachment</a>
+                {% endif %}
+              {% endwith %}
+            {% endif %}
+            {{ note.text }} <i> posted by {{ note.author.first_name }} at {{ note.updated_at }} </i>
+            <div class="ms-auto">
+              <button class="btn btn-sm btn-primary me-2" onclick="editNote({{note.pk}})">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteNote({{note.pk}})">Delete</button>
+          </div>
+          </li>
+        {% endfor %}
+      </ul>
+      </div>
+      <div class="my-4">
+      <!-- Include the form to add a new note -->
+      <div id="jobNoteForm"></div>
+   <!-- <h4>Add Note</h4> -->
+     <form id="note-form" method="post" enctype="multipart/form-data">
+       {% csrf_token %}
+       <div class="mb-3">
+         <label for="id_text" class="form-label">Text:</label>
+         <textarea name="text" id="id_text" class="form-control"></textarea>
+       </div>
+       <div class="mb-3">
+       <label for="id_attachment" class="form-label">Attachment:</label>
+       <div class="input-group">
+         <input type="file" name="attachment" id="id_attachment" class="form-control" style="display: none;">
+         <label for="id_attachment" class="input-group-text"><i class="fas fa-paperclip"></i></label>
+         <input type="text" class="form-control" id="attachment_filename" readonly>
+       </div>
+     </div>
+       <button type="submit"  id="add-note-btn" class="btn btn-primary">Add Note</button>
+     </form>
+   </div>
+ </div>
+
+
+  <script>
+    document.querySelector("#note-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const noteText = form.querySelector("#id_text");
+        const noteAttachment = form.querySelector("#id_attachment");
+
+        if (noteText.value.trim() === "" && noteAttachment.files.length === 0) {
+            const errorElement = document.createElement("p");
+            errorElement.classList.add("text-danger");
+            errorElement.textContent = "Please enter a note or select an attachment.";
+            form.appendChild(errorElement);
+            return;
+        }
+        // Show loading spinner
+        const loadingSpinner = document.createElement("div");
+        loadingSpinner.classList.add("spinner-border");
+        loadingSpinner.setAttribute("role", "status");
+        form.appendChild(loadingSpinner);
+        // Optimize image uploads
+        const formData = new FormData(form);
+        if (noteAttachment.files.length > 0) {
+            const options = {
+                maxSizeMB: 0.8,
+                maxWidthOrHeight: 800,
+                useWebWorker: true,
+            };
+
+            try {
+                const compressedFile = await imageCompression(noteAttachment.files[0], options);
+                formData.set('attachment', new File([compressedFile], noteAttachment.files[0].name, {
+                    type: compressedFile.type,
+                }));
+            } catch (error) {
+                console.error("Error during compression:", error);
+            }
+        }
+        fetch("{% url 'smeApp:add_job_note' job.pk %}", {
+          method: "POST",
+          body: formData,
+          headers: {
+              "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+          }
+      })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    noteText.value = "";
+                    noteAttachment.value = "";
+                    document.querySelector("#attachment_filename").value = "";
+                    // Remove loading spinner
+                    form.removeChild(loadingSpinner);
+                  // Append the new note to the list
+                  const noteList = document.querySelector(".list-group");
+                  const noteItem = document.createElement("li");
+                  const noteId = data.note.id; // Add this line to get noteId from the data
+                  noteItem.id = `note-${noteId}`; // Add unique ID for the note item
+                  noteItem.classList.add("list-group-item");
+                  let attachmentHTML = '';
+                  if (data.note.attachment_thumbnail_url) {
+                      attachmentHTML = `
+                          <a href="${data.note.attachment_url}" target="_blank">
+                              <img src="${data.note.attachment_thumbnail_url}" class="attachment-thumbnail me-2" alt="attachment">
+                          </a>`;
+                  }
+                  noteItem.innerHTML = `
+                      ${attachmentHTML}
+                      <span class="note-text">${data.note.text}</span> <i> posted by ${data.note.author_first_name} at ${data.note.updated_at} </i>
+                      <div class="ms-auto">
+                          <button id="edit-btn-${noteId}" class="btn btn-sm btn-primary me-2" onclick="editNote(${noteId})">Edit</button>
+                          <button id="delete-btn-${noteId}" class="btn btn-sm btn-danger" onclick="deleteNote(${noteId})">Delete</button>
+                      </div>
+                  `;
+                  noteList.appendChild(noteItem);
+                } else {
+                    console.error("Error submitting note:", data.errors);
+                }
+            });
+    });
+    function editNote(noteId) {
+    fetch("{% url 'smeApp:get_note' 0 %}".replace('0', noteId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                const note = data.note;
+                const noteText = document.querySelector("#id_text");
+                const noteForm = document.querySelector("#note-form");
+                noteText.value = note.text;
+                // Disable the add note button
+                const addNoteBtn = document.querySelector("#add-note-btn");
+                if (addNoteBtn) {
+                    addNoteBtn.disabled = true;
+                }
+                // Remove existing update or delete buttons if any
+                const existingUpdateBtn = noteForm.querySelector("#update-note-btn");
+                if (existingUpdateBtn) existingUpdateBtn.remove();
+                const existingDeleteBtn = noteForm.querySelector("#delete-note-btn");
+                if (existingDeleteBtn) existingDeleteBtn.remove();
+                // Add an update button to the form
+                const updateBtn = document.createElement("button");
+                updateBtn.id = "update-note-btn";
+                updateBtn.type = "button";
+                updateBtn.className = "btn btn-primary";
+                updateBtn.textContent = "Update Note";
+                noteForm.appendChild(updateBtn);
+                // Set up the update button click event
+                updateBtn.addEventListener("click", function() {
+                    fetch("{% url 'smeApp:update_note' 0 %}".replace('0', noteId), {
+                        method: "POST",
+                        body: new FormData(noteForm),
+                        headers: {
+                            "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'ok') {
+                                // Update the note display
+                                const noteItem = document.querySelector(`#note-${noteId}`);
+                                const noteTextElement = noteItem.querySelector("span.note-text");
+                                if (noteTextElement) {
+                                    noteTextElement.textContent = data.note.text;
+                                }
+                                // Clear the form and remove the update button
+                                noteText.value = "";
+                                updateBtn.remove();
+                                // Enable the add note button
+                                if (addNoteBtn) {
+                                    addNoteBtn.disabled = false;
+                                }
+                            } else {
+                                console.error("Error updating note:", data.errors);
+                            }
+                        });
+                });
+            }
+        });
+}
+    function deleteNote(noteId) {
+        fetch("{% url 'smeApp:delete_note' 0 %}".replace('0', noteId), {
+            method: "DELETE",
+            headers: {
+                "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    // Remove the note item from the list
+                    const noteItem = document.querySelector(`#note-${noteId}`);
+                    noteItem.remove();
+                } else {
+                    console.error("Error deleting note:", data.errors);
+                }
+            });
+    }
+  </script>
+  <script>
+  document.querySelector("#id_attachment").addEventListener("change", function(event) {
+    const input = event.target;
+    const filenameDisplay = document.querySelector("#attachment_filename");
+
+    if (input.files && input.files[0]) {
+      filenameDisplay.value = input.files[0].name;
+    } else {
+      filenameDisplay.value = "";
+    }
+  });
+</script>
+  {% endblock %}
+
+  <script>
+    document.querySelector("#note-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const noteText = form.querySelector("#id_text");
+            const noteAttachment = form.querySelector("#id_attachment");
+            if (noteText.value.trim() === "" && noteAttachment.files.length === 0) {
+                const errorElement = document.createElement("p");
+                errorElement.classList.add("text-danger");
+                errorElement.textContent = "Please enter a note or select an attachment.";
+                form.appendChild(errorElement);
+                return;
+            }
+            // Show loading spinner
+            const loadingSpinner = document.createElement("div");
+            loadingSpinner.classList.add("spinner-border");
+            loadingSpinner.setAttribute("role", "status");
+            form.appendChild(loadingSpinner);
+            const formData = new FormData(form);
+            fetch("{% url 'smeApp:add_job_note' job.pk %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    noteText.value = "";
+                    noteAttachment.value = "";
+                    document.querySelector("#attachment_filename").value = "";
+                    // Remove loading spinner
+                    form.removeChild(loadingSpinner);
+                    const noteSection = document.querySelector(".notes-container");
+                    const noteDiv = document.createElement("div");
+                    noteDiv.classList.add("border-top", "border-300", "px-4", "px-lg-6", "py-4");
+                    const author = data.note.author_name;
+                    const created_at = data.note.created_at;
+                    const text = data.note.text;
+                    const attachment_url = data.note.attachment_url;
+                    let attachmentHTML = "";
+                    if (attachment_url) {
+                        attachmentHTML = `<a href="${attachment_url}" target="_blank" class="me-2">Download Attachment</a>`;
+                    }
+
+                    noteDiv.innerHTML = `
+  <div class="me-n3">
+      <div class="d-flex flex-between-center">
+          <div class="d-flex mb-1">
+              <p class="text-1000 mb-0 lh-1">${text}</p>
+          </div>
+          <div class="font-sans-serif btn-reveal-trigger">
+              <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
+              <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!" onclick="editNote(${data.note.id})">Edit</a><a class="dropdown-item text-danger" href="#!" onclick="deleteNote(${data.note.id})">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
+          </div>
+      </div>
+      <div class="d-flex fs--1 text-700 mb-2 flex-wrap">
+          <a href="#!">${author} </a><span class="text-400 mx-1">| </span><span class="text-nowrap">${created_at}</span>
+      </div>
+      ${
+          attachment_url
+              ? data.note.attachment_icon === "fa-image"
+                  ? `<img class="rounded-2" src="${attachment_url}" alt="" style="max-width:200px" />`
+                  : `<div class="d-flex fs--1 text-700 mb-2 flex-wrap"><a href="${attachment_url}" target="_blank" class="me-2"><i class="fas ${data.note.attachment_icon}"></i> Download Attachment</a></div>`
+              : ""
+      }
+  </div>`;
+
+                    noteSection.insertAdjacentElement("beforeend", noteDiv);
+                } else {
+                    console.error("Error submitting note:", data.errors);
+                }
+            });
+});
+
+function editNote(noteId) {
+    fetch("{% url 'smeApp:get_note' 0 %}".replace('0', noteId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                const note = data.note;
+                const noteText = document.querySelector("#id_text");
+                const noteForm = document.querySelector("#note-form");
+                noteText.value = note.text;
+                // Disable the add note button
+                const addNoteBtn = document.querySelector("#add-note-btn");
+                if (addNoteBtn) {
+                    addNoteBtn.disabled = true;
+                }
+                // Remove existing update or delete buttons if any
+                const existingUpdateBtn = noteForm.querySelector("#update-note-btn");
+                if (existingUpdateBtn) existingUpdateBtn.remove();
+                const existingDeleteBtn = noteForm.querySelector("#delete-note-btn");
+                if (existingDeleteBtn) existingDeleteBtn.remove();
+                // Add an update button to the form
+                const updateBtn = document.createElement("button");
+                updateBtn.id = "update-note-btn";
+                updateBtn.type = "button";
+                updateBtn.className = "btn btn-primary";
+                updateBtn.textContent = "Update Note";
+                noteForm.appendChild(updateBtn);
+                // Set up the update button click event
+                updateBtn.addEventListener("click", function() {
+                    fetch("{% url 'smeApp:update_note' 0 %}".replace('0', noteId), {
+                        method: "POST",
+                        body: new FormData(noteForm),
+                        headers: {
+                            "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'ok') {
+                                // Update the note display
+                                const noteItem = document.querySelector(`div[data-note-id='${noteId}']`);
+                                const noteTextElement = noteItem.querySelector("p.text-1000.mb-0.lh-1");
+                                if (noteTextElement) {
+                                    noteTextElement.textContent = data.text;
+                                }
+                                // Clear the form and remove the update button
+                                noteText.value = "";
+                                updateBtn.remove();
+                                // Enable the add note button
+                                if (addNoteBtn) {
+                                    addNoteBtn.disabled = false;
+                                }
+                            } else {
+                                console.error("Error updating note:", data.errors);
+                            }
+                        });
+                });
+            }
+        });
+}
+
+function deleteNote(noteId) {
+    fetch("{% url 'smeApp:delete_note' 0 %}".replace('0', noteId), {
+        method: "DELETE",
+        headers: {
+            "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                // Remove the note item from the list
+                const noteItem = document.querySelector(".border-top.border-300.px-4.px-lg-6.py-4");
+                noteItem.remove();
+            } else {
+                console.error("Error deleting note:", data.errors);
+            }
+        });
+}
+  </script>
+  <script>
+  document.querySelector("#id_attachment").addEventListener("change", function(event) {
+    const input = event.target;
+    const filenameDisplay = document.querySelector("#attachment_filename");
+
+    if (input.files && input.files[0]) {
+      filenameDisplay.value = input.files[0].name;
+    } else {
+      filenameDisplay.value = "";
+    }
+  });
+</script>
+
+
+<!-- profile page more fileds for company -->
+<!-- <div class="col-sm-6 col-md-4"> -->
+    <!-- <div class="form-floating">
+        {{ company_form.city|add_class:"form-select" }}
+        <label for="{{ company_form.city.auto_id }}">City</label>
+    </div>
+</div>
+<div class="col-sm-6 col-md-4">
+    <div class="form-floating">
+        {{ company_form.state|add_class:"form-select" }}
+        <label for="{{ company_form.state.auto_id }}">State</label>
+    </div>
+</div>
+<div class="col-sm-6">
+    <div class="form-floating">
+        {{ company_form.country|add_class:"form-select" }}
+        <label for="{{ company_form.country.auto_id }}">Country</label>
+    </div>
+</div>
+<div class="col-sm-6">
+    <div class="form-floating">
+        {{ company_form.zip_code|add_class:"form-control" }}
+        <label for="{{ company_form.zip_code.auto_id }}">Zip Code</label>
+    </div>
+</div> -->
+<!-- <div class="col-sm-6 col-md-4">
+    <div class="form-floating">
+        {{ company_form.website|add_class:"form-control" }}
+        <label for="{{ company_form.website.auto_id }}">Company Website</label>
+    </div>
+</div> -->
+<!-- <div class="col-sm-6 col-md-4">
+    <div class="form-floating">
+        {{ company_form.number_of_employees|add_class:"form-select" }}
+        <label for="{{ company_form.number_of_employees.auto_id }}">Number of employees</label>
+    </div>
+</div> -->
+<h1>Stock Items</h1>
+<a href="{% url 'smeApp:stock_item_create' %}" class="btn btn-primary">Add Stock Item</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Item ID</th>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Quantity</th>
+      <th>Unit Selling Price</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stock_item in object_list %}
+      <tr>
+        <td>{{ stock_item.item_id }}</td>
+        <td>{{ stock_item.name }}</td>
+        <td>{{ stock_item.type }}</td>
+        <td>{{ stock_item.quantity }}</td>
+        <td>{{ stock_item.unit_selling_price }}</td>
+        <td>
+          <a href="{% url 'smeApp:stock_item_update' stock_item.item_id %}" class="btn btn-warning">Edit</a>
+          <a href="{% url 'smeApp:stock_item_delete' stock_item.item_id %}" class="btn btn-danger">Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<!-- modal form invoice -->
+<div class="modal fade" id="addDealModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addDealModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content bg-100 p-6">
+        <div class="modal-header border-0 p-0 mb-2">
+          <h3 class="mb-0">Deal Informations</h3>
+          <button class="btn btn-sm btn-phoenix-secondary" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times text-danger"></span></button>
+        </div>
+        <div class="modal-body px-0">
+          <div class="row g-4">
+            <div class="col-lg-6">
+              <div class="mb-4">
+                <label class="text-1000 fw-bold mb-2">Deal Owner</label>
+                <select class="form-select">
+                  <option>Select</option>
+                  <option>Ally Aagaard</option>
+                  <option>Aida Moen</option>
+                  <option>Niko Koss</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <label class="text-1000 fw-bold mb-2">Deal Name</label>
+                <input class="form-control" type="text" placeholder="Enter deal name" />
+              </div>
+              <div class="mb-4">
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-12 col-xl-6">
+                    <label class="text-1000 fw-bold mb-2">Deal Amount</label>
+                    <div class="row g-2">
+                      <div class="col">
+                        <input class="form-control" type="number" placeholder="$ Enter amount" />
+                      </div>
+                      <div class="col-auto">
+                        <select class="form-select">
+                          <option>USD</option>
+                          <option>GBP</option>
+                          <option>EUR</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-lg-12 col-xl-6">
+                    <label class="text-1000 fw-bold mb-2">Deal Code</label>
+                    <input class="form-control" type="text" placeholder="Enter deals code" />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-4">
+                <label class="text-1000 fw-bold mb-2">Deal Type
+                  <button class="btn btn-link p-0 ms-3"><span class="fa-solid fa-plus me-1"></span><span>Add new</span></button>
+                </label>
+                <select class="form-select">
+                  <option>Select</option>
+                  <option>Buy One Get One Free</option>
+                  <option>Clearance sale</option>
+                  <option>Bundle deals</option>
+                  <option>Free shipping</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <label class="text-1000 fw-bold mb-2">Category
+                  <button class="btn btn-link p-0 ms-3"><span class="fa-solid fa-plus me-1"></span><span>Add new</span></button>
+                </label>
+                <select class="form-select">
+                  <option>Select</option>
+                  <option>Financial</option>
+                  <option>Marketplace</option>
+                  <option>Travel</option>
+                  <option>E-commerce</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-12 col-xl-6">
+                    <label class="text-1000 fw-bold mb-2">Probability (%)</label>
+                    <input class="form-control" type="text" placeholder="Enter value" />
+                  </div>
+                  <div class="col-sm-6 col-lg-12 col-xl-6">
+                    <label class="text-1000 fw-bold mb-2">Expected Revenue</label>
+                    <div class="row g-2">
+                      <div class="col">
+                        <input class="form-control" type="number" placeholder="$ Enter amount" />
+                      </div>
+                      <div class="col-auto">
+                        <select class="form-select">
+                          <option>USD</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="row g-3">
+                  <div class="col-6">
+                    <label class="text-1000 fw-bold mb-2">Stage</label>
+                    <select class="form-select">
+                      <option>Select</option>
+                      <option>New</option>
+                      <option>In Progress</option>
+                      <option>Pending</option>
+                      <option>Canceled</option>
+                      <option>Completed</option>
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label class="text-1000 fw-bold mb-2">Priority</label>
+                    <select class="form-select">
+                      <option>Urgent</option>
+                      <option>High</option>
+                      <option>Medium</option>
+                      <option>Low</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="mb-4">
+                <label class="text-1000 fw-bold mb-2">Contact Name</label>
+                <input class="form-control" type="text" placeholder="Enter contact name" />
+              </div>
+              <div class="mb-4">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <label class="text-1000 fw-bold mb-2">Phone Number</label>
+                    <input class="form-control" type="text" placeholder="Enter phone number" />
+                  </div>
+                  <div class="col-6">
+                    <label class="text-1000 fw-bold mb-2">Email Address</label>
+                    <input class="form-control" type="text" placeholder="Enter email address" />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-4">
+                <label class="text-1000 fw-bold mb-2">Lead Source
+                  <button class="btn btn-link p-0 ms-3"><span class="fa-solid fa-plus me-1"></span><span>Add new</span></button>
+                </label>
+                <select class="form-select">
+                  <option>Select</option>
+                  <option>Referrals</option>
+                  <option>Former Clients</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <label class="text-1000 fw-bold mb-2">Campaign Source
+                  <button class="btn btn-link p-0 ms-3"><span class="fa-solid fa-plus me-1"></span><span>Add new</span></button>
+                </label>
+                <select class="form-select">
+                  <option>Select</option>
+                  <option>Online Campaign</option>
+                  <option>Offline Campaign</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <label class="text-1000 fw-bold mb-2">Create Date</label>
+                    <input class="form-control datetimepicker" type="text" placeholder="dd / mm / yyyy" data-options='{"disableMobile":true}' />
+                  </div>
+                  <div class="col-6">
+                    <label class="text-1000 fw-bold mb-2">Start Time</label>
+                    <input class="form-control datetimepicker" type="text" placeholder="H:i" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="row g-3">
+                  <div class="col-6">
+                    <label class="text-1000 fw-bold mb-2">Closing Date</label>
+                    <input class="form-control datetimepicker" type="text" placeholder="dd / mm / yyyy" data-options='{"disableMobile":true}' />
+                  </div>
+                  <div class="col-6">
+                    <label class="text-1000 fw-bold mb-2">Closing Time</label>
+                    <input class="form-control datetimepicker" type="text" placeholder="H:i" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-6 px-0 pb-0">
+          <button class="btn btn-link text-danger px-3 my-0" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+          <button class="btn btn-primary my-0">Create Deal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- stockform -->
+  <h1>{% if form.instance.pk %}Update{% else %}Create{% endif %} Stock Item</h1>
+
+  <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-3">
+          <label for="{{ form.item_id.auto_id }}" class="form-label">Item ID</label>
+          <input type="text" class="form-control" id="{{ form.item_id.auto_id }}" name="{{ form.item_id.html_name }}" value="{{ form.item_id.value|default:'' }}" required>
+      </div>
+      <div class="mb-3">
+          <label for="{{ form.name.auto_id }}" class="form-label">Item Name</label>
+          <input type="text" class="form-control" id="{{ form.name.auto_id }}" name="{{ form.name.html_name }}" value="{{ form.name.value|default:'' }}" required>
+      </div>
+      <div class="mb-3">
+          <label for="{{ form.type.auto_id }}" class="form-label">Item Type</label>
+          <input type="text" class="form-control" id="{{ form.type.auto_id }}" name="{{ form.type.html_name }}" value="{{ form.type.value|default:'' }}" required>
+      </div>
+      <div class="mb-3">
+          <label for="{{ form.image.auto_id }}" class="form-label">Item Image</label>
+          <input type="file" class="form-control" id="{{ form.image.auto_id }}" name="{{ form.image.html_name }}" value="{{ form.image.value|default:'' }}">
+      </div>
+      <div class="mb-3">
+          <label for="{{ form.barcode.auto_id }}" class="form-label">Barcode</label>
+          <input type="text" class="form-control" id="{{ form.barcode.auto_id }}" name="{{ form.barcode.html_name }}" value="{{ form.barcode.value|default:'' }}" placeholder="Optional barcode for the item.">
+      </div>
+      <div class="mb-3">
+          <label for="{{ form.description.auto_id }}" class="form-label">Description</label>
+          <textarea class="form-control" id="{{ form.description.auto_id }}" name="{{ form.description.html_name }}" rows="3">{{ form.description.value|default:'' }}</textarea>
+      </div>
+      <div class="mb-3">
+          <label for="{{ form.supplier.auto_id }}" class="form-label">Supplier</label>
+          <select class="form-select" id="{{ form.supplier.auto_id }}" name="{{ form.supplier.html_name }}" required>
+              <option value="">Choose a supplier...</option>
+              {% for supplier in form.supplier.field.queryset %}
+                  <option value="{{ supplier.pk }}" {% if form.supplier.value == supplier.pk|stringformat:'s' %}selected{% endif %}>{{ supplier.name }}</option>
+              {% endfor %}
+          </select>
+      </div>
+      <div class="mb-3">
+          <label for="{{ form.unit_selling_price.auto_id }}" class="form-label">Unit Selling Price</label>
+          <input type="number" step="0.01" class="form-control" id="{{ form.unit_selling_price.auto_id }}" name="{{ form.unit_selling_price.html_name }}" value="{{ form.unit_selling_price.value|default:'' }}" required>
+      </div>
+      <div class="mb-3">
+          <label for="{{ form.quantity.auto_id }}" class="form-label">Quantity in Inventory</label>
+          <input type="number" class="form-control" id="{{ form.quantity.auto_id }}" name="{{ form.quantity.html_name }}" value="{{ form.quantity.value|default:'' }}" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+  <form class="mb-9">
+    <div class="row g-3 flex-between-end mb-5">
+      <div class="col-auto">
+        <h2 class="mb-2">Add a product</h2>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-phoenix-secondary me-2 mb-2 mb-sm-0" type="button">Discard</button>
+        <button class="btn btn-primary mb-2 mb-sm-0" type="submit">Add product</button>
+      </div>
+    </div>
+    <h4 class="mb-3">Product Name</h4>
+    <div class="row g-5">
+      <div class="col-12 col-xl-8">
+        <input class="form-control mb-5" type="text" placeholder="Write name here..." />
+        <div class="mb-6">
+          <h4 class="mb-3"> Product Description</h4>
+          <textarea class="tinymce" name="content" data-tinymce='{"height":"15rem","placeholder":"Write a description here..."}'></textarea>
+        </div>
+        <h4 class="mb-3">Display images</h4>
+        <div class="dropzone dropzone-multiple p-0 mb-5" id="my-awesome-dropzone" data-dropzone="data-dropzone">
+          <div class="fallback">
+            <input name="file" type="file" multiple="multiple" />
+          </div>
+          <div class="dz-preview d-flex flex-wrap">
+            <div class="border bg-white rounded-3 d-flex flex-center position-relative me-2 mb-2" style="height:80px;width:80px;"><img class="dz-image" src="../../../assets/img/products/23.png" alt="..." data-dz-thumbnail="data-dz-thumbnail" /><a class="dz-remove text-400" href="#!" data-dz-remove="data-dz-remove"><span data-feather="x"></span></a></div>
+          </div>
+          <div class="dz-message text-600" data-dz-message="data-dz-message">
+            Drag your photo here<span class="text-800">or</span>
+            <button class="btn btn-link p-0" type="button">Browse from device</button><br /><img class="mt-3 me-2" src="../../../assets/img/icons/image-icon.png" width="40" alt="" />
+          </div>
+        </div>
+        <h4 class="mb-3">Inventory</h4>
+        <div class="row g-0 border-top border-bottom border-300">
+          <div class="col-sm-4">
+            <div class="nav flex-sm-column border-bottom border-bottom-sm-0 border-end-sm border-300 fs--1 vertical-tab h-100 justify-content-between" role="tablist" aria-orientation="vertical"><a class="nav-link border-end border-end-sm-0 border-bottom-sm border-300 text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center active" id="pricingTab" data-bs-toggle="tab" data-bs-target="#pricingTabContent" role="tab" aria-controls="pricingTabContent" aria-selected="true"> <span class="me-sm-2 fs-4 nav-icons" data-feather="tag"></span><span class="d-none d-sm-inline">Pricing</span></a><a class="nav-link border-end border-end-sm-0 border-bottom-sm border-300 text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center" id="restockTab" data-bs-toggle="tab" data-bs-target="#restockTabContent" role="tab" aria-controls="restockTabContent" aria-selected="false"> <span class="me-sm-2 fs-4 nav-icons" data-feather="package"></span><span class="d-none d-sm-inline">Quantity</span></a><a class="nav-link border-end border-end-sm-0 border-bottom-sm border-300 text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center" id="attributesTab" data-bs-toggle="tab" data-bs-target="#attributesTabContent" role="tab" aria-controls="attributesTabContent" aria-selected="false"> <span class="me-sm-2 fs-4 nav-icons" data-feather="sliders"></span><span class="d-none d-sm-inline">Barcode</span></a><a class="nav-link text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center" id="advancedTab" data-bs-toggle="tab" data-bs-target="#advancedTabContent" role="tab" aria-controls="advancedTabContent" aria-selected="false"> <span class="me-sm-2 fs-4 nav-icons" data-feather="lock"></span><span class="d-none d-sm-inline">Product ID</span></a></div>
+          </div>
+          <div class="col-sm-8">
+            <div class="tab-content py-3 ps-sm-4 h-100">
+              <div class="tab-pane fade show active" id="pricingTabContent" role="tabpanel">
+                <h4 class="mb-3 d-sm-none">Pricing</h4>
+                <div class="row g-3">
+                  <div class="col-12 col-lg-9">
+                    <h5 class="mb-2 text-1000">Unit price</h5>
+                    <input class="form-control" type="text" placeholder="$$$" />
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade h-100" id="restockTabContent" role="tabpanel" aria-labelledby="restockTab">
+                <div class="d-flex flex-column h-100">
+                  <h5 class="mb-3 text-1000">Add to Stock</h5>
+                  <div class="row g-3 flex-1 mb-4">
+                    <div class="col-sm-7">
+                      <input class="form-control" type="number" placeholder="Quantity" />
+                    </div>
+                    <div class="col-sm">
+                      <button class="btn btn-primary" type="button"><span class="fa-solid fa-check me-1 fs--2"></span>Confirm</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="attributesTabContent" role="tabpanel" aria-labelledby="attributesTab">
+                <h5 class="mb-3 text-1000">Barcode</h5>
+                <div class="col-12 col-lg-9">
+                  <input class="form-control" type="text" placeholder="Barcode Here(optional)" />
+                </div>
+              </div>
+              <div class="tab-pane fade" id="advancedTabContent" role="tabpanel" aria-labelledby="advancedTab">
+                <div class="row g-3">
+                  <div class="col-12 col-lg-9">
+                    <h5 class="mb-2 text-1000">Product ID</h5>
+                    <input class="form-control" type="text" placeholder="Product ID" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-xl-4">
+        <div class="row g-2">
+          <div class="col-12 col-xl-12">
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12 col-sm-6 col-xl-12">
+                    <div class="mb-4">
+                      <div class="d-flex flex-wrap mb-2">
+                        <h5 class="mb-0 text-1000 me-2">Category</h5><a class="fw-bold fs--1" href="#!">Add new category</a>
+                      </div>
+                      <select class="form-select mb-3" aria-label="category">
+                        <option value="men-cloth">Men's Clothing</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6 col-xl-12">
+                    <div class="mb-4">
+                      <div class="d-flex flex-wrap mb-2">
+                        <h5 class="mb-0 text-1000 me-2">Supplier</h5><a class="fw-bold fs--1" href="#!">Add new supplier</a>
+                      </div>
+                      <select class="form-select mb-3" aria-label="category">
+                        <option value="women-cloth">Womens's Clothing</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6 col-xl-12">
+                    <div class="mb-xl-4">
+                      <h5 class="mb-2 text-1000">Color</h5>
+                      <input class="form-control mb-xl-3" type="text" placeholder="Collection" />
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6 col-xl-12">
+                    <div class="d-flex flex-wrap mb-2">
+                      <h5 class="mb-0 text-1000 me-2">Tags</h5><a class="fw-bold fs--1 lh-sm" href="#!">View all tags</a>
+                    </div>
+                    <select class="form-select" aria-label="category">
+                      <option value="men-cloth">Men's Clothing</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+{% extends 'dashboard.html' %}
+
+{% block content %}
+    <nav class="mb-2" aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="#!">Page 1</a></li>
+        <li class="breadcrumb-item"><a href="#!">Page 2</a></li>
+        <li class="breadcrumb-item active">Default</li>
+      </ol>
+    </nav>
+    <div class="mb-9">
+      <div id="projectSummary" data-list='{"valueNames":["projectName","assigness","start","deadline","task","projectprogress","status","action"],"page":6,"pagination":true}'>
+        <div class="row mb-4 gx-6 gy-3 align-items-center">
+          <div class="col-auto">
+            <h2 class="mb-0">Jobs<span class="fw-normal text-700 ms-3">({{ object_list|length }})</span></h2>
+          </div>
+          <div class="col-auto"><a class="btn btn-primary px-5" href="{% url 'smeApp:job_add' %}"><i class="fa-solid fa-plus me-2"></i>Add new job</a></div>
+        </div>
+        <div class="row g-3 justify-content-between align-items-end mb-4">
+          <div class="col-12 col-sm-auto">
+            <ul class="nav nav-links mx-n2">
+              <li class="nav-item"><a class="nav-link px-2 py-1 active" aria-current="page" href="{% url 'smeApp:job_list' %}">All<span class="text-700 fw-semi-bold">({{ all_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=ongoing">Ongoing<span class="text-700 fw-semi-bold">({{ ongoing_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=cancelled">Cancelled<span class="text-700 fw-semi-bold">({{ cancelled_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=finished">Completed<span class="text-700 fw-semi-bold">({{ completed_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=postponed">Postponed<span class="text-700 fw-semi-bold">({{ postponed_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=work_order">Work Order<span class="text-700 fw-semi-bold">({{ work_order_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=quotes">Quotes<span class="text-700 fw-semi-bold">({{ quotes_count }})</span></a></li>
+            </ul>
+          </div>
+
+          <div class="col-12 col-sm-auto">
+            <div class="d-flex align-items-center">
+              <div class="search-box me-3">
+                <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
+                  <input class="form-control search-input search" type="search" placeholder="Search projects" aria-label="Search" />
+                  <span class="fas fa-search search-box-icon"></span>
+
+                </form>
+              </div><a class="btn btn-phoenix-primary px-3 me-1 border-0 text-900" href="../../apps/project-management/project-list-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="List view"><span class="fa-solid fa-list fs--2"></span></a><a class="btn btn-phoenix-primary px-3 me-1" href="../../apps/project-management/project-board-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Board view">
+                <svg width="9" height="9" viewbox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 0.5C0 0.223857 0.223858 0 0.5 0H1.83333C2.10948 0 2.33333 0.223858 2.33333 0.5V1.83333C2.33333 2.10948 2.10948 2.33333 1.83333 2.33333H0.5C0.223857 2.33333 0 2.10948 0 1.83333V0.5Z" fill="currentColor"></path>
+                  <path d="M3.33333 0.5C3.33333 0.223857 3.55719 0 3.83333 0H5.16667C5.44281 0 5.66667 0.223858 5.66667 0.5V1.83333C5.66667 2.10948 5.44281 2.33333 5.16667 2.33333H3.83333C3.55719 2.33333 3.33333 2.10948 3.33333 1.83333V0.5Z" fill="currentColor"></path>
+                  <path d="M6.66667 0.5C6.66667 0.223857 6.89052 0 7.16667 0H8.5C8.77614 0 9 0.223858 9 0.5V1.83333C9 2.10948 8.77614 2.33333 8.5 2.33333H7.16667C6.89052 2.33333 6.66667 2.10948 6.66667 1.83333V0.5Z" fill="currentColor"></path>
+                  <path d="M0 3.83333C0 3.55719 0.223858 3.33333 0.5 3.33333H1.83333C2.10948 3.33333 2.33333 3.55719 2.33333 3.83333V5.16667C2.33333 5.44281 2.10948 5.66667 1.83333 5.66667H0.5C0.223857 5.66667 0 5.44281 0 5.16667V3.83333Z" fill="currentColor"></path>
+                  <path d="M3.33333 3.83333C3.33333 3.55719 3.55719 3.33333 3.83333 3.33333H5.16667C5.44281 3.33333 5.66667 3.55719 5.66667 3.83333V5.16667C5.66667 5.44281 5.44281 5.66667 5.16667 5.66667H3.83333C3.55719 5.66667 3.33333 5.44281 3.33333 5.16667V3.83333Z" fill="currentColor"></path>
+                  <path d="M6.66667 3.83333C6.66667 3.55719 6.89052 3.33333 7.16667 3.33333H8.5C8.77614 3.33333 9 3.55719 9 3.83333V5.16667C9 5.44281 8.77614 5.66667 8.5 5.66667H7.16667C6.89052 5.66667 6.66667 5.44281 6.66667 5.16667V3.83333Z" fill="currentColor"></path>
+                  <path d="M0 7.16667C0 6.89052 0.223858 6.66667 0.5 6.66667H1.83333C2.10948 6.66667 2.33333 6.89052 2.33333 7.16667V8.5C2.33333 8.77614 2.10948 9 1.83333 9H0.5C0.223857 9 0 8.77614 0 8.5V7.16667Z" fill="currentColor"></path>
+                  <path d="M3.33333 7.16667C3.33333 6.89052 3.55719 6.66667 3.83333 6.66667H5.16667C5.44281 6.66667 5.66667 6.89052 5.66667 7.16667V8.5C5.66667 8.77614 5.44281 9 5.16667 9H3.83333C3.55719 9 3.33333 8.77614 3.33333 8.5V7.16667Z" fill="currentColor"></path>
+                  <path d="M6.66667 7.16667C6.66667 6.89052 6.89052 6.66667 7.16667 6.66667H8.5C8.77614 6.66667 9 6.89052 9 7.16667V8.5C9 8.77614 8.77614 9 8.5 9H7.16667C6.89052 9 6.66667 8.77614 6.66667 8.5V7.16667Z" fill="currentColor"></path>
+                </svg></a><a class="btn btn-phoenix-primary px-3" href="../../apps/project-management/project-card-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Card view">
+                <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 0.5C0 0.223858 0.223858 0 0.5 0H3.5C3.77614 0 4 0.223858 4 0.5V3.5C4 3.77614 3.77614 4 3.5 4H0.5C0.223858 4 0 3.77614 0 3.5V0.5Z" fill="currentColor"></path>
+                  <path d="M0 5.5C0 5.22386 0.223858 5 0.5 5H3.5C3.77614 5 4 5.22386 4 5.5V8.5C4 8.77614 3.77614 9 3.5 9H0.5C0.223858 9 0 8.77614 0 8.5V5.5Z" fill="currentColor"></path>
+                  <path d="M5 0.5C5 0.223858 5.22386 0 5.5 0H8.5C8.77614 0 9 0.223858 9 0.5V3.5C9 3.77614 8.77614 4 8.5 4H5.5C5.22386 4 5 3.77614 5 3.5V0.5Z" fill="currentColor"></path>
+                  <path d="M5 5.5C5 5.22386 5.22386 5 5.5 5H8.5C8.77614 5 9 5.22386 9 5.5V8.5C9 8.77614 8.77614 9 8.5 9H5.5C5.22386 9 5 8.77614 5 8.5V5.5Z" fill="currentColor"></path>
+                </svg></a>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive scrollbar">
+          <table class="table fs--1 mb-0 border-top border-200">
+            <thead>
+              <tr>
+              <th class="sort white-space-nowrap align-middle ps-0" scope="col" data-sort="projectName" style="width:20%;">
+                <i class="fas fa-user text-primary me-2"></i>Client Name
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="assigness" style="width:10%;">
+                <i class="fas fa-briefcase text-success me-2"></i>Job #
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="start" style="width:10%;">
+                <i class="fas fa-tasks text-info me-2"></i>Status
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="deadline" style="width:15%;">
+                <i class="fas fa-envelope text-warning me-2"></i>Contact Email
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="task" style="width:12%;">
+                <i class="fas fa-credit-card text-danger me-2"></i>Payment Status
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="projectprogress" style="width:5%;">
+                <i class="fas fa-calendar-alt text-warning me-2"></i>Deadline
+              </th>
+              <th class="sort align-middle text-end" scope="col" data-sort="assigness" style="width:10%;">
+                <i class="fas fa-dollar-sign text-success me-2"></i>Budget
+              </th>
+              <th class="sort align-middle text-end" scope="col" style="width:10%;">
+                <i class="fas fa-cog text-dark me-2"></i>Action
+              </th>
+            </tr>
+
+</thead>
+<tbody class="list" id="project-list-table-body">
+  {% for job in object_list %}
+    <tr class="position-static">
+      <td class="align-middle time white-space-nowrap ps-0 projectName py-4"><a class="text-decoration-none fw-bold fs-0" href="{% url 'smeApp:job_detail' job.pk %}">{{ job.client.name }}</a></td>
+      <td class="align-middle white-space-nowrap assigness ps-3 py-4">{{ job.po_number }}</td>
+      <td class="align-middle white-space-nowrap start ps-3 py-4">
+        {% if job.status == 'quote' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-primary">{{ job.get_status_display }}</span>
+        {% elif job.status == 'work_order' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-warning">{{ job.get_status_display }}</span>
+        {% elif job.status == 'ongoing' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-info">{{ job.get_status_display }}</span>
+        {% elif job.status == 'completed' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-success">{{ job.get_status_display }}</span>
+        {% elif job.status == 'cancelled' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-danger">{{ job.get_status_display }}</span>
+        {% elif job.status == 'postponed' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-secondary">{{ job.get_status_display }}</span>
+        {% else %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-light">{{ job.get_status_display }}</span>
+        {% endif %}
+      </td>
+      <td class="align-middle white-space-nowrap deadline ps-3 py-4">{{ job.client.email }}</td>
+      <td class="align-middle white-space-nowrap task ps-3 py-4">{{ job.payment_status }}</td>
+      <td class="align-middle white-space-nowrap ps-3 projectprogress">{{ job.end_date }}</td>
+      <td class="align-middle white-space-nowrap text-end statuses">{{ job.assigned_worker }}</td>
+      <td class="align-middle white-space-nowrap text-end statuses">{{ job.total_cost }}</td>
+      <td class="align-middle text-end white-space-nowrap pe-0 action">
+        <div class="font-sans-serif btn-reveal-trigger position-static">
+          <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--2" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-v fs--2"></span></button>
+          <div class="dropdown-menu dropdown-menu-end py-2">
+            <a class="dropdown-item" href="{% url 'smeApp:job_detail' job.pk %}">View</a>
+            <a class="dropdown-item" href="{% url 'smeApp:job_edit' job.pk %}">Edit</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-danger" href="{% url 'smeApp:job_delete' job.pk %}">Delete</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="8" class="text-center">No jobs found.</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+    </table>
+    </div>
+    <div class="d-flex flex-wrap align-items-center justify-content-between py-3 pe-0 fs--1 border-bottom border-200">
+      <div class="d-flex">
+        <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"></p><a class="fw-semi-bold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a class="fw-semi-bold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+          </div>
+          <div class="d-flex">
+            <button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+            <ul class="mb-0 pagination"></ul>
+            <button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer position-absolute">
+      <div class="row g-0 justify-content-between align-items-center h-100">
+        <div class="col-12 col-sm-auto text-center">
+          <p class="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span class="d-none d-sm-inline-block"></span><span class="d-none d-sm-inline-block mx-1">|</span><br class="d-sm-none" />2023 &copy;<a class="mx-1" href="https://themewagon.com">Themewagon</a></p>
+        </div>
+        <div class="col-12 col-sm-auto text-center">
+          <p class="mb-0 text-600">v1.10.0</p>
+        </div>
+      </div>
+    </footer>
+{% endblock %}
+
+
+
+{% extends 'dashboard.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <!-- <div class="container mt-4"> -->
+    <h2 class="mb-4">Create Job</h2>
+    <form method="post" enctype="multipart/form-data" class="row g-3 mb-6">
+      {% csrf_token %}
+      {% for field in form %}
+        {% if field.name != 'client' %}
+          {% if field.name == 'start_date' or field.name == 'end_date' %}
+            <div class="col-md-6 gy-6">
+              <div class="form-floating">
+                <input class="form-control flatpickr-date" type="text" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}">
+                <label for="{{ field.auto_id }}">{{ field.label }}</label>
+              </div>
+            </div>
+          {% else %}
+            <div class="col-md-6 gy-6">
+              <div class="form-floating">
+                {{ field }}
+                <label for="{{ field.auto_id }}">{{ field.label }}</label>
+              </div>
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="col-md-6 gy-6">
+            <div class="form-floating">
+              {{ field }}
+              <label for="{{ field.auto_id }}">{{ field.label }}</label>
+              <h5 style="padding: 7px;" ><i class="fas fa-plus-circle" id="add-client-icon" data-bs-toggle="modal" data-bs-target="#clientModal" style="cursor: pointer; margin-left: 5px; color: green;"></i> Add new client</h5>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="col-12 gy-6">
+        <div class="row g-3 justify-content-start">
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Client Modal -->
+  <div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="clientModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clientModalLabel">New Client</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="new-client-fields"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="save-client">Save Client</button>
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+  </div>
+</body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    flatpickr(".flatpickr-date", {
+      dateFormat: "Y-m-d", // Update the format according to your preference
+      disableMobile: true
+    });
+  });
+</script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const newClientFields = document.getElementById('new-client-fields');
+        const clientModalElement = document.getElementById('clientModal');
+        const clientModal = new bootstrap.Modal(clientModalElement);
+      // Function to create a new form field
+      function createFormField(name, labelText, inputType = 'text') {
+          const formGroup = document.createElement('div');
+          formGroup.className = 'mb-3';
+
+          const label = document.createElement('label');
+          label.htmlFor = `new_${name}`;
+          label.textContent = labelText;
+          formGroup.appendChild(label);
+
+          const input = document.createElement('input');
+          input.type = inputType;
+          input.name = `new_${name}`;
+          input.id = `new_${name}`;
+          input.className = 'form-control';
+          formGroup.appendChild(input);
+
+          return formGroup;
+      }
+
+      // Add new client form fields when the "Add Client" button is clicked or when the modal is opened
+      function setupNewClientFields() {
+          newClientFields.innerHTML = '';
+          const nameField = createFormField('name', 'Name');
+          newClientFields.appendChild(nameField);
+
+          const addressField = createFormField('address', 'Address');
+          newClientFields.appendChild(addressField);
+
+          const contactNameField = createFormField('contact_name', 'Contact Name');
+          newClientFields.appendChild(contactNameField);
+
+          const emailField = createFormField('email', 'Email', 'email');
+          newClientFields.appendChild(emailField);
+
+          const phoneField = createFormField('phone', 'Phone');
+          newClientFields.appendChild(phoneField);
+
+          // Add more fields as necessary
+          const roleField = document.createElement('div');
+          roleField.className = 'mb-3';
+
+          const roleLabel = document.createElement('label');
+          roleLabel.htmlFor = 'new_role';
+          roleLabel.textContent = 'Role';
+          roleField.appendChild(roleLabel);
+
+          const roleSelect = document.createElement('select');
+          roleSelect.name = 'new_role';
+          roleSelect.id = 'new_role';
+          roleSelect.className = 'form-control';
+          roleField.appendChild(roleSelect);
+
+          // Add the appropriate role options for your application
+          const roleOption1 = new Option('Job Contact', 'job_contact');
+          const roleOption2 = new Option('Property Owner', 'property_owner');
+          const roleOption3 = new Option('Tenant', 'tenant');
+          const roleOption4 = new Option('Manager', 'manager');
+          const roleOption5 = new Option('Vendor', 'vendor');
+          const roleOption6 = new Option('Other', 'Other');
+
+          roleSelect.add(roleOption1);
+          roleSelect.add(roleOption2);
+          roleSelect.add(roleOption3);
+          roleSelect.add(roleOption4);
+          roleSelect.add(roleOption5);
+          roleSelect.add(roleOption6);
+
+          newClientFields.appendChild(roleField);
+      }
+
+      async function fetchClients() {
+          try {
+              const response = await fetch("#");
+              if (response.ok) {
+                  const clients = await response.json();
+                  const clientSelect = document.getElementById('id_client');
+                  clients.forEach(client => {
+                      const option = new Option(client.name, client.id);
+                      clientSelect.add(option);
+                  });
+              } else {
+                  console.error("Error fetching clients:", response);
+              }
+          } catch (error) {
+              console.error("Error fetching clients:", error);
+          }
+      }
+
+      fetchClients();
+
+        // Add event listener for the Bootstrap 'show' event on the modal
+          clientModalElement.addEventListener('show.bs.modal', () => {
+              setupNewClientFields();
+          });
+
+          // Save client and close modal
+          const saveClientBtn = document.getElementById('save-client');
+          saveClientBtn.addEventListener('click', async () => {
+              const formData = new FormData();
+              formData.append('name', document.getElementById('new_name').value);
+              formData.append('address', document.getElementById('new_address').value);
+              formData.append('contact_name', document.getElementById('new_contact_name').value);
+              formData.append('email', document.getElementById('new_email').value);
+              formData.append('phone', document.getElementById('new_phone').value);
+              formData.append('role', document.getElementById('new_role').value);
+
+              try {
+                  const response = await fetch("{% url 'smeApp:client_create' %}", {
+                      method: 'POST',
+                      body: formData,
+                      headers: {
+                          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                      },
+                  });
+
+                  if (response.ok) {
+                      const newClient = await response.json();
+                      const clientSelect = document.getElementById('id_client');
+                      const newOption = new Option(newClient.name, newClient.id);
+                      clientSelect.add(newOption);
+                      clientSelect.value = newClient.id;
+                      clientModal.hide();
+                  } else {
+                      console.error("Error saving client:", response);
+                  }
+              } catch (error) {
+                  console.error("Error saving client:", error);
+              }
+          });
+
+          // Close modal and clear fields
+          const closeModalBtn = document.getElementById('close-modal');
+          closeModalBtn.addEventListener('click', () => {
+              clientModal.hide();
+              setupNewClientFields();
+          });
+        });
+        </script>
+{% endblock %}
+
+
+
+job form:
+<!-- <div class="modal fade" id="addDealModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addDealModal" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content bg-100 p-6">
+      <div class="modal-header border-0 p-0 mb-2">
+        <h3 class="mb-0">Deal Informations</h3>
+        <button class="btn btn-sm btn-phoenix-secondary" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times text-danger"></span></button>
+      </div>
+      <div class="modal-body px-0">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="mb-4">
+              <label class="text-1000 fw-bold mb-2">Deal Owner</label>
+              <select class="form-select">
+                <option>Select</option>
+                <option>Ally Aagaard</option>
+                <option>Aida Moen</option>
+                <option>Niko Koss</option>
+                <option>Alec Haag</option>
+                <option>Lonnie Kub</option>
+                <option>Ola Smith</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="text-1000 fw-bold mb-2">Deal Name</label>
+              <input class="form-control" type="text" placeholder="Enter deal name" />
+            </div>
+            <div class="mb-4">
+              <div class="row g-3">
+                <div class="col-sm-6 col-lg-12 col-xl-6">
+                  <label class="text-1000 fw-bold mb-2">Deal Amount</label>
+                  <div class="row g-2">
+                    <div class="col">
+                      <input class="form-control" type="number" placeholder="$ Enter amount" />
+                    </div>
+                    <div class="col-auto">
+                      <select class="form-select">
+                        <option>USD</option>
+                        <option>GBP</option>
+                        <option>EUR</option>
+                        <option>JPY</option>
+                        <option>CAD</option>
+                        <option>AUD</option>
+                        <option>CNY</option>
+                        <option>CHF</option>
+                        <option>ZAR</option>
+                        <option>BRL</option>
+                        <option>RUB</option>
+                        <option>INR</option>
+                        <option>MXN</option>
+                        <option>NZD</option>
+                        <option>SGD</option>
+                        <option>HKD</option>
+                        <option>KRW</option>
+                        <option>SEK</option>
+                        <option>NOK</option>
+                        <option>TRY</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-12 col-xl-6">
+                  <label class="text-1000 fw-bold mb-2">Deal Code</label>
+                  <input class="form-control" type="text" placeholder="Enter deals code" />
+                </div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="text-1000 fw-bold mb-2">Deal Type
+                <button class="btn btn-link p-0 ms-3"><span class="fa-solid fa-plus me-1"></span><span>Add new</span></button>
+              </label>
+              <select class="form-select">
+                <option>Select</option>
+                <option>Buy One Get One Free</option>
+                <option>Clearance sale</option>
+                <option>Bundle deals</option>
+                <option>Free shipping</option>
+                <option>Loyalty programs</option>
+                <option>Limited-time offers</option>
+                <option>Refer-a-friend discounts</option>
+                <option>Seasonal sales</option>
+                <option>Membership discounts</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="text-1000 fw-bold mb-2">Category
+                <button class="btn btn-link p-0 ms-3"><span class="fa-solid fa-plus me-1"></span><span>Add new</span></button>
+              </label>
+              <select class="form-select">
+                <option>Select</option>
+                <option>Financial</option>
+                <option>Marketplace</option>
+                <option>Travel</option>
+                <option>E-commerce</option>
+                <option>Cloud Computing</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <div class="row g-3">
+                <div class="col-sm-6 col-lg-12 col-xl-6">
+                  <label class="text-1000 fw-bold mb-2">Probability (%)</label>
+                  <input class="form-control" type="text" placeholder="Enter value" />
+                </div>
+                <div class="col-sm-6 col-lg-12 col-xl-6">
+                  <label class="text-1000 fw-bold mb-2">Expected Revenue</label>
+                  <div class="row g-2">
+                    <div class="col">
+                      <input class="form-control" type="number" placeholder="$ Enter amount" />
+                    </div>
+                    <div class="col-auto">
+                      <select class="form-select">
+                        <option>USD</option>
+                        <option>GBP</option>
+                        <option>EUR</option>
+                        <option>JPY</option>
+                        <option>CAD</option>
+                        <option>AUD</option>
+                        <option>CNY</option>
+                        <option>CHF</option>
+                        <option>ZAR</option>
+                        <option>BRL</option>
+                        <option>RUB</option>
+                        <option>INR</option>
+                        <option>MXN</option>
+                        <option>NZD</option>
+                        <option>SGD</option>
+                        <option>HKD</option>
+                        <option>KRW</option>
+                        <option>SEK</option>
+                        <option>NOK</option>
+                        <option>TRY</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="text-1000 fw-bold mb-2">Stage</label>
+                  <select class="form-select">
+                    <option>Select</option>
+                    <option>New</option>
+                    <option>In Progress</option>
+                    <option>Pending</option>
+                    <option>Canceled</option>
+                    <option>Completed</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="text-1000 fw-bold mb-2">Priority</label>
+                  <select class="form-select">
+                    <option>Urgent</option>
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="mb-4">
+              <label class="text-1000 fw-bold mb-2">Contact Name</label>
+              <input class="form-control" type="text" placeholder="Enter contact name" />
+            </div>
+            <div class="mb-4">
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="text-1000 fw-bold mb-2">Phone Number</label>
+                  <input class="form-control" type="text" placeholder="Enter phone number" />
+                </div>
+                <div class="col-6">
+                  <label class="text-1000 fw-bold mb-2">Email Address</label>
+                  <input class="form-control" type="text" placeholder="Enter email address" />
+                </div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="text-1000 fw-bold mb-2">Lead Source
+                <button class="btn btn-link p-0 ms-3"><span class="fa-solid fa-plus me-1"></span><span>Add new</span></button>
+              </label>
+              <select class="form-select">
+                <option>Select</option>
+                <option>Referrals</option>
+                <option>Former Clients</option>
+                <option>Competitors</option>
+                <option>Business & sales</option>
+                <option>Google resources</option>
+                <option>Linkedin</option>
+                <option>Marketing</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="text-1000 fw-bold mb-2">Campaign Source
+                <button class="btn btn-link p-0 ms-3"><span class="fa-solid fa-plus me-1"></span><span>Add new</span></button>
+              </label>
+              <select class="form-select">
+                <option>Select</option>
+                <option>Online Campaign</option>
+                <option>Offline Campaign</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="text-1000 fw-bold mb-2">Time Zone</label>
+              <select class="form-select">
+                <option>GMT-12:00 Etc/GMT-12</option>
+                <option>GMT-11:00 Etc/GMT-11</option>
+                <option>GMT-11:00 Pacific/Midway</option>
+                <option>GMT-10:00 America/Adak</option>
+                <option>GMT-09:00 America/Anchorage</option>
+                <option>GMT-09:00 Pacific/Gambier</option>
+                <option>GMT-08:00 America/Dawson_Creek</option>
+                <option>GMT-08:00 America/Ensenada</option>
+                <option>GMT-08:00 America/Los_Angeles</option>
+                <option>GMT-07:00 America/Chihuahua</option>
+                <option>GMT-07:00 America/Denver</option>
+                <option>GMT-06:00 America/Belize</option>
+                <option>GMT-06:00 America/Cancun</option>
+                <option>GMT-06:00 America/Chicago</option>
+                <option>GMT-06:00 Chile/EasterIsland</option>
+                <option>GMT-05:00 America/Bogota</option>
+                <option>GMT-05:00 America/Havana</option>
+                <option>GMT-05:00 America/New_York</option>
+                <option>GMT-04:30 America/Caracas</option>
+                <option>GMT-04:00 America/Campo_Grande</option>
+                <option>GMT-04:00 America/Glace_Bay</option>
+                <option>GMT-04:00 America/Goose_Bay</option>
+                <option>GMT-04:00 America/Santiago</option>
+                <option>GMT-04:00 America/La_Paz</option>
+                <option>GMT-03:00 America/Argentina/Buenos_Aires</option>
+                <option>GMT-03:00 America/Montevideo</option>
+                <option>GMT-03:00 America/Araguaina</option>
+                <option>GMT-03:00 America/Godthab</option>
+                <option>GMT-03:00 America/Miquelon</option>
+                <option>GMT-03:00 America/Sao_Paulo</option>
+                <option>GMT-03:30 America/St_Johns</option>
+                <option>GMT-02:00 America/Noronha</option>
+                <option>GMT-01:00 Atlantic/Cape_Verde</option>
+                <option>GMT Europe/Belfast</option>
+                <option>GMT Africa/Abidjan</option>
+                <option>GMT Europe/Dublin</option>
+                <option>GMT Europe/Lisbon</option>
+                <option>GMT Europe/London</option>
+                <option>UTC UTC</option>
+                <option>GMT+01:00 Africa/Algiers</option>
+                <option>GMT+01:00 Africa/Windhoek</option>
+                <option>GMT+01:00 Atlantic/Azores</option>
+                <option>GMT+01:00 Atlantic/Stanley</option>
+                <option>GMT+01:00 Europe/Amsterdam</option>
+                <option>GMT+01:00 Europe/Belgrade</option>
+                <option>GMT+01:00 Europe/Brussels</option>
+                <option>GMT+02:00 Africa/Cairo</option>
+                <option>GMT+02:00 Africa/Blantyre</option>
+                <option>GMT+02:00 Asia/Beirut</option>
+                <option>GMT+02:00 Asia/Damascus</option>
+                <option>GMT+02:00 Asia/Gaza</option>
+                <option>GMT+02:00 Asia/Jerusalem</option>
+                <option>GMT+03:00 Africa/Addis_Ababa</option>
+                <option>GMT+03:00 Asia/Riyadh89</option>
+                <option>GMT+03:00 Europe/Minsk</option>
+                <option>GMT+03:30 Asia/Tehran</option>
+                <option>GMT+04:00 Asia/Dubai</option>
+                <option>GMT+04:00 Asia/Yerevan</option>
+                <option>GMT+04:00 Europe/Moscow</option>
+                <option>GMT+04:30 Asia/Kabul</option>
+                <option>GMT+05:00 Asia/Tashkent</option>
+                <option>GMT+05:30 Asia/Kolkata</option>
+                <option>GMT+05:45 Asia/Katmandu</option>
+                <option>GMT+06:00 Asia/Dhaka</option>
+                <option>GMT+06:00 Asia/Yekaterinburg</option>
+                <option>GMT+06:30 Asia/Rangoon</option>
+                <option>GMT+07:00 Asia/Bangkok</option>
+                <option>GMT+07:00 Asia/Novosibirsk</option>
+                <option>GMT+08:00 Etc/GMT+8</option>
+                <option>GMT+08:00 Asia/Hong_Kong</option>
+                <option>GMT+08:00 Asia/Krasnoyarsk</option>
+                <option>GMT+08:00 Australia/Perth</option>
+                <option>GMT+08:45 Australia/Eucla</option>
+                <option>GMT+09:00 Asia/Irkutsk</option>
+                <option>GMT+09:00 Asia/Seoul</option>
+                <option>GMT+09:00 Asia/Tokyo</option>
+                <option>GMT+09:30 Australia/Adelaide</option>
+                <option>GMT+09:30 Australia/Darwin</option>
+                <option>GMT+09:30 Pacific/Marquesas</option>
+                <option>GMT+10:00 Etc/GMT+10</option>
+                <option>GMT+10:00 Australia/Brisbane</option>
+                <option>GMT+10:00 Australia/Hobart</option>
+                <option>GMT+10:00 Asia/Yakutsk</option>
+                <option>GMT+10:30 Australia/Lord_Howe</option>
+                <option>GMT+11:00 Asia/Vladivostok</option>
+                <option>GMT+11:30 Pacific/Norfolk</option>
+                <option>GMT+12:00 Etc/GMT+12</option>
+                <option>GMT+12:00 Asia/Anadyr</option>
+                <option>GMT+12:00 Asia/Magadan</option>
+                <option>GMT+12:00 Pacific/Auckland</option>
+                <option>GMT+12:45 Pacific/Chatham</option>
+                <option>GMT+13:00 Pacific/Tongatapu</option>
+                <option>GMT+14:00 Pacific/Kiritimati</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="text-1000 fw-bold mb-2">Create Date</label>
+                  <input class="form-control datetimepicker" type="text" placeholder="dd / mm / yyyy" data-options='{"disableMobile":true}' />
+                </div>
+                <div class="col-6">
+                  <label class="text-1000 fw-bold mb-2">Start Time</label>
+                  <input class="form-control datetimepicker" type="text" placeholder="H:i" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="row g-3">
+                <div class="col-6">
+                  <label class="text-1000 fw-bold mb-2">Closing Date</label>
+                  <input class="form-control datetimepicker" type="text" placeholder="dd / mm / yyyy" data-options='{"disableMobile":true}' />
+                </div>
+                <div class="col-6">
+                  <label class="text-1000 fw-bold mb-2">Closing Time</label>
+                  <input class="form-control datetimepicker" type="text" placeholder="H:i" data-options='{"enableTime":true,"noCalendar":true,"dateFormat":"H:i","disableMobile":true}' />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-6 px-0 pb-0">
+        <button class="btn btn-link text-danger px-3 my-0" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+        <button class="btn btn-primary my-0">Create Deal</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+
+
+<!-- modal form for job detail card -->
+<!--
+     <div class="modal fade" id="projectsCardViewModal" tabindex="-1" aria-labelledby="projectsCardViewModal" aria-hidden="true">
+       <div class="modal-dialog modal-md">
+         <div class="modal-content overflow-hidden">
+           <div class="modal-header position-relative p-0">
+             <input class="d-none" id="projectCoverInput" type="file" />
+             <label class="position-absolute top-0 start-0" for="projectCoverInput"><span class="d-inline-block bg-white rounded-2 py-2 px-3 fs--1 fw-bolder mt-3 ms-3 cursor-pointer dark__text-white" style="--phoenix-bg-opacity: .64;"><span class="fa-solid fa-image me-1"></span>Change</span></label>
+             <button class="btn btn-circle position-absolute end-0 top-0 mt-3 me-3 bg-white" style="--phoenix-bg-opacity: .64;" data-bs-dismiss="modal"><span class="fa-solid fa-xmark text-900 dark__text-white"></span></button><img class="w-100" src="../../assets/img/generic/43.png" alt="" style="max-height: 200px;min-height: 150px;" />
+           </div>
+           <div class="modal-body p-5 px-md-6">
+             <div class="row g-5">
+               <div class="col-12 col-md-9">
+                 <div class="mb-4">
+                   <h3 class="fw-bolder lh-sm">It was popularised in the 1960s with the release of Letraset</h3>
+                   <p class="text-1000 fw-semi-bold mb-0">In list<a class="ms-1 fw-bold" href="#!">Review </a></p>
+                 </div>
+                 <div class="d-flex align-items-center mb-4">
+                   <p class="text-1000 fw-700 mb-0 me-2">64%</p>
+                   <div class="progress bg-300 flex-1">
+                     <div class="progress-bar bg-800 rounded-3" role="progressbar" style="width: 64%"></div>
+                   </div>
+                 </div>
+                 <h6 class="text-800 mb-2">Due date</h6>
+                 <div class="flatpickr-input-container flatpickr-input-sm w-50 mb-3">
+                   <input class="form-control form-control-sm ps-6 datetimepicker" id="datepicker" type="text" data-options='{"dateFormat":"M j, Y","disableMobile":true,"defaultDate":"Mar 1, 2022"}' /><span class="uil uil-calendar-alt flatpickr-icon text-700"></span>
+                 </div>
+                 <div class="mb-3">
+                   <h6 class="text-800 mb-2">Assignees</h6>
+                   <div class="d-flex">
+                     <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                         <div class="avatar avatar-m  me-1">
+                           <img class="rounded-circle " src="../../assets/img//team/60.webp" alt="" />
+
+                         </div>
+                       </a>
+                       <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                         <div class="position-relative">
+                           <div class="bg-holder z-index--1" style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;">
+                           </div>
+                           <!--/.bg-holder-->
+
+                           <!-- <div class="p-3">
+                             <div class="text-end">
+                               <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                               <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                             </div>
+                             <div class="text-center">
+                               <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img class="rounded-circle border border-white" src="../../assets/img//team/33.webp" alt="" /></div>
+                               <h6 class="text-white light">Tyrion Lannister</h6>
+                               <p class="text-600 fw-semi-bold fs--2 mb-2">@tyrion222</p>
+                               <div class="d-flex flex-center mb-3">
+                                 <h6 class="text-white light mb-0">224 <span class="fw-normal text-300">connections</span></h6><span class="fa-solid fa-circle text-700 mx-1" data-fa-transform="shrink-10 up-2"></span>
+                                 <h6 class="text-white light mb-0">23 <span class="fw-normal text-300">mutual</span></h6>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="bg-white">
+                           <div class="p-3 border-bottom">
+                             <div class="d-flex justify-content-between">
+                               <div class="d-flex">
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span class="fa-solid fa-phone"></span></button>
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span class="fa-solid fa-message"></span></button>
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span class="fa-solid fa-video"></span></button>
+                               </div>
+                               <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send Email</button>
+                             </div>
+                           </div>
+                           <ul class="nav d-flex flex-column py-3 border-bottom">
+                             <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span class="me-2 text-900 d-inline-block" data-feather="clipboard"></span><span class="text-1000 flex-1">Assigned Projects</span><span class="fa-solid fa-chevron-right fs--3"></span></a></li>
+                             <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span class="me-2 text-900" data-feather="pie-chart"></span><span class="text-1000 flex-1">View activiy</span><span class="fa-solid fa-chevron-right fs--3"></span></a></li>
+                           </ul>
+                           <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none" href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger" href="#!">Unassign </a></div>
+                         </div>
+                       </div>
+                     </div>
+                     <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                         <div class="avatar avatar-m  me-1">
+                           <img class="rounded-circle " src="../../assets/img//team/58.webp" alt="" />
+
+                         </div>
+                       </a>
+                       <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                         <div class="position-relative">
+                           <div class="bg-holder z-index--1" style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;">
+                           </div>
+                           <!--/.bg-holder-->
+
+                           <!-- <div class="p-3">
+                             <div class="text-end">
+                               <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                               <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                             </div>
+                             <div class="text-center">
+                               <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img class="rounded-circle border border-white" src="../../assets/img//team/33.webp" alt="" /></div>
+                               <h6 class="text-white light">Tyrion Lannister</h6>
+                               <p class="text-600 fw-semi-bold fs--2 mb-2">@tyrion222</p>
+                               <div class="d-flex flex-center mb-3">
+                                 <h6 class="text-white light mb-0">224 <span class="fw-normal text-300">connections</span></h6><span class="fa-solid fa-circle text-700 mx-1" data-fa-transform="shrink-10 up-2"></span>
+                                 <h6 class="text-white light mb-0">23 <span class="fw-normal text-300">mutual</span></h6>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="bg-white">
+                           <div class="p-3 border-bottom">
+                             <div class="d-flex justify-content-between">
+                               <div class="d-flex">
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span class="fa-solid fa-phone"></span></button>
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span class="fa-solid fa-message"></span></button>
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span class="fa-solid fa-video"></span></button>
+                               </div>
+                               <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send Email</button>
+                             </div>
+                           </div>
+                           <ul class="nav d-flex flex-column py-3 border-bottom">
+                             <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span class="me-2 text-900 d-inline-block" data-feather="clipboard"></span><span class="text-1000 flex-1">Assigned Projects</span><span class="fa-solid fa-chevron-right fs--3"></span></a></li>
+                             <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span class="me-2 text-900" data-feather="pie-chart"></span><span class="text-1000 flex-1">View activiy</span><span class="fa-solid fa-chevron-right fs--3"></span></a></li>
+                           </ul>
+                           <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none" href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger" href="#!">Unassign </a></div>
+                         </div>
+                       </div>
+                     </div>
+                     <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                         <div class="avatar avatar-m  me-1">
+                           <img class="rounded-circle " src="../../assets/img//team/59.webp" alt="" />
+
+                         </div>
+                       </a>
+                       <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                         <div class="position-relative">
+                           <div class="bg-holder z-index--1" style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;"> -->
+                           <!-- </div>  -->
+                           <!--/.bg-holder-->
+<!--
+                           <div class="p-3">
+                             <div class="text-end">
+                               <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                               <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                             </div>
+                             <div class="text-center">
+                               <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img class="rounded-circle border border-white" src="../../assets/img//team/33.webp" alt="" /></div>
+                               <h6 class="text-white light">Tyrion Lannister</h6>
+                               <p class="text-600 fw-semi-bold fs--2 mb-2">@tyrion222</p>
+                               <div class="d-flex flex-center mb-3">
+                                 <h6 class="text-white light mb-0">224 <span class="fw-normal text-300">connections</span></h6><span class="fa-solid fa-circle text-700 mx-1" data-fa-transform="shrink-10 up-2"></span>
+                                 <h6 class="text-white light mb-0">23 <span class="fw-normal text-300">mutual</span></h6>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="bg-white">
+                           <div class="p-3 border-bottom">
+                             <div class="d-flex justify-content-between">
+                               <div class="d-flex">
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span class="fa-solid fa-phone"></span></button>
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span class="fa-solid fa-message"></span></button>
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span class="fa-solid fa-video"></span></button>
+                               </div>
+                               <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send Email</button>
+                             </div>
+                           </div>
+                           <ul class="nav d-flex flex-column py-3 border-bottom">
+                             <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span class="me-2 text-900 d-inline-block" data-feather="clipboard"></span><span class="text-1000 flex-1">Assigned Projects</span><span class="fa-solid fa-chevron-right fs--3"></span></a></li>
+                             <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span class="me-2 text-900" data-feather="pie-chart"></span><span class="text-1000 flex-1">View activiy</span><span class="fa-solid fa-chevron-right fs--3"></span></a></li>
+                           </ul>
+                           <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none" href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger" href="#!">Unassign </a></div>
+                         </div>
+                       </div>
+                     </div>
+                     <div class="dropdown"><a class="dropdown-toggle dropdown-caret-none d-inline-block" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                         <div class="avatar avatar-m  me-1">
+                           <img class="rounded-circle " src="../../assets/img//team/34.webp" alt="" />
+
+                         </div>
+                       </a>
+                       <div class="dropdown-menu avatar-dropdown-menu p-0 overflow-hidden" style="width: 320px;">
+                         <div class="position-relative">
+                           <div class="bg-holder z-index--1" style="background-image:url(../../assets/img/bg/bg-32.png);background-size: auto;">
+                           </div> -->
+                           <!--/.bg-holder-->
+<!--
+                           <div class="p-3">
+                             <div class="text-end">
+                               <button class="btn p-0 me-2"><span class="fa-solid fa-user-plus text-white"></span></button>
+                               <button class="btn p-0"><span class="fa-solid fa-ellipsis text-white"></span></button>
+                             </div>
+                             <div class="text-center">
+                               <div class="avatar avatar-xl status-online position-relative me-2 me-sm-0 me-xl-2 mb-2"><img class="rounded-circle border border-white" src="../../assets/img//team/33.webp" alt="" /></div>
+                               <h6 class="text-white light">Tyrion Lannister</h6>
+                               <p class="text-600 fw-semi-bold fs--2 mb-2">@tyrion222</p>
+                               <div class="d-flex flex-center mb-3">
+                                 <h6 class="text-white light mb-0">224 <span class="fw-normal text-300">connections</span></h6><span class="fa-solid fa-circle text-700 mx-1" data-fa-transform="shrink-10 up-2"></span>
+                                 <h6 class="text-white light mb-0">23 <span class="fw-normal text-300">mutual</span></h6>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="bg-white">
+                           <div class="p-3 border-bottom">
+                             <div class="d-flex justify-content-between">
+                               <div class="d-flex">
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span class="fa-solid fa-phone"></span></button>
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg me-2"><span class="fa-solid fa-message"></span></button>
+                                 <button class="btn btn-phoenix-secondary btn-icon btn-icon-lg"><span class="fa-solid fa-video"></span></button>
+                               </div>
+                               <button class="btn btn-phoenix-primary"><span class="fa-solid fa-envelope me-2"></span>Send Email</button>
+                             </div>
+                           </div>
+                           <ul class="nav d-flex flex-column py-3 border-bottom">
+                             <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span class="me-2 text-900 d-inline-block" data-feather="clipboard"></span><span class="text-1000 flex-1">Assigned Projects</span><span class="fa-solid fa-chevron-right fs--3"></span></a></li>
+                             <li class="nav-item"><a class="nav-link px-3 d-flex flex-between-center" href="#!"> <span class="me-2 text-900" data-feather="pie-chart"></span><span class="text-1000 flex-1">View activiy</span><span class="fa-solid fa-chevron-right fs--3"></span></a></li>
+                           </ul>
+                           <div class="p-3 d-flex justify-content-between"><a class="btn btn-link p-0 text-decoration-none" href="#!">Details </a><a class="btn btn-link p-0 text-decoration-none text-danger" href="#!">Unassign </a></div>
+                         </div>
+                       </div>
+                     </div>
+                     <button class="btn btn-sm btn-phoenix-secondary btn-circle"><span class="fa-solid fa-plus"></span></button>
+                   </div>
+                 </div>
+                 <div class="mb-5">
+                   <h6 class="text-800 mb-2">Labels</h6>
+                   <div class="d-flex align-items-center"><span class="badge badge-phoenix badge-phoenix-info fs--2 me-2">INFO</span><span class="badge badge-phoenix badge-phoenix-warning fs--2 me-2">URGENT</span><span class="badge badge-phoenix badge-phoenix-success fs--2 me-2">DONE</span><a class="text-900 fw-bolder fs--1 lh-1 text-decoration-none" href="#!"> <span class="fa-solid fa-plus me-1"></span>Add another</a></div>
+                 </div>
+                 <div class="mb-6">
+                   <div class="d-flex align-items-center mb-3">
+                     <h4 class="me-3">Description</h4>
+                     <button class="btn btn-link p-0"><span class="fa-solid fa-pen"></span></button>
+                   </div>
+                   <p class="text-1000">The female circus horse-rider is a recurring subject in Chagall’s work. In 1926 the art dealer Ambroise Vollard invited Chagall to make a project based on the circus. They visited Paris’s historic Cirque d’Hiver Bouglione together; Vollard lent Chagall his private box seats. Chagall completed 19 gouaches...<a class="fw-semi-bold" href="#!">see more </a></p>
+                 </div>
+                 <div class="bg-100 rounded-2 p-4 mb-3">
+                   <div class="row justify-contnet-between border-bottom g-0 gy-2 pb-3">
+                     <div class="col-12 col-sm">
+                       <p class="fs--1 text-800 mb-2"><a class="fw-semi-bold" href="#!">Anthony Van Dyck </a>uploaded a file </p><img class="rounded-2 mb-2" src="../../assets/img/generic/42.png" alt="" width="220" />
+                       <p class="text-1000 fw-semi-bold fs--1 mb-0">Fruit blast</p>
+                     </div>
+                     <div class="col-12 col-sm-auto">
+                       <p class="text-800 fw-semi-bold fs--2 mb-0">Oct 3 at 4:38 pm</p>
+                     </div>
+                   </div>
+                   <div class="row justify-contnet-between border-bottom g-0 gy-1 py-3 align-items-center">
+                     <div class="col-12 col-sm">
+                       <p class="fs--1 text-800 mb-0"><span class="text-1000 fw-semi-bold me-1">You</span>created this task</p>
+                     </div>
+                     <div class="col-12 col-sm-auto">
+                       <p class="text-800 fw-semi-bold fs--2 mb-0">Oct 4 at 12:18 pm</p>
+                     </div>
+                   </div>
+                   <div class="row justify-contnet-between border-bottom g-0 gy-1 py-3 align-items-center">
+                     <div class="col-12 col-sm">
+                       <p class="fs--1 text-800 mb-1"><a class="fw-semi-bold" href="#!">Kazimir Malevich </a>added a subtask</p>
+                       <div class="d-flex">
+                         <p class="mb-0 fs--1 fw-semi-bold text-1000"><span class="fa-solid fa-circle text-primary" data-fa-transform="shrink-8"> </span>Doing</p><span class="text-800 fs--1 mx-2">to</span>
+                         <p class="mb-0 fs--1 fw-semi-bold text-1000"><span class="fa-solid fa-circle text-primary" data-fa-transform="shrink-8"> </span>Review</p>
+                       </div>
+                     </div>
+                     <div class="col-12 col-sm-auto">
+                       <p class="text-800 fw-semi-bold fs--2 mb-0">Oct 5 at 9:59 am</p>
+                     </div>
+                   </div>
+                   <div class="row justify-contnet-between gx-2 align-items-center pt-3">
+                     <div class="col col-auto">
+                       <div class="avatar avatar-m status-online ">
+                         <img class="rounded-circle " src="../../assets/img//team/30.webp" alt="" /> -->
+
+                       <!-- </div>
+                     </div>
+                     <div class="col col-auto flex-1">
+                       <p class="fs--1 text-800 mb-0"><a class="fw-semi-bold" href="#!">Peter Paul Rubens </a>commented</p>
+                     </div>
+                     <div class="col-12 col-sm-auto order-1 order-sm-0">
+                       <p class="text-800 fw-semi-bold fs--2 mb-0">Oct 5 at 9:59 am</p>
+                     </div>
+                     <div class="col-12 col-sm-11 offset-sm-1">
+                       <p class="text-900 fs--1 mb-0">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form</p>
+                     </div>
+                   </div>
+                 </div>
+                 <textarea class="form-control form-control mb-3" rows="3" placeholder="Add comment"></textarea>
+                 <div class="d-flex flex-between-center pb-3 border-bottom mb-6">
+                   <div class="d-flex">
+                     <button class="btn btn-sm px-2 py-0"><span class="fa-solid fa-image text-600 fs-0"></span></button>
+                     <button class="btn btn-sm px-2 py-0"><span class="fa-solid fa-calendar-days text-600 fs-0"></span></button>
+                     <button class="btn btn-sm px-2 py-0"><span class="fa-solid fa-location-dot text-600 fs-0"></span></button>
+                     <button class="btn btn-sm px-2 py-0"><span class="fa-solid fa-tag text-600 fs-0"></span></button>
+                   </div>
+                   <button class="btn btn-sm btn-primary px-6">Comment</button>
+                 </div>
+                 <div class="mb-6">
+                   <div class="mb-7">
+                     <h4 class="mb-4">To do list <span class="text-700 fw-normal fs-2">(23)</span></h4>
+                     <div class="row align-items-center g-0 justify-content-between mb-3">
+                       <div class="col-12 col-sm-auto">
+                         <div class="search-box w-100 mb-2 mb-sm-0" style="max-width:30rem;">
+                           <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
+                             <input class="form-control search-input search" type="search" placeholder="Search tasks" aria-label="Search" />
+                             <span class="fas fa-search search-box-icon"></span>
+
+                           </form>
+                         </div>
+                       </div>
+                       <div class="col-auto d-flex">
+                         <p class="mb-0 ms-sm-3 fs--1 text-700 fw-bold"><span class="fas fa-filter me-1 fw-extra-bold fs--2"></span>23 tasks</p>
+                         <button class="btn btn-link p-0 ms-3 fs--1 text-primary fw-bold text-decoration-none"><span class="fas fa-sort me-1 fw-extra-bold fs--2"></span>Sorting</button>
+                       </div>
+                     </div>
+                     <div class="mb-3">
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-1">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-0" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-0">Designing the dungeon</label>
+                               <div class="badge badge-phoenix fs--2 ms-auto badge-phoenix-primary"><span class="fw-bold badge-label">DRAFT</span>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <button class="btn p-0 text-700 fs--2 me-2"><span class="fas fa-paperclip me-1"></span>2</button>
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">12 Nov, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">12:00 PM</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-2">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-1" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-1">Hiring a motion graphic designer</label>
+                               <div class="badge badge-phoenix fs--2 ms-auto badge-phoenix-warning"><span class="fw-bold badge-label">URGENT</span>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <button class="btn p-0 text-700 fs--2 me-2"><span class="fas fa-paperclip me-1"></span>2</button>
+                             <button class="btn p-0 text-warning fs--2 me-2"><span class="fas fa-tasks me-1"></span>3</button>
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">12 Nov, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">12:00 PM</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-3">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-2" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-2">Daily Meetings Purpose, participants</label>
+                               <div class="badge badge-phoenix fs--2 ms-auto badge-phoenix-info"><span class="fw-bold badge-label">ON PROCESS</span>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <button class="btn p-0 text-700 fs--2 me-2"><span class="fas fa-paperclip me-1"></span>4</button>
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">12 Dec, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">05:00 AM</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-4">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-3" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-3">Finalizing the geometric shapes</label>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <button class="btn p-0 text-700 fs--2 me-2"><span class="fas fa-paperclip me-1"></span>3</button>
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">12 Nov, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">12:00 PM</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-5">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-4" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-4">Daily meeting with team members</label>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">1 Nov, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">12:00 PM</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-6">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-5" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-5">Daily Standup Meetings</label>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">13 Nov, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">10:00 PM</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-7">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-6" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-6">Procrastinate for a month</label>
+                               <div class="badge badge-phoenix fs--2 ms-auto badge-phoenix-info"><span class="fw-bold badge-label">ON PROCESS</span>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <button class="btn p-0 text-700 fs--2 me-2"><span class="fas fa-paperclip me-1"></span>3</button>
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">12 Nov, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">12:00 PM</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-8">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-7" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-7">warming up</label>
+                               <div class="badge badge-phoenix fs--2 ms-auto badge-phoenix-info"><span class="fw-bold badge-label">CLOSE</span>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <button class="btn p-0 text-700 fs--2 me-2"><span class="fas fa-paperclip me-1"></span>3</button>
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">12 Nov, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">12:00 PM</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div class="row justify-content-between align-items-md-center hover-actions-trigger btn-reveal-trigger border-200 py-3 gx-0 border-top border-bottom">
+                         <div class="col-12">
+                           <div data-todo-offcanvas-toogle="data-todo-offcanvas-toogle" data-todo-offcanvas-target="todoOffcanvas-9">
+                             <div class="form-check mb-1 mb-md-0 d-flex align-items-center lh-1">
+                               <input class="form-check-input flex-shrink-0 form-check-line-through mt-0 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-8" />
+                               <label class="form-check-label mb-0 fs-0 me-2 line-clamp-1" for="checkbox-todo-8">Make ready for release</label>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="col-12">
+                           <div class="d-flex ms-4 lh-1 align-items-center">
+                             <button class="btn p-0 text-700 fs--2 me-2"><span class="fas fa-paperclip me-1"></span>2</button>
+                             <p class="text-700 fs--2 mb-md-0 me-2 mb-0">2o Nov, 2021</p>
+                             <p class="text-700 fs--2 fw-bold mb-md-0 mb-0">1:00 AM</p>
+                           </div>
+                         </div>
+                       </div>
+                     </div><a class="fw-bold fs--1 mt-4 text-decoration-none" href="#!"><span class="fas fa-plus me-1"></span>Add new task</a>
+                   </div>
+                 </div>
+                 <h4 class="mb-3">Files</h4>
+                 <div class="border-top border-300 pt-3 pb-4">
+                   <div class="me-n3">
+                     <div class="d-flex flex-between-center">
+                       <div class="d-flex mb-1"><span class="fa-solid fa-image me-2 text-700 fs--1"></span>
+                         <p class="text-1000 mb-0 lh-1">Silly_sight_1.png</p>
+                       </div>
+                       <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
+                       <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
+                     </div>
+                     <p class="fs--1 text-700 mb-2"><span>768 kb</span><span class="text-400 mx-1">| </span><a href="#!">Shantinan Mekalan </a><span class="text-400 mx-1">| </span><span class="text-nowrap">21st Dec, 12:56 PM</span></p><img class="rounded-2" src="../../assets/img/generic/40.png" alt="" />
+                   </div>
+                 </div>
+                 <div class="border-top border-300 py-3">
+                   <div class="me-n3">
+                     <div class="d-flex flex-between-center">
+                       <div class="d-flex mb-1"><span class="fa-solid fa-image me-2 text-700 fs--1"></span>
+                         <p class="text-1000 mb-0 lh-1">Silly_sight_1.png</p>
+                       </div>
+                       <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
+                       <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
+                     </div>
+                     <p class="fs--1 text-700 mb-1"><span>12.8 mb</span><span class="text-400 mx-1">| </span><a href="#!">Yves Tanguy </a><span class="text-400 mx-1">| </span><span class="text-nowrap">19th Dec, 08:56 PM</span></p>
+                   </div>
+                 </div>
+                 <div class="border-top border-bottom border-300 py-3 mb-3">
+                   <div class="me-n3">
+                     <div class="d-flex flex-between-center">
+                       <div class="d-flex align-items-center mb-1"><span class="fa-solid fa-file-lines me-2 fs--1 text-700"></span>
+                         <p class="text-1000 mb-0 lh-1">Project.txt</p>
+                       </div>
+                       <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
+                       <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
+                     </div>
+                     <p class="fs--1 text-700 mb-1"><span>123 kb</span><span class="text-400 mx-1">|</span><a href="#!">Shantinan Mekalan</a><span class="text-400 mx-1">|</span><span class="text-nowrap">12th Dec, 12:56 PM</span></p>
+                   </div>
+                 </div><a class="fw-bold fs--1 text-decoration-none" href="#!"><span class="fas fa-plus me-1"></span>Add file(s)</a>
+               </div>
+               <div class="col-12 col-md-3">
+                 <h5 class="text-800 mb-3">Add to card</h5>
+                 <div class="mb-6">
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-user-plus"></span>Assignee</button>
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-tag"></span>Labels</button>
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-paperclip"></span>Attachments</button>
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-square-check"></span>Checklist</button>
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-calendar-days"></span>Dates</button>
+                 </div>
+                 <h5 class="text-800 mb-3">Actions</h5>
+                 <div class="mb-6">
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-arrow-right"></span>Move</button>
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-copy"></span>Copy</button>
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-trash"></span>Remove</button>
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-box-archive"></span>Archive</button>
+                   <button class="btn btn-sm btn-soft-secondary rounded-3 mb-2 d-flex align-items-center w-100"><span class="me-2 fa-solid fa-share-nodes"></span>Share</button>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div> -->
+
+
+
+
+
+
+
+
+     I have two views, one for listview of jobs and one for card view of jobs, I want the user to toggle between these views to see their jobs in a way they like, how do i combine the two views below so that they work:
+Listview:
+{% extends 'dashboard.html' %}
+
+{% block content %}
+    <div class="mb-9">
+      <div id="projectSummary" data-list='{"valueNames":["projectName","assigness","start","deadline","task","projectprogress","status","action"],"page":6,"pagination":true}'>
+        <div class="row mb-4 gx-6 gy-3 align-items-center">
+          <div class="col-auto">
+            <h2 class="mb-0">Jobs<span class="fw-normal text-700 ms-3">({{ object_list|length }})</span></h2>
+          </div>
+          <div class="col-auto"><a class="btn btn-primary px-5" href="{% url 'smeApp:job_add' %}"><i class="fa-solid fa-plus me-2"></i>Add new job</a></div>
+        </div>
+        <div class="row g-3 justify-content-between align-items-end mb-4">
+          <div class="col-12 col-sm-auto">
+            <ul class="nav nav-links mx-n2">
+              <li class="nav-item"><a class="nav-link px-2 py-1 active" aria-current="page" href="{% url 'smeApp:job_list' %}">All<span class="text-700 fw-semi-bold">({{ all_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=ongoing">Ongoing<span class="text-700 fw-semi-bold">({{ ongoing_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=cancelled">Cancelled<span class="text-700 fw-semi-bold">({{ cancelled_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=finished">Completed<span class="text-700 fw-semi-bold">({{ completed_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=postponed">Postponed<span class="text-700 fw-semi-bold">({{ postponed_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=work_order">Work Order<span class="text-700 fw-semi-bold">({{ work_order_count }})</span></a></li>
+              <li class="nav-item"><a class="nav-link px-2 py-1" href="{% url 'smeApp:job_list' %}?status=quotes">Quotes<span class="text-700 fw-semi-bold">({{ quotes_count }})</span></a></li>
+            </ul>
+          </div>
+
+          <div class="col-12 col-sm-auto">
+            <div class="d-flex align-items-center">
+              <div class="search-box me-3">
+                <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
+                  <input class="form-control search-input search" type="search" placeholder="Search projects" aria-label="Search" />
+                  <span class="fas fa-search search-box-icon"></span>
+
+                </form>
+              </div><a class="btn btn-phoenix-primary px-3 me-1 border-0 text-900" href="../../apps/project-management/project-list-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="List view"><span class="fa-solid fa-list fs--2"></span></a><a class="btn btn-phoenix-primary px-3 me-1" href="../../apps/project-management/project-board-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Board view">
+                </svg></a><a class="btn btn-phoenix-primary px-3" href="../../apps/project-management/project-card-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Card view">
+                <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  </path>
+                </svg></a>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive scrollbar">
+          <table class="table fs--1 mb-0 border-top border-200">
+            <thead>
+              <tr>
+              <th class="sort white-space-nowrap align-middle ps-0" scope="col" data-sort="projectName" style="width:20%;">
+                <i class="fas fa-user text-primary me-2"></i>Client Name
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="assigness" style="width:10%;">
+                <i class="fas fa-briefcase text-success me-2"></i>Job #
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="start" style="width:10%;">
+                <i class="fas fa-tasks text-info me-2"></i>Status
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="deadline" style="width:15%;">
+                <i class="fas fa-envelope text-warning me-2"></i>Contact Email
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="task" style="width:12%;">
+                <i class="fas fa-credit-card text-danger me-2"></i>Payment Status
+              </th>
+              <th class="sort align-middle ps-3" scope="col" data-sort="projectprogress" style="width:5%;">
+                <i class="fas fa-calendar-alt text-warning me-2"></i>Deadline
+              </th>
+              <th class="sort align-middle text-end" scope="col" data-sort="assigness" style="width:10%;">
+                <i class="fas fa-dollar-sign text-success me-2"></i>Budget
+              </th>
+              <th class="sort align-middle text-end" scope="col" style="width:10%;">
+                <i class="fas fa-cog text-dark me-2"></i>Action
+              </th>
+            </tr>
+</thead>
+<tbody class="list" id="project-list-table-body">
+  {% for job in object_list %}
+    <tr class="position-static">
+      <td class="align-middle time white-space-nowrap ps-0 projectName py-4"><a class="text-decoration-none fw-bold fs-0" href="{% url 'smeApp:job_detail' job.pk %}">{{ job.client.name }}</a></td>
+      <td class="align-middle white-space-nowrap assigness ps-3 py-4">{{ job.po_number }}</td>
+      <td class="align-middle white-space-nowrap start ps-3 py-4">
+        {% if job.status == 'quote' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-primary">{{ job.get_status_display }}</span>
+        {% elif job.status == 'work_order' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-warning">{{ job.get_status_display }}</span>
+        {% elif job.status == 'ongoing' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-info">{{ job.get_status_display }}</span>
+        {% elif job.status == 'completed' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-success">{{ job.get_status_display }}</span>
+        {% elif job.status == 'cancelled' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-danger">{{ job.get_status_display }}</span>
+        {% elif job.status == 'postponed' %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-secondary">{{ job.get_status_display }}</span>
+        {% else %}
+          <span class="badge badge-phoenix fs--2 badge-phoenix-light">{{ job.get_status_display }}</span>
+        {% endif %}
+      </td>
+      <td class="align-middle white-space-nowrap deadline ps-3 py-4">{{ job.client.email }}</td>
+      <td class="align-middle white-space-nowrap task ps-3 py-4">{{ job.payment_status }}</td>
+      <td class="align-middle white-space-nowrap ps-3 projectprogress">{{ job.end_date }}</td>
+      <td class="align-middle white-space-nowrap text-end statuses">{{ job.assigned_worker }}</td>
+      <td class="align-middle white-space-nowrap text-end statuses">{{ job.total_cost }}</td>
+      <td class="align-middle text-end white-space-nowrap pe-0 action">
+        <div class="font-sans-serif btn-reveal-trigger position-static">
+          <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--2" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-v fs--2"></span></button>
+          <div class="dropdown-menu dropdown-menu-end py-2">
+            <a class="dropdown-item" href="{% url 'smeApp:job_detail' job.pk %}">View</a>
+            <a class="dropdown-item" href="{% url 'smeApp:job_edit' job.pk %}">Edit</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-danger" href="{% url 'smeApp:job_delete' job.pk %}">Delete</a>
+          </div>
+        </div>
+      </td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="8" class="text-center">No jobs found.</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+    </table>
+    </div>
+    <div class="d-flex flex-wrap align-items-center justify-content-between py-3 pe-0 fs--1 border-bottom border-200">
+      <div class="d-flex">
+        <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"></p><a class="fw-semi-bold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a class="fw-semi-bold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+          </div>
+          <div class="d-flex">
+            <button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+            <ul class="mb-0 pagination"></ul>
+            <button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer position-absolute">
+      <div class="row g-0 justify-content-between align-items-center h-100">
+        <div class="col-12 col-sm-auto text-center">
+          <p class="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span class="d-none d-sm-inline-block"></span><span class="d-none d-sm-inline-block mx-1">|</span><br class="d-sm-none" />2023 &copy;<a class="mx-1" href="https://themewagon.com">Themewagon</a></p>
+        </div>
+        <div class="col-12 col-sm-auto text-center">
+          <p class="mb-0 text-600">v1.10.0</p>
+        </div>
+      </div>
+    </footer>
+{% endblock %}
+
+cardview:
+{% extends 'dashboard.html' %}
+{% load static %}
+
+{% block content %}
+     <div class="row gx-6 gy-3 mb-4 align-items-center">
+       <div class="col-auto">
+         <h2 class="mb-0">Jobs<span class="fw-normal text-700 ms-3">({{ object_list|length }})</span></h2>
+       </div>
+       <div class="col-auto"><a class="btn btn-primary px-5" href="{% url 'smeApp:job_add' %}"><i class="fa-solid fa-plus me-2"></i>Add new project</a></div>
+     </div>
+     <div class="row justify-content-between align-items-end mb-4 g-3">
+       #same code as list view here
+       <div class="col-12 col-sm-auto">
+         <div class="d-flex align-items-center">
+           <div class="search-box me-3">
+             <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
+               <input class="form-control search-input search" type="search" placeholder="Search projects" aria-label="Search" />
+               <span class="fas fa-search search-box-icon"></span>
+             </form>
+           </div><a class="btn btn-phoenix-primary px-3 me-1" href="../../apps/project-management/project-list-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="List view"><span class="fa-solid fa-list fs--2"></span></a><a class="btn btn-phoenix-primary px-3 me-1" href="../../apps/project-management/project-board-view.html" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Board view">
+             <svg width="9" height="9" viewbox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+               /path>
+             </svg></a>
+         </div>
+       </div>
+     </div>
+     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3 mb-9">
+  {% for job in object_list %}
+    <div class="col">
+      <div class="card h-100 hover-actions-trigger">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <h4 class="mb-2 line-clamp-1 lh-sm flex-1 me-5">{{ job.description|title }}</h4>
+            <div class="hover-actions top-0 end-0 mt-4 me-4">
+              <button class="btn btn-primary btn-icon flex-shrink-0" data-bs-toggle="modal" data-bs-target="#projectsCardViewModal"><span class="fa-solid fa-chevron-right"></span></button>
+            </div>
+          </div>
+          {% if job.status == 'quote' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-primary"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'work order' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-warning"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'ongoing' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-info"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'completed' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-success"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'cancelled' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ job.status }}</span></span>
+          {% elif job.status == 'postponed' %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-secondary"><span class="badge-label">{{ job.status }}</span></span>
+          {% else %}
+            <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-light"><span class="badge-label">{{ job.status }}</span></span>
+          {% endif %}
+
+          <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-user me-2 text-700 fs--1 fw-extra-bold"></span>
+            <p class="fw-bold mb-0 text-truncate lh-1">Client : <span class="fw-semi-bold text-primary ms-1">{{ job.client.name }}</span></p>
+          </div>
+          <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-credit-card me-2 text-700 fs--1 fw-extra-bold"></span>
+            <p class="fw-bold mb-0 lh-1">Budget : <span class="ms-1 text-1100">{{ job.total_cost }}</span></p>
+          </div>
+          <div class="d-flex align-items-center mb-4"><span class="fa-solid fa-credit-card me-2 text-700 fs--1 fw-extra-bold"></span>
+            <p class="fw-bold mb-0 lh-1">Payment Type: <span class="ms-1 text-1100">{{ job.payment_type|title }}</span></p>
+          </div>
+          <div class="d-flex align-items-center mt-4">
+            <p class="mb-0 fw-bold fs--1">Started :<span class="fw-semi-bold text-600 ms-1">{{ job.start_date }}</span></p>
+          </div>
+          <div class="d-flex align-items-center mt-2">
+            <p class="mb-0 fw-bold fs--1">Deadline : <span class="fw-semi-bold text-600 ms-1">{{ job.end_date }}</span></p>
+          </div>
+          <div class="d-flex d-lg-block d-xl-flex justify-content-between align-items-center mt-3">
+               <div class="avatar-group">
+
+               </div>
+               <div class="mt-lg-3 mt-xl-0"> <i class="fa-solid fa-list-check me-1"></i>
+                <p class="d-inline-block fw-bold mb-0">Job #: <span class="fw-normal">{{ job.po_number }}</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% endblock %}
+
+
+
+
+#expenses-listView
+
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load thumbnails %}
+
+{% block content %}
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+
+  <nav class="mb-2" aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <div class="mb-3" id="editDeleteButtons" style="display:none;">
+        <button id="editExpense" class="btn btn-phoenix-secondary px-3 px-sm-5 me-2">
+            <span class="fa-solid fa-edit me-sm-2"></span><span class="d-none d-sm-inline">Edit</span>
+        </button>
+        <button id="deleteExpense" class="btn btn-phoenix-danger me-2">
+            <span class="fa-solid fa-trash me-2"></span>
+        </button>
+    </div>
+  </ol>
+</nav>
+
+<div class="pb-8">
+  <h2 class="mb-4">Expense Reports</h2>
+  <div id="reports" data-list='{"valueNames":["title","text","priority","reportsby","reports","date"],"page":10,"pagination":true}'>
+    <div class="row g-3 justify-content-between mb-2">
+      <div class="col-12">
+        <div class="d-md-flex justify-content-between">
+          <div class="mb-3">
+              <a href="{% url 'smeApp:add_expense' %}"><button class="btn btn-primary me-4"><span class="fas fa-plus me-2"></span>Add Expense</button></a>
+              <a href="{% url 'smeApp:upload_receipt' %}"><button class="btn btn-primary me-4"><span class="fa-solid fas fa-camera fs--1 me-2"></span>Scan Receipt </button></a>
+              <div class="form-check form-check-inline mb-3">
+                <input class="form-check-input" type="checkbox" id="markAll" />
+                <label class="form-check-label" for="markAll" style="font-size: 1.15rem;">Select All</label>
+            </div>
+
+          </div>
+          <div class="d-flex mb-3">
+            <div class="search-box me-2">
+              <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
+                <input class="form-control search-input search" type="search" placeholder="Search by name" aria-label="Search" />
+                <span class="fas fa-search search-box-icon"></span>
+
+              </form>
+            </div>
+              <button class="btn px-3 btn-phoenix-secondary" type="button" data-bs-toggle="modal" data-bs-target="#reportsFilterModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa-solid fa-filter text-primary" data-fa-transform="down-3"></span></button>
+              <div class="modal fade" id="reportsFilterModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content border">
+                    <form id="addEventForm" autocomplete="off">
+                      <div class="modal-header border-200 p-4">
+                        <h5 class="modal-title text-1000 fs-2 lh-sm">Filter</h5>
+                        <button class="btn p-1 text-900" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
+                      </div>
+                      <div class="modal-body pt-4 pb-2 px-4">
+                        <div class="mb-3">
+                          <label class="fw-bold mb-2 text-1000" for="priority">Priority</label>
+                          <select class="form-select" id="priority">
+                            <option value="urgent" selected="selected">Urgent</option>
+                            <option value="medium">Medium </option>
+                            <option value="high">High</option>
+                            <option value="low">Low</option>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label class="fw-bold mb-2 text-1000" for="createDate">Create Date</label>
+                          <select class="form-select" id="createDate">
+                            <option value="today" selected="selected">Today</option>
+                            <option value="last7Days">Last 7 Days</option>
+                            <option value="last30Days">Last 30 Days</option>
+                            <option value="chooseATimePeriod">Choose a time period</option>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label class="fw-bold mb-2 text-1000" for="category">Category</label>##use my own categories to filter
+                          <select class="form-select" id="category">
+                            <option value="salesReports" selected="selected">Sales Reports</option>
+                            <option value="hrReports">HR Reports</option>
+                            <option value="marketingReports">Marketing Reports</option>
+                            <option value="administrativeReports">Administrative Reports</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="modal-footer d-flex justify-content-end align-items-center px-4 pb-4 border-0 pt-3">
+                        <button class="btn btn-sm btn-phoenix-primary px-4 fs--2 my-0" type="submit"> <span class="fas fa-arrows-rotate me-2 fs--2"></span>Reset</button>
+                        <button class="btn btn-sm btn-primary px-9 fs--2 my-0" type="submit">Done</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 list" id="reportsList">
+        {% for expense in expenses %}
+        <div class="col-12 col-xl-6" data-id="{{ expense.id }}">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="border-bottom">
+                <div class="d-flex align-items-start mb-1">
+                  <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" data-id="{{ expense.id }}" />
+                  </div>
+                  <div class="d-sm-flex align-items-center ps-2"><a class="fw-bold fs-1 lh-sm text-decoration-none title line-clamp-1 me-sm-4" href="../../apps/crm/reports-details.html">{{ expense.vendor }}</a>
+                    <div class="d-flex align-items-center"><span class="fw-bold fs--1 text-900 lh-2"></span></div>
+                  </div>
+                </div>
+                <p class="fs--1 fw-semi-bold text-900 ms-4 text mb-4 ps-2">{{ expense.description }}</p>
+              </div>
+              <div class="row g-1 g-sm-3 mt-2 lh-1">
+              <div class="col-12 col-sm-auto flex-1 text-truncate">
+                <span class="fw-bold fs-0">
+                <span class="fa-solid fa-dollar-sign"></span> {{ expense.amount }}
+                </span>
+                </div>
+                <div class="col-12 col-sm-auto">
+                  <div class="d-flex align-items-center"><span class="me-2" data-feather="grid" style="stroke-width:2;"></span>
+                    <p class="mb-0 fs--1 fw-semi-bold text-700 reports">{{ expense.category}}</p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-auto">
+                  <div class="d-flex align-items-center"><span class="me-2" data-feather="clock" style="stroke-width:2;"></span>
+                    <p class="mb-0 fs--1 fw-semi-bold text-700 date">{{expense.date_created }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-thumbnail">
+              {% if expense.receipt %}
+              <a href="{{ expense.receipt.url }}" target="_blank">
+                <img src="{{ expense.receipt.url|get_thumbnail_url }}" alt="Thumbnail" class="rounded">
+              </a>
+              {% else %}
+              <img src="{% static 'assets/img/favicons/receipt1.png' %}" alt="Thumbnail" class="rounded">
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <!-- <div class="mb-3" id="editDeleteButtons" style="display:none;">
+          <button id="editExpense" class="btn btn-primary me-4"><span class="fas fa-edit me-2"></span>Edit Expense</button>
+          <button id="deleteExpense" class="btn btn-danger me-4"><span class="fas fa-trash me-2"></span>Delete Expense</button>
+        </div> -->
+        <form id="csrfTokenForm" style="display:none;">
+            <input type="hidden" name="csrfmiddlewaretoken" id="csrfToken" value="{{ csrf_token }}">
+        </form>
+
+      </div>
+
+
+      <div class="row align-items-center justify-content-between py-2 pe-0 fs--1 mt-2">
+        <div class="col-auto d-flex">
+          <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"></p><a class="fw-semi-bold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a class="fw-semi-bold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+        </div>
+        <div class="col-auto d-flex">
+          <button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+          <ul class="mb-0 pagination"></ul>
+          <button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer position-absolute">
+    <div class="row g-0 justify-content-between align-items-center h-100">
+      <div class="col-12 col-sm-auto text-center">
+        <p class="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span class="d-none d-sm-inline-block"></span><span class="d-none d-sm-inline-block mx-1">|</span><br class="d-sm-none" />2023 &copy;<a class="mx-1" href="https://themewagon.com">Themewagon</a></p>
+      </div>
+      <div class="col-12 col-sm-auto text-center">
+        <p class="mb-0 text-600">v1.11.0</p>
+      </div>
+    </div>
+  </footer>
+{% block extrajs %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.form-check-input');
+    const editDeleteButtons = document.getElementById('editDeleteButtons');
+    const editExpenseButton = document.getElementById('editExpense');
+    const deleteExpenseButton = document.getElementById('deleteExpense');
+
+    function updateButtons() {
+      const checked = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+      if (checked.length > 0) {
+        editDeleteButtons.style.display = 'block';
+        if (checked.length > 1) {
+          editExpenseButton.disabled = true;
+        } else {
+          editExpenseButton.disabled = false;
+        }
+      } else {
+        editDeleteButtons.style.display = 'none';
+      }
+    }
+
+
+    function editExpense() {
+      const checked = Array.from(checkboxes).find(checkbox => checkbox.checked);
+      if (checked) {
+        const expenseId = checked.dataset.id;
+        window.location.href = `{% url 'smeApp:expense-update' 0 %}`.replace('0', expenseId);
+      }
+    }
+    async function deleteExpense() {
+      const checked = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+      if (checked.length > 0) {
+        const expenseIds = checked.map(checkbox => checkbox.dataset.id);
+        try {
+          const csrfToken = document.querySelector('#csrfToken').value;
+          const response = await fetch(`{% url 'smeApp:api_expense_delete' %}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ ids: expenseIds })
+          });
+
+          if (response.status === 204) {
+            // Remove the deleted expense cards from the UI
+            expenseIds.forEach(expenseId => {
+              const expenseCard = document.querySelector(`[data-id="${expenseId}"]`);
+              if (expenseCard) {
+                expenseCard.remove();
+              } else {
+                console.warn(`Could not find expense card with id ${expenseId}`);
+              }
+            });
+          } else {
+            throw new Error(`Unexpected response status: ${response.status}`);
+          }
+
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while deleting the expense");
+        }
+      }
+    }
+
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateButtons);
+    });
+
+    editExpenseButton.addEventListener('click', editExpense);
+    deleteExpenseButton.addEventListener('click', (event) => {
+      let target = event.target;
+      while (target && target !== deleteExpenseButton) {
+        target = target.parentElement;
+      }
+      if (target) {
+        deleteExpense();
+      }
+    });
+
+    const markAllCheckbox = document.getElementById('markAll');
+
+    function markAllExpenses() {
+        const isChecked = markAllCheckbox.checked;
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+        updateButtons();
+    }
+
+    markAllCheckbox.addEventListener('change', markAllExpenses);
+
+  });
+</script>
+{% endblock %}
+{% endblock %}

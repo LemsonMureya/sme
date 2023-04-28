@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
   <title>Transactions</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
@@ -26,19 +26,22 @@
 <body>
   <div class="card">
     <div class="card-body">
-  <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-    <h2>Transactions</h2>
-    <div>
-      <a href="{% url 'smeApp:add_expense' %}" class="btn btn-primary me-2">
-        <i class="fas fa-plus-circle"></i> Add Expense
-      </a>
-      <a href="{% url 'smeApp:add_income' %}" class="btn btn-primary">
-        <i class="fas fa-plus-circle"></i> Add Income
-      </a>
+      <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+        <h2>Transactions</h2>
+        <div>
+          <a href="{% url 'smeApp:add_expense' %}" class="btn btn-primary me-2">
+            <i class="fas fa-plus-circle"></i> Add Expense
+          </a>
+          <a href="{% url 'smeApp:add_income' %}" class="btn btn-primary me-2">
+            <i class="fas fa-plus-circle"></i> Add Income
+          </a>
+          <a href="{% url 'smeApp:upload_receipt' %}" class="btn btn-primary">
+            <i class="fas fa-camera"></i> Scan Receipt
+          </a>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-</div>
 <br>
 
 <div class="card">
@@ -47,15 +50,15 @@
     <div class="row">
       <div class="col-md-4">
         <h4 class="mb-2">Total Expenses</h4>
-        <h3 class="text-danger">{{ total_expenses }}</h3>
+        <h3 class="text-danger">{{ total_expenses|floatformat:2 }}</h3>
       </div>
       <div class="col-md-4">
         <h4 class="mb-2">Total Income</h4>
-        <h3 class="text-success">{{ total_incomes }}</h3>
+        <h3 class="text-success">{{ total_incomes|floatformat:2 }}</h3>
       </div>
       <div class="col-md-4">
         <h4 class="mb-2">Profit/Loss</h4>
-        <h3 class="{% if profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">{{ profit_loss }}</h3>
+        <h3 class="{% if profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">{{ profit_loss|floatformat:2 }}</h3>
       </div>
     </div>
   </div>
@@ -81,7 +84,7 @@
         {% for expense in expenses %}
         <tr>
           <td class="col-date">{{ expense.date_created }}</td>
-          <td class="col-merchant">{{ expense.merchant }}</td>
+          <td class="col-merchant">{{ expense.vendor }}</td>
           <td class="col-category">{{ expense.category }}</td>
           <td class="col-total">{{ expense.amount }}</td>
           <td class="col-description">{{ expense.description }}</td>

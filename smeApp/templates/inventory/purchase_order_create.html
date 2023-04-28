@@ -1,0 +1,103 @@
+{% extends 'dashboard.html' %}
+{% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+
+<form method="post" enctype="multipart/form-data" action="{% url 'smeApp:purchase_order_create' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="{{ purchase_order_form.supplier.auto_id }}" class="form-label">Supplier</label>
+        <select class="form-select" id="{{ purchase_order_form.supplier.auto_id }}" name="{{ purchase_order_form.supplier.html_name }}" required>
+            <option value="">Choose a supplier...</option>
+            {% for supplier in purchase_order_form.supplier.field.queryset %}
+                <option value="{{ supplier.pk }}" {% if purchase_order_form.supplier.value == supplier.pk|stringformat:'s' %}selected{% endif %}>{{ supplier.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="{{ purchase_order_form.purchase_date.auto_id }}" class="form-label">Purchase Date</label>
+        <input type="date" class="form-control" id="{{ purchase_order_form.purchase_date.auto_id }}" name="{{ purchase_order_form.purchase_date.html_name }}" value="{{ purchase_order_form.purchase_date.value|default:'' }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="{{ purchase_order_form.receive_by_date.auto_id }}" class="form-label">Receive By Date</label>
+        <input type="date" class="form-control" id="{{ purchase_order_form.receive_by_date.auto_id }}" name="{{ purchase_order_form.receive_by_date.html_name }}" value="{{ purchase_order_form.receive_by_date.value|default:'' }}" required>
+    </div>
+    <div class="mb-3">
+      <table id="form-set">
+    {{ purchase_order_item_formset.management_form }}
+    {% for form in purchase_order_item_formset %}
+        <tr>
+            {% for field in form %}
+                <td>
+                    <div class="mb-3">
+                        {{ field.errors }}
+                        <label for="{{ field.auto_id }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                </td>
+            {% endfor %}
+            <td>
+                <button type="button" class="btn btn-danger remove-form-row">Remove</button>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+    <button type="button" class="btn btn-secondary add-form-row">Add Item</button>
+  </div>
+    <div class="mb-3">
+        <label for="{{ purchase_order_form.status.auto_id }}" class="form-label">Order Status</label>
+        <select class="form-select" id="{{ purchase_order_form.status.auto_id }}" name="{{ purchase_order_form.status.html_name }}" required>
+            <option value="">Choose a status...</option>
+            {% for status, status_label in purchase_order_form.status.field.choices %}
+                <option value="{{ status }}" {% if purchase_order_form.status.value == status %}selected{% endif %}>{{ status_label }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+{% endblock %}
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let formIdx = {{ formset|length }};
+
+        document.querySelector('.add-form-row').addEventListener('click', function () {
+            let newRow = document.querySelector('#form-set tr:last-child').cloneNode(true);
+            newRow.querySelectorAll('input, select').forEach(function (input) {
+                input.setAttribute('name', input.getAttribute('name').replace(/\d+/g, formIdx));
+                input.setAttribute('id', input.getAttribute('id').replace(/\d+/g, formIdx));
+                input.value = '';
+            });
+            newRow.querySelectorAll('label').forEach(function (label) {
+                label.setAttribute('for', label.getAttribute('for').replace(/\d+/g, formIdx));
+            });
+            document.querySelector('#form-set').appendChild(newRow);
+            formIdx++;
+            document.querySelector('#id_purchaseorderitem_set-TOTAL_FORMS').value = formIdx;
+
+            // Add event listener to the new 'Remove' button
+            newRow.querySelector('.remove-form-row').addEventListener('click', function () {
+                newRow.remove();
+                formIdx--;
+                document.querySelector('#id_purchaseorderitem_set-TOTAL_FORMS').value = formIdx;
+            });
+        });
+
+        document.querySelectorAll('.remove-form-row').forEach(function (button) {
+            button.addEventListener('click', function () {
+                button.closest('tr').remove();
+                formIdx--;
+                document.querySelector('#id_purchaseorderitem_set-TOTAL_FORMS').value = formIdx;
+            });
+        });
+    });
+</script>
+{% endblock %}

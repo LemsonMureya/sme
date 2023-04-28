@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.core.validators import FileExtensionValidator
 
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -25,16 +24,28 @@ class CustomUserManager(BaseUserManager):
 
 class CompanyProfile(models.Model):
     BUSINESS_CATEGORY_CHOICES = (
-        ('art_photography_creative', 'Art, Photography & Creative Services'),
-        ('construction_home_improvement', 'Construction & Home Improvement'),
-        ('consulting_professional', 'Consulting & Professional Services'),
-        ('financial_services_insurance', 'Financial Services & Insurance'),
-        ('hair_spa_aesthetics', 'Hair, Spa & Aesthetics'),
-        ('nonprofits_associations_groups', 'Non-profits, Associations & Groups'),
-        ('real_estate', 'Real Estate'),
-        ('retailers_resellers_sales', 'Retailers, Resellers & Sales'),
-        ('web_tech_media', 'Web, Tech & Media'),
+        ('art, photography & creative', 'Art, Photography & Creative Services'),
+        ('construction & home improvement', 'Construction & Home Improvement'),
+        ('consulting & professional', 'Consulting & Professional Services'),
+        ('financial services & insurance', 'Financial Services & Insurance'),
+        ('hair, spa & aesthetics', 'Hair, Spa & Aesthetics'),
+        ('non-profits, associations & groups', 'Non-profits, Associations & Groups'),
+        ('real estate', 'Real Estate'),
+        ('retailers, resellers & sales', 'Retailers, Resellers & Sales'),
+        ('web, tech & media', 'Web, Tech & Media'),
         ('other', 'Other'),
+    )
+    BUSINESS_TYPE_CHOICES = [
+        ('service', 'Service'),
+        ('sales', 'Sales'),
+    ]
+
+    NUM_EMPLOYEES_CHOICES = (
+        ('1', '1'),
+        ('2-10', '2-10'),
+        ('11-50', '11-50'),
+        ('51-200', '51-199'),
+        ('200+', '200+'),
     )
 
     name = models.CharField(max_length=255)
@@ -44,6 +55,13 @@ class CompanyProfile(models.Model):
     email = models.EmailField(blank=True, null=True)
     logo = models.ImageField(upload_to='company_logos/', validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif'])], blank=True, null=True)
     industry = models.CharField(max_length=50, choices=BUSINESS_CATEGORY_CHOICES, default='other')
+    business_type = models.CharField(max_length=10, choices=BUSINESS_TYPE_CHOICES, default='service')
+    num_employees = models.CharField(max_length=20, choices=NUM_EMPLOYEES_CHOICES, blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
+    zip_code = models.CharField(max_length=10, blank=True, null=True)
+    date_joined = models.DateField(default=timezone.now, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -59,8 +77,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='Other')
-    company =  models.OneToOneField(CompanyProfile, on_delete=models.SET_NULL, null=True, blank=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='Employee')
+    company = models.ForeignKey(CompanyProfile, on_delete=models.SET_NULL, null=True, related_query_name="customuser")
     photo = models.ImageField(upload_to='user_photos/', blank=True, default='user_photos/default-avatar.png')
     verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -79,13 +97,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'user'
         verbose_name_plural = 'users'
 
-
 class Client(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     contact_name = models.CharField(max_length=255)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='clients')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     ROLE_CHOICES = (
         ('job_contact', 'Job Contact'),
@@ -95,7 +114,6 @@ class Client(models.Model):
         ('vendor', 'Vendor'),
         ('Other', 'Other'),
     )
-
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
     def __str__(self):
@@ -109,18 +127,13 @@ class Note(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     related_object = models.ForeignKey('Job', on_delete=models.CASCADE)
 
-    def save(self, *args, **kwargs):
-        if not self.author_id:
-            self.author = get_user_model().objects.first()  # Set the author to the currently logged in user
-        super(Note, self).save(*args, **kwargs)
-
     def __str__(self):
         return self.related_object.client.name
 
 class Job(models.Model):
     STATUS_CHOICES = (
         ('quote', 'Quote'),
-        ('work_order', 'Work Order'),
+        ('work order', 'Work Order'),
         ('ongoing', 'Ongoing'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
@@ -128,14 +141,14 @@ class Job(models.Model):
     )
 
     CATEGORY_CHOICES = (
-        ('after_hours', 'After Hours'),
+        ('after hours', 'After Hours'),
         ('standard', 'Standard'),
         ('vip', 'VIP'),
         ('warranty', 'Warranty'),
     )
     PAYMENT_TYPE_CHOICES = (
-        ('credit_card', 'Credit Card'),
-        ('debit_card', 'Debit Card'),
+        ('credit card', 'Credit Card'),
+        ('debit card', 'Debit Card'),
         ('cash', 'Cash'),
         ('check', 'Check'),
         ('paypal', 'PayPal'),
@@ -143,12 +156,12 @@ class Job(models.Model):
     )
     PAYMENT_STATUS_CHOICES = (
         ('unpaid', 'Unpaid'),
-        ('partially_paid', 'Partially Paid'),
+        ('partially paid', 'Partially Paid'),
         ('paid', 'Paid'),
         ('late', 'Late Payment'),
         ('pending', 'Pending Payment'),
         ('overdue', 'Overdue'),
-        ('not_invoiced', 'Not Yet Invoiced'),
+        ('not invoiced', 'Not Yet Invoiced'),
         ('refunded', 'Refunded'),
         ('cancelled', 'Cancelled'),
         ('other', 'Other'),
@@ -166,6 +179,8 @@ class Job(models.Model):
     payment_status = models.CharField(max_length=20, blank=True, null=True, choices=PAYMENT_STATUS_CHOICES)
     payment_type = models.CharField(max_length=20, blank=True, null=True, choices=PAYMENT_TYPE_CHOICES)
     assigned_worker = models.CharField(max_length=255, blank=True, null=True)
+    revenue_recorded = models.BooleanField(default=False)
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='jobs')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -203,8 +218,10 @@ class Expense(models.Model):
     date_created = models.DateField(auto_now_add=False)
     date_modified = models.DateField(auto_now=True)
     notes = models.TextField(blank=True, null=True)
+    job = models.ForeignKey(Job, on_delete=models.SET_NULL, blank=True, null=True, related_name='expenses')
     receipt = models.FileField(upload_to='receipts/', blank=True, null=True)
     vendor = models.CharField(max_length=100, blank=True, null=True)
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='expenses')
 
     def __str__(self):
         return self.description
@@ -232,22 +249,55 @@ class Income(models.Model):
     notes = models.TextField(blank=True, null=True)
     invoice = models.FileField(upload_to='invoices/', blank=True, null=True)
     customer = models.CharField(max_length=100, blank=True, null=True)
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='incomes')
 
     def __str__(self):
         return self.description
 
 class Invoice(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    UNPAID = 'Unpaid'
+    PARTIALLY_PAID = 'Partially Paid'
+    PAID = 'Paid'
+    LATE = 'Late Payment'
+    PENDING = 'Pending Payment'
+    OVERDUE = 'Overdue'
+    NOT_INVOICED = 'Not Yet Invoiced'
+    REFUNDED = 'Refunded'
+    CANCELLED = 'Cancelled'
+    OTHER = 'Other'
+
+    PAYMENT_STATUS_CHOICES = [
+        (UNPAID, 'Unpaid'),
+        (PARTIALLY_PAID, 'Partially Paid'),
+        (PAID, 'Paid'),
+        (LATE, 'Late Payment'),
+        (PENDING, 'Pending Payment'),
+        (OVERDUE, 'Overdue'),
+        (NOT_INVOICED, 'Not Yet Invoiced'),
+        (REFUNDED, 'Refunded'),
+        (CANCELLED, 'Cancelled'),
+        (OTHER, 'Other'),
+    ]
+
     company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)  
     invoice_number = models.CharField(max_length=50)
     invoice_date = models.DateField()
     due_date = models.DateField()
+    tax = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # Tax in percentage
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Discount in currency value
+    notes = models.TextField(blank=True, null=True)
+    color_accent = models.CharField(max_length=7, default='#0097eb')
+    job = models.ForeignKey(Job, on_delete=models.SET_NULL, blank=True, null=True, related_name='invoices')  # New field added
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default=UNPAID)
 
     def get_total_amount(self):
-        total = 0
+        subtotal = 0
         for item in self.invoiceitem_set.all():
-            total += item.quantity * item.unit_price
+            subtotal += item.quantity * item.unit_price
+
+        total_tax = (subtotal * self.tax) / 100
+        total = subtotal + total_tax - self.discount
         return total
 
     def __str__(self):
@@ -262,3 +312,107 @@ class InvoiceItem(models.Model):
 
     def __str__(self):
         return self.item_name
+
+class Supplier(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Supplier Name')
+    address = models.CharField(max_length=255, blank=True, null=True, verbose_name='Address', help_text='Street address, city, and zip code.')
+    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name='Phone Number')
+    email = models.EmailField(blank=True, null=True, verbose_name='Email Address')
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='suppliers')
+
+    def __str__(self):
+        return self.name
+
+class ProductType(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Type Name')
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='product_types')
+
+    @staticmethod
+    def get_default_type(company):
+        default_type, created = ProductType.objects.get_or_create(name='Default Type', company=company)
+        return default_type.id
+
+    def __str__(self):
+        return self.name
+
+class StockItem(models.Model):
+    item_id = models.CharField(max_length=255, primary_key=True, verbose_name='Item ID')
+    name = models.CharField(max_length=255, verbose_name='Item Name')
+    product_type = models.ForeignKey(ProductType, on_delete=models.SET_NULL, null=True, related_name='stock_items', verbose_name='Product Type', default=None)
+    image = models.ImageField(upload_to='stock_items/', blank=True, null=True, verbose_name='Item Image')
+    barcode = models.CharField(max_length=255, blank=True, null=True, verbose_name='Barcode', help_text='Optional barcode for the item.')
+    description = models.TextField(blank=True, null=True, verbose_name='Description')
+    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, related_name='stock_items', verbose_name='Supplier')
+    unit_selling_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Unit Selling Price')
+    quantity = models.PositiveIntegerField(default=0, verbose_name='Quantity in Inventory')
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='stock_items', verbose_name='Company')
+
+    def __str__(self):
+        return self.name
+
+class PurchaseOrder(models.Model):
+    PENDING = 'Pending'
+    CONFIRMED = 'Confirmed'
+    RECEIVED = 'Received'
+    CANCELLED = 'Cancelled'
+
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (CONFIRMED, 'Confirmed'),
+        (RECEIVED, 'Received'),
+        (CANCELLED, 'Cancelled'),
+    ]
+
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, verbose_name='Supplier')
+    purchase_date = models.DateField(verbose_name='Purchase Date')
+    receive_by_date = models.DateField(verbose_name='Receive By Date')
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default=PENDING, verbose_name='Order Status')
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='purchase_orders', verbose_name='Company')
+
+    def get_total_purchase_cost(self):
+        total_cost = 0
+        for item in self.purchase_order_items.all():
+            total_cost += item.total_price
+        return total_cost
+
+    def __str__(self):
+        return f'Purchase Order {self.pk} - {self.supplier.name}'
+
+class PurchaseOrderItem(models.Model):
+    purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='purchase_order_items', verbose_name='Purchase Order')
+    stock_item = models.ForeignKey(StockItem, on_delete=models.CASCADE, verbose_name='Stock Item')
+    quantity = models.PositiveIntegerField(verbose_name='Quantity Ordered', help_text='The number of items ordered.')
+    unit_purchase_cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Unit Purchase Cost')
+    expense = models.ForeignKey(Expense, on_delete=models.SET_NULL, null=True, blank=True)
+
+    @property
+    def total_purchase_price(self):
+        return self.quantity * self.unit_purchase_cost
+
+    def __str__(self):
+        return f'{self.stock_item.name} - {self.quantity}'
+
+class Sale(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    sale_date = models.DateField(verbose_name='Sale Date', help_text='The date the sale was made.')
+    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, related_name='sales')
+    revenue_recorded = models.BooleanField(default=False)
+
+    def get_total_amount(self):
+        total = 0
+        for item in self.sale_items.all():
+            total += item.selling_price * item.quantity
+        return total
+
+    def __str__(self):
+        return f'Sale {self.pk} - {self.client.name}'
+
+class SaleItem(models.Model):
+    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, related_name='sale_items')
+    stock_item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(verbose_name='Quantity Sold', help_text='The number of items sold in this transaction.')
+    selling_price = models.DecimalField(max_digits=10, decimal_places=2)
+    expense = models.ForeignKey(Expense, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.stock_item.name} - {self.quantity}'

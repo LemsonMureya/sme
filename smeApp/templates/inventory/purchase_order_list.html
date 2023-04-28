@@ -1,0 +1,91 @@
+{% extends 'dashboard.html' %}
+{% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<div class="no-gutters mt-4 col-12 full-width-mobile">
+  <h1 class="mb-4">Purchase Order List</h1>
+  <div class="list-group">
+    {% for purchase_order in object_list %}
+    <div class="list-group-item">
+      <div class="d-flex w-100 justify-content-between">
+        <div class="d-flex flex-row">
+          <div class="me-3">
+            <i class="fas fa-truck text-primary fs-4"></i>
+          </div>
+          <div>
+            <h5 class="mb-1">{{ purchase_order.supplier }}</h5>
+            <p class="mb-0"><i class="fas fa-calendar-alt text-secondary me-1"></i><small class="text-muted">Purchase Date: {{ purchase_order.purchase_date }}</small></p>
+            <p class="mb-0"><i class="fas fa-calendar-check text-secondary me-1"></i><small class="text-muted">Receive By: {{ purchase_order.receive_by_date }}</small></p>
+          </div>
+        </div>
+        <div class="d-flex flex-column">
+          <span class="badge bg-info">{{ purchase_order.status }}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="mt-4">
+    <a href="{% url 'smeApp:purchase_order_create' %}" class="btn btn-primary custom-button"><i class="fas fa-plus me-2"></i>Create New Purchase Order</a>
+  </div>
+</div>
+
+{% block extra_css %}
+<style>
+  .list-group-item {
+    border-radius: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 576px) {
+    .container.no-gutters {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .list-group-item {
+      border-radius: 0;
+    }
+    .custom-button {
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .full-width-mobile {
+      max-width: 100% !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  .custom-button {
+    border-radius: 20px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .custom-button:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+
+</style>
+{% endblock %}
+{% endblock %}

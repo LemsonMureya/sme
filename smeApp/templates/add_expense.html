@@ -9,10 +9,16 @@
       {{ form.category }}
     </div>
     <div class="mb-3">
+        {{ form.vendor.label_tag }} {{ form.vendor }}
+    </div>
+    <div class="mb-3">
         {{ form.description.label_tag }} {{ form.description }}
     </div>
     <div class="mb-3">
         {{ form.amount.label_tag }} {{ form.amount }}
+    </div>
+    <div class="mb-3">
+        {{ form.job.label_tag }} {{ form.job }}
     </div>
     <div class="mb-3">
         {{ form.date_created.label_tag }} {{ form.date_created }}
@@ -24,19 +30,9 @@
         <label class="form-label">{{ form.receipt.label }}</label>
         {{ form.receipt }}
     </div>
-    <div class="mb-3">
-        {{ form.vendor.label_tag }} {{ form.vendor }}
-    </div>
+    {{ form.uploaded_receipt_path }}
+    {{ form.uploaded_receipt_image }}
     <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Expense</button>
   </form>
-<footer class="footer position-absolute">
-  <div class="row g-0 justify-content-between align-items-center h-100">
-    <div class="col-12 col-sm-auto text-center">
-      <p class="mb-0 mt-2 mt-sm-0 text-900">Thank you for creating with Phoenix<span class="d-none d-sm-inline-block"></span><span class="d-none d-sm-inline-block mx-1">|</span><br class="d-sm-none" />2023 &copy;<a class="mx-1" href="https://themewagon.com">Themewagon</a></p>
-    </div>
-    <div class="col-12 col-sm-auto text-center">
-      <p class="mb-0 text-600">v1.10.0</p>
-    </div>
-  </div>
-</footer>
+
 {% endblock %}

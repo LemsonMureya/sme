@@ -3,6 +3,7 @@
 {% block content %}
 
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
@@ -10,16 +11,60 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+
+  <style>
+    .initials-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+      border-radius: 50%;
+    }
+
+    .modern-button {
+      background-image: linear-gradient(90deg, #4C84FF 0%, #B768FF 100%);
+      border: none;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      padding: 8px 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 25px;
+      transition: background-image 0.3s;
+    }
+
+    .modern-button:hover {
+      background-image: linear-gradient(90deg, #B768FF 0%, #4C84FF 100%);
+    }
+
+    @media screen and (max-width: 767px) {
+      .modern-button {
+        font-size: 12px;
+        padding: 8px 16px;
+        min-width: 40px;
+        font-weight: bold;
+      }
+
+      .modern-button.icon-only {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .modern-button.icon-only span {
+        display: none;
+      }
+    }
+  </style>
+
 </head>
 
-<!-- <div class="content"> -->
-  <nav class="mb-2" aria-label="breadcrumb">
-    <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item"><a href="#!">Page 1</a></li>
-      <li class="breadcrumb-item"><a href="#!">Page 2</a></li>
-      <li class="breadcrumb-item active">Default</li>
-    </ol>
-  </nav>
   <div class="pb-6">
     <h2 class="mb-4">{{ clients.count }} Clients</h2>
     <div id="dealsTable" data-list='{"valueNames":["name","email","phone","contact","company","date"],"page":10,"pagination":true}'>
@@ -27,8 +72,10 @@
         <div class="col-auto">
           <div class="d-md-flex justify-content-between">
             <div>
-              <button class="btn btn-primary me-4"><span class="fas fa-plus me-2"></span>Add Client</button>
-              <button class="btn btn-link text-900 px-0"><span class="fa-solid fa-file-export fs--1 me-2"></span>Export</button>
+              <a href="{% url 'smeApp:clients_add' %}" class="modern-button icon-only">
+              <span class="fas fa-plus me-2"></span>Add Client
+            </a>
+              <!-- <button class="btn btn-link text-900 px-0"><span class="fa-solid fa-file-export fs--1 me-2"></span>Export</button> -->
             </div>
           </div>
         </div>
@@ -38,13 +85,8 @@
               <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
                 <input class="form-control search-input search" type="search" placeholder="Search by name" aria-label="Search" />
                 <span class="fas fa-search search-box-icon"></span>
-
               </form>
             </div>
-
-            <!-- <div class="flatpickr-input-container me-2">
-              <input class="form-control ps-6 datetimepicker" id="datepicker" type="text" data-options='{"dateFormat":"M j, Y","disableMobile":true,"defaultDate":"Mar 1, 2022"}' /><span class="uil uil-calendar-alt flatpickr-icon text-700"></span>
-            </div> -->
             <button class="btn px-3 btn-phoenix-secondary" type="button" data-bs-toggle="modal" data-bs-target="#filterModal" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa-solid fa-filter text-primary" data-fa-transform="down-3"></span></button>
             <div class="modal fade" id="filterModal" tabindex="-1">
               <div class="modal-dialog modal-dialog-centered">
@@ -85,84 +127,88 @@
           </div>
         </div>
       </div>
-
       <div class="table-responsive scrollbar mx-n1 px-1 border-top">
-        <table class="table fs--1 mb-0 leads-table">
-          <thead>
-            <tr>
-              <th class="white-space-nowrap fs--1 align-middle ps-0" style="max-width:20px; width:18px;">
-                <div class="form-check mb-0 fs-0">
-                  <input class="form-check-input" type="checkbox" data-bulk-select='{"body":"deal-tables-body"}' />
-                </div>
-              </th>
-              <th class="sort white-space-nowrap align-middle text-uppercase" scope="col" data-sort="name" style="width:25%;">Name</th>
-              <th class="sort align-middle ps-4 pe-5 text-uppercase border-end" scope="col" data-sort="email" style="width:15%;">
-                <div class="d-inline-flex flex-center">
-                  <div class="d-flex align-items-center px-1 py-1 bg-success-100 rounded me-2"><span class="text-success-600 dark__text-success-300" data-feather="mail"></span></div><span>Email</span>
-                </div>
-              </th>
-              <th class="sort align-middle ps-4 pe-5 text-uppercase border-end" scope="col" data-sort="phone" style="width:15%; min-width: 180px;">
-                <div class="d-inline-flex flex-center">
-                  <div class="d-flex align-items-center px-1 py-1 bg-primary-100 rounded me-2"><span class="text-primary-600 dark__text-primary-300" data-feather="phone"></span></div><span>Phone</span>
-                </div>
-              </th>
-              <th class="sort align-middle ps-4 pe-5 text-uppercase border-end" scope="col" data-sort="contact" style="width:15%;">
-                <div class="d-inline-flex flex-center">
-                  <div class="d-flex align-items-center px-1 py-1 bg-info-100 rounded me-2"><span class="text-info-600 dark__text-info-300" data-feather="user"></span></div><span>Contact name</span>
-                </div>
-              </th>
-              <th class="sort align-middle ps-4 pe-5 text-uppercase border-end" scope="col" data-sort="company" style="width:15%;">
-                <div class="d-inline-flex flex-center">
-                  <div class="d-flex align-items-center px-1 py-1 bg-warning-100 rounded me-2"><span class="text-warning-600 dark__text-warning-300" data-feather="grid"></span></div><span>Company Address</span>
-                </div>
-              </th>
-              <th class="sort align-middle ps-4 pe-5 text-uppercase" scope="col" data-sort="date" style="width:15%;">Client Role</th>
-              <th class="sort text-end align-middle pe-0 ps-4" scope="col"></th>
-            </tr>
-          </thead>
-
-          <tbody class="list" id="deal-tables-body">
-              {% for client in clients %}
-              <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                  <td class="fs--1 align-middle">
-                      <div class="form-check mb-0 fs-0">
-                          <input class="form-check-input" type="checkbox" />
-                      </div>
-                  </td>
-                  <td class="name align-middle white-space-nowrap">
-                      <div class="d-flex align-items-center">
-                          <div class="avatar avatar-xl me-3"><img class="rounded-circle" src="../../assets/img/team/75.webp" alt="" />
-                          </div>
-                          <div><a class="fs-0 fw-bold" href="#!">{{ client.name }}</a>
-                              <div class="d-flex align-items-center">
-                                  <p class="mb-0 text-1000 fw-semi-bold fs--1 me-2">{{ client.category }}</p>
-                                  <!-- You can add a status badge here if needed -->
-                              </div>
-                          </div>
-                      </div>
-                  </td>
-                  <td class="email align-middle white-space-nowrap fw-semi-bold text-1000 ps-4 border-end">{{ client.email }}</td>
-                  <td class="phone align-middle white-space-nowrap fw-semi-bold text-1000 ps-4 border-end">{{ client.phone }}</td>
-                  <td class="contact align-middle white-space-nowrap ps-4 border-end fw-semi-bold text-1000">{{ client.contact_name }}</td>
-                  <td class="company align-middle white-space-nowrap text-600 ps-4 border-end fw-semi-bold text-1000">{{client.address}}</td>
-                  <td class="date align-middle white-space-nowrap text-600 ps-4 text-700">{{ client.role }}</td>
-                  <!-- Add more columns for additional client attributes if needed -->
-                  <td class="align-middle text-end white-space-nowrap pe-0 action">
-                    <div class="font-sans-serif btn-reveal-trigger position-static">
-                      <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--2" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-v fs--2"></span></button>
-                      <div class="dropdown-menu dropdown-menu-end py-2">
-                        <a class="dropdown-item" href="#">View</a>
-                        <a class="dropdown-item" href="#">Edit</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item text-danger" href="#">Delete</a>
-                      </div>
-                    </div>
-                  </td>
-              </tr>
-              {% endfor %}
-          </tbody>
-        </table>
+  <table class="table fs--1 mb-0 leads-table">
+    <thead>
+  <tr>
+      <th class="white-space-nowrap fs--1 align-middle ps-0" style="max-width:20px; width:18px;">
+          <div class="form-check mb-0 fs-0">
+              <input class="form-check-input" type="checkbox" data-bulk-select='{"body":"deal-tables-body"}' />
+          </div>
+      </th>
+      <th class="sort white-space-nowrap align-middle text-uppercase" scope="col" data-sort="name" style="width:25%;">Name</th>
+      <th class="d-none d-md-table-cell sort align-middle ps-4 pe-5 text-uppercase border-end" scope="col" data-sort="email" style="width:15%;">
+          <div class="d-inline-flex flex-center">
+              <div class="d-flex align-items-center px-1 py-1 bg-success-100 rounded me-2"><span class="text-success-600 dark__text-success-300" data-feather="mail"></span></div><span>Email</span>
+          </div>
+      </th>
+      <th class="d-none d-md-table-cell sort align-middle ps-4 pe-5 text-uppercase border-end" scope="col" data-sort="phone" style="width:15%; min-width: 180px;">
+          <div class="d-inline-flex flex-center">
+              <div class="d-flex align-items-center px-1 py-1 bg-primary-100 rounded me-2"><span class="text-primary-600 dark__text-primary-300" data-feather="phone"></span></div><span>Phone</span>
+          </div>
+      </th>
+      <th class="d-none d-md-table-cell sort align-middle ps-4 pe-5 text-uppercase border-end" scope="col" data-sort="contact" style="width:15%;">
+          <div class="d-inline-flex flex-center">
+              <div class="d-flex align-items-center px-1 py-1 bg-info-100 rounded me-2"><span class="text-info-600 dark__text-info-300" data-feather="user"></span></div><span>Contact name</span>
+          </div>
+      </th>
+      <th class="d-none d-md-table-cell sort align-middle ps-4 pe-5 text-uppercase border-end" scope="col" data-sort="company" style="width:15%;">
+          <div class="d-inline-flex flex-center">
+              <div class="d-flex align-items-center px-1 py-1 bg-warning-100 rounded me-2"><span class="text-warning-600 dark__text-warning-300" data-feather="grid"></span></div><span>Company Address</span>
+          </div>
+      </th>
+      <th class="d-none d-md-table-cell sort align-middle ps-4 pe-5 text-uppercase" scope="col" data-sort="date" style="width:15%;">Client Role</th>
+      <th class="sort text-end align-middle pe-0 ps-4" scope="col"></th>
+  </tr>
+  </thead>
+      <tbody class="list" id="deal-tables-body">
+        {% for client in clients %}
+<tr class="hover-actions-trigger btn-reveal-trigger position-static">
+  <td class="fs--1 align-middle">
+    <div class="form-check mb-0 fs-0">
+      <input class="form-check-input" type="checkbox" />
+    </div>
+  </td>
+  <td class="name align-middle white-space-nowrap">
+    <div class="d-flex align-items-center">
+      {% with client.name|first as initial %}
+        <div class="avatar avatar-xl me-3 initials-icon" style="background-color: #FFADAD;">
+          {{ initial }}
+        </div>
+      {% endwith %}
+      <div>
+        <a class="fs-0 fw-bold" href="{% url 'smeApp:client-update' client.pk %}">{{ client.name }}</a>
+        <div class="d-flex align-items-center">
+          <p class="mb-0 text-1000 fw-semi-bold fs--1 me-2">{{ client.category }}</p>
+        </div>
       </div>
+    </div>
+  </td>
+
+              <td class="d-none d-md-table-cell">{{ client.email }}</td>
+              <td class="d-none d-md-table-cell">{{ client.phone }}</td>
+              <td class="d-none d-md-table-cell">{{ client.contact_name }}</td>
+              <td class="d-none d-md-table-cell">{{client.address}}</td>
+              <td class="d-none d-md-table-cell">{{ client.role }}</td>
+              <td class="align-middle text-end white-space-nowrap pe-0 action">
+                   <div class="font-sans-serif btn-reveal-trigger position-static">
+                     <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--2" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-v fs--2"></span></button>
+                     <div class="dropdown-menu dropdown-menu-end py-2">
+                       <a class="dropdown-item" href="#">View</a>
+                       <a class="dropdown-item" href="{% url 'smeApp:client-update' pk=client.pk %}">Edit</a>
+                       <div class="dropdown-divider"></div>
+                       <a class="dropdown-item text-danger" href="{% url 'smeApp:client-delete' pk=client.pk %}">Delete</a>
+                     </div>
+                </div>
+            </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
+
+
+
       <div class="row align-items-center justify-content-end py-4 pe-0 fs--1">
         <div class="col-auto d-flex">
           <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"></p><a class="fw-semi-bold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a class="fw-semi-bold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
@@ -175,6 +221,4 @@
       </div>
     </div>
   </div>
-
-
 {% endblock %}

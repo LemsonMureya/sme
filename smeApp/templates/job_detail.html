@@ -1,30 +1,579 @@
 {% extends 'dashboard.html' %}
+{% load static %}
 
 {% block content %}
-  <h1>{{ job.client.name }}</h1>
-  <p>Address: {{ job.client.address }}</p>
-  <p>Phone: {{ job.client.phone }}</p>
-  <p>Start date: {{ job.start_date }}</p>
-  <p>End date: {{ job.end_date }}</p>
-  <p>Total cost: {{ job.total_cost }}</p>
-  <p>Status: {{ job.status }}</p>
-  <p>Category: {{ job.category }}</p>
-  <p>Payment status: {{ job.payment_status }}</p>
-  <p>Payment type: {{ job.payment_type }}</p>
-  <p>Assigned worker: {{ job.assigned_worker }}</p>
-  {% if job.notes.notes %}
-    <p>Attachments: {{ job.notes.notes }}</p>
-  {% endif %}
-  {% if job.notes.attachment %}
-    <p>Attachments: {{ job.notes.attachment }}</p>
-  {% endif %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+   <script src="{% static 'vendors/tinymce/tinymce.min.js' %}"></script>
+   <style>
+       .card {
+           border-radius: 8px;
+           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+       }
 
-  <a href="{% url 'smeApp:job_edit' pk=job.pk %}">Edit</a>
+       .btn-phoenix-secondary {
+           background-color: #6c757d;
+           color: #ffffff;
+       }
 
-  <form action="{% url 'smeApp:job_delete' pk=job.pk %}" method="POST">
-    {% csrf_token %}
-    <input type="submit" value="Delete">
-  </form>
+       .btn-phoenix-danger {
+           background-color: #dc3545;
+           color: #ffffff;
+       }
 
-  <a href="{% url 'smeApp:job_list' %}">Back to job list</a>
+       .btn-phoenix-secondary:hover,
+       .btn-phoenix-danger:hover {
+           opacity: 0.8;
+       }
+       .client-name {
+            flex-grow: 1;
+        }
+
+        .address-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        .map-thumbnail {
+         width: 100%;
+         height: 200px;
+         background-repeat: no-repeat;
+         background-size: cover;
+         margin-bottom: 16px;
+     }
+       .icon-row {
+        display: flex;
+        align-items: center;
+      }
+
+      .icon-text {
+          margin-left: 8px;
+          font-weight: 500;
+          font-size: 16px;
+      }
+
+      .edit-icon {
+          margin-left: auto;
+          color: #6c757d;
+      }
+
+      .colored-icon {
+          color: #007bff;
+          margin-right: 4px;
+      }
+
+       @media (max-width: 767.98px) {
+           .hide-on-mobile {
+               display: none;
+           }
+
+           .icon-row {
+            display: flex;
+            align-items: center;
+          }
+
+          .icon-text {
+              margin-left: 8px;
+              font-weight: 500;
+              font-size: 16px;
+          }
+
+          .edit-icon {
+            margin-left: auto;
+            color: #6c757d;
+        }
+
+        .colored-icon {
+            color: #007bff;
+            margin-right: 4px;
+        }
+         }
+   </style>
+</head>
+<div class="pb-9">
+  <div class="row align-items-center justify-content-between g-3 mb-4">
+      <div class="col-12 col-md-auto">
+          <h4 class="mb-0">{{ job.description|truncatewords:5 }}</h4>
+      </div>
+      <div class="col-12 col-md-auto hide-on-mobile">
+          <a class="btn btn-phoenix-secondary px-3 px-sm-5 me-2" href="{% url 'smeApp:job_edit' job.pk %}"><span class="fa-solid fa-edit me-sm-2"></span><span class="d-none d-sm-inline">Edit</span></a>
+          <form method="POST" action="{% url 'smeApp:job_delete' job.pk %}" style="display: inline;">
+              {% csrf_token %}
+              <button class="btn btn-phoenix-danger me-2" type="submit"><span class="fa-solid fa-trash me-2"></span><span></span></button>
+          </form>
+      </div>
+  </div>
+
+  <div class="row g-4 g-xl-6">
+      <div class="col-12 col-md-6 col-lg-5 col-xl-5 col-xxl-4">
+          <div class="sticky-leads-sidebar">
+              <div class="card mb-3">
+                  <div class="card-body pb-3">
+                      <div class="d-flex align-items-center mb-3">
+                          <h4 class="client-name me-1">{{ job.client.name }}</h4>
+                          <a href="#!"><i class="fas fa-pen edit-icon"></i></a>
+                      </div>
+                      <hr>
+                      <div class="icon-row">
+                          <i class="fas fa-map-marker-alt colored-icon"></i>
+                          <h5 class="text-800 icon-text"></h5>
+
+                      <p class="text-800">
+                        <a class="address-link" href="https://www.google.com/maps/search/?api=1&query={{ job.client.address|urlencode }}" target="_blank">
+                            {{ job.client.address|linebreaks }}
+                        </a>
+                    </p>
+                    </div>
+                    <a class="address-link" href="https://www.google.com/maps/search/?api=1&query={{ job.client.address|urlencode }}" target="_blank">
+                        <div class="map-thumbnail" style="background-image: url('https://maps.googleapis.com/maps/api/streetview?size=600x200&location={{ job.client.address|urlencode }}&fov=90&heading=235&pitch=10&key=AIzaSyDGH7PokiWi5eT7LMjkOcnxLxYCtGUqgNw');"></div>
+                    </a>
+                    <hr>
+                        <div class="icon-row">
+                            <i class="fas fa-envelope colored-icon"></i>
+                            <h5 class="text-800 icon-text"></h5><a href="mailto:{{ job.client.email }}">{{ job.client.email }}</a>
+                        </div>
+                        <hr>
+                        <div class="icon-row">
+                            <i class="fas fa-phone-alt colored-icon"></i>
+                            <h5 class="text-800 icon-text"></h5><a class="text-800" href="tel:{{ job.client.phone }}">{{ job.client.phone }}</a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+              <div class="card">
+                  <div class="card-body">
+                      <h4 class="mb-5">Billing Information</h4>
+                      <div class="row g-3">
+                          <div class="col-12">
+                              <div class="mb-4">
+                                  <div class="d-flex flex-wrap justify-content-between mb-2">
+                                      <h5 class="mb-0 text-1000 me-2">Payment Type</h5>
+                                  </div>
+                                  <p class="mb-3">{{ job.get_payment_type_display }}</p>
+                              </div><hr>
+                              <div class="mb-4">
+                                  <div class="d-flex flex-wrap justify-content-between mb-2">
+                                      <h5 class="mb-0 text-1000 me-2">Payment Status</h5>
+                                  </div>
+                                  <p class="mb-3">{{ job.get_payment_status_display }}</p>
+                              </div>
+                              <hr>
+                              <!-- Add this section where you want to display the expenses details -->
+                              <div class="card mb-4">
+                                  <div class="card-body">
+                                    <h5 class="mb-0 text-1000 me-2">Expenses</h5>
+                                      {% if job.expenses.all %}
+                                      <table class="table">
+                                          <thead>
+                                              <tr>
+                                                  <th>Category</th>
+                                                  <th>Description</th>
+                                                  <th>Amount</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody>
+                                              {% for expense in job.expenses.all %}
+                                              <tr>
+                                                  <td>{{ expense.get_category_display }}</td>
+                                                  <td>{{ expense.description }}</td>
+                                                  <td>${{ expense.amount }}</td>
+                                              </tr>
+                                              {% endfor %}
+                                          </tbody>
+                                      </table>
+                                      {% else %}
+                                      <p>No expenses associated with this job.</p>
+                                      {% endif %}
+                                  </div>
+                              </div>
+                              <hr>
+                              <div class="mb-4">
+                                  <div class="d-flex flex-wrap justify-content-between mb-2">
+                                      <h5 class="mb-0 text-1000 me-2">Total Cost</h5>
+                                  </div>
+                                  <p class="mb-3">${{ job.total_cost }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-7 col-xl-7 col-xxl-8">
+        <div class="card mb-5">
+            <div class="card-body">
+                <div class="row g-4 g-xl-1 g-xxl-3 justify-content-between">
+                    <div class="col-sm-auto">
+                        <div class="d-sm-block d-inline-flex d-md-flex flex-xl-column flex-xxl-row align-items-center align-items-xl-start align-items-xxl-center">
+                            <div class="d-flex bg-success-100 rounded flex-center me-3 mb-sm-3 mb-md-0 mb-xl-3 mb-xxl-0" style="width:32px; height:32px"><span class="text-success-600 dark__text-success-300" data-feather="dollar-sign" style="width:24px; height:24px"></span></div>
+                            <div>
+                                <p class="fw-bold mb-1">Total Amount</p>
+                                <h4 class="fw-bolder text-nowrap">${{ job.total_cost }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-auto">
+                        <div class="d-sm-block d-inline-flex d-md-flex flex-xl-column flex-xxl-row align-items-center align-items-xl-start align-items-xxl-center border-start-sm ps-sm-5">
+                            <div class="d-flex bg-info-100 rounded flex-center me-3 mb-sm-3 mb-md-0 mb-xl-3 mb-xxl-0" style="width:32px; height:32px"><span class="text-info-600 dark__text-info-300" data-feather="code" style="width:24px; height:24px"></span></div>
+                            <div>
+                                <p class="fw-bold mb-1">Job/Task Number</p>
+                                <h4 class="fw-bolder text-nowrap">{{ job.po_number }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-auto">
+                        <div class="d-sm-block d-inline-flex d-md-flex flex-xl-column flex-xxl-row align-items-center align-items-xl-start align-items-xxl-center border-start-sm ps-sm-5">
+                            <div class="d-flex bg-primary-100 rounded flex-center me-3 mb-sm-3 mb-md-0 mb-xl-3 mb-xxl-0" style="width:32px; height:32px"><span class="text-primary-600 dark__text-primary-300" data-feather="layout" style="width:24px; height:24px"></span></div>
+                            <div>
+                                <p class="fw-bold mb-1">Job Type</p>
+                                <h4 class="fw-bolder text-nowrap">{{ job.category|title }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-xl-4 mb-7">
+          <div class="row mx-0 mx-sm-3 mx-lg-0 px-lg-0">
+            <div class="col-sm-12 col-xxl-6 border-bottom border-end-xxl py-3">
+                <table class="w-100 table-stats">
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                  <tr>
+                    <td class="py-2">
+                      <div class="d-inline-flex align-items-center">
+                        <div class="d-flex bg-info-100 rounded-circle flex-center me-3" style="width:24px; height:24px"><span class="text-info-600 dark__text-info-300" data-feather="clock" style="width:16px; height:16px"></span></div>
+                        <p class="fw-bold mb-0">Starts On</p>
+                      </div>
+                    </td>
+                    <td class="py-2 d-none d-sm-block pe-sm-2">:</td>
+                    <td class="py-2">
+                      <div class="ps-6 ps-sm-0 fw-semi-bold mb-0 pb-3 pb-sm-0">{{ job.start_date|date:"M d, Y" }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="py-2">
+                      <div class="d-flex align-items-center">
+                        <div class="d-flex bg-warning-100 rounded-circle flex-center me-3" style="width:24px; height:24px"><span class="text-warning-600 dark__text-warning-300" data-feather="clock" style="width:16px; height:16px"></span></div>
+                        <p class="fw-bold mb-0">Ends on</p>
+                      </div>
+                    </td>
+                    <td class="py-2 d-none d-sm-block pe-sm-2">:</td>
+                    <td class="py-2">
+                      <div class="ps-6 ps-sm-0 fw-semi-bold mb-0">{{ job.end_date|date:"M d, Y" }}</div>
+                    </td>
+                  </tr>
+                </table>
+            </div>
+            <div class="col-sm-12 col-xxl-6 border-bottom py-3">
+              <table class="w-100 table-stats">
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
+                <tr>
+                  <td class="py-2">
+                    <div class="d-inline-flex align-items-center">
+                      <div class="d-flex bg-primary-100 rounded-circle flex-center me-3" style="width:24px; height:24px"><span class="text-primary-600 dark__text-primary-300" data-feather="users" style="width:16px; height:16px"></span></div>
+                      <p class="fw-bold mb-0">Assigned Staff</p>
+                    </div>
+                  </td>
+                  <td class="py-2 d-none d-sm-block pe-sm-2">:</td>
+                  <td class="py-2"><a class="ps-6 ps-sm-0 fw-semi-bold mb-0 pb-3 pb-sm-0 text-900" href="tel:{{ job.assigned_staff.phone }}">{{ job.assigned_worker|title }}</a></td>
+                  </tr>
+                  <tr>
+                  <td class="py-2">
+                  <div class="d-flex align-items-center">
+                  <div class="d-flex bg-warning-100 rounded-circle flex-center me-3" style="width:24px; height:24px"><span class="text-warning-600 dark__text-warning-300" data-feather="edit" style="width:16px; height:16px"></span></div>
+                  <p class="fw-bold mb-0">Job Status</p>
+                  </div>
+                  </td>
+                  <td class="py-2 d-none d-sm-block pe-sm-2">:</td>
+                  <td class="py-2"><a class="ps-6 ps-sm-0 fw-semi-bold mb-0 text-900" href="mailto:{{ job.assigned_staff.email }}">{{ job.status|title }}</a></td>
+                  </tr>
+                  </table>
+                  </div>
+                    </div>
+                  </div>
+
+                  <div class="px-xl-4 mb-7">
+                  <div class="px-4 px-lg-6">
+                      <h4 class="mb-3">Notes & Attachments</h4>
+                  </div>
+                  <!-- <div class="list-group"> -->
+                  <div class="notes-container">
+                  {% for note in notes %}
+                  <div data-note-id="{{ note.pk }}" class="border-top border-300 px-4 px-lg-6 py-4">
+                      <div class="me-n3">
+                          <div class="d-flex flex-between-center">
+                              <div class="d-flex mb-1">
+                                  <p class="text-1000 mb-0 lh-1">{{ note.text }}</p>
+                                  {% if note.attachment %}
+                                  <span class="fa-solid {{ note.attachment_icon }} me-2 text-700 fs--1"></span>
+                                  {% endif %}
+                              </div>
+                              <div class="font-sans-serif btn-reveal-trigger">
+                                  <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
+                                  <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!" onclick="editNote({{note.pk}})">Edit</a><a class="dropdown-item text-danger" href="#!"onclick="deleteNote({{note.pk}})">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
+                              </div>
+                          </div>
+                          <div class="d-flex fs--1 text-700 mb-2 flex-wrap">
+                              <a href="#!">{{ note.author }} </a><span class="text-400 mx-1">| </span><span class="text-nowrap">{{ note.created_at|date:'Y-m-d H:i:s' }}</span>
+                          </div>
+                          {% if note.attachment %}
+                          {% with ext=note.attachment.url|lower %}
+                          {% if ".jpg" in ext or ".jpeg" in ext or ".png" in ext or ".gif" in ext %}
+                          <img class="rounded-2" src="{{ note.attachment.url }}" alt="" style="max-width:130px" />
+                          {% else %}
+                          <a href="{{ note.attachment.url }}" target="_blank" class="me-2">Download Attachment</a>
+                          {% endif %}
+                          {% endwith %}
+                          {% endif %}
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>
+              <!-- </div> -->
+      <div class="px-xl-4 mb-7">
+          <div id="jobNoteForm"></div>
+          <div class="my-4">
+          <!-- Include the form to add a new note -->
+          <div id="jobNoteForm"></div>
+       <!-- <h4>Add Note</h4> -->
+         <form id="note-form" method="post" enctype="multipart/form-data">
+           {% csrf_token %}
+           <div class="mb-3">
+             <label for="id_text" class="form-label">Text:</label>
+             <textarea name="text" id="id_text" class="form-control"></textarea>
+           </div>
+           <div class="mb-3">
+           <label for="id_attachment" class="form-label">Attachment:</label>
+           <div class="input-group">
+             <input type="file" name="attachment" id="id_attachment" class="form-control" style="display: none;">
+             <label for="id_attachment" class="input-group-text"><i class="fas fa-paperclip"></i></label>
+             <input type="text" class="form-control" id="attachment_filename" readonly>
+           </div>
+         </div>
+           <button type="submit"  id="add-note-btn" class="btn btn-primary">Add Note</button>
+         </form>
+       </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function attachDeleteEventListener(noteId) {
+    const deleteBtn = document.querySelector(`div[data-note-id='${noteId}'] a.dropdown-item.text-danger`);
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', function () {
+            deleteNote(noteId);
+        });
+    }
+}
+
+function attachEditEventListener(noteId) {
+    const editBtn = document.querySelector(`div[data-note-id='${noteId}'] a.dropdown-item[href^="#!"]:not(.text-danger)`);
+    if (editBtn) {
+        editBtn.addEventListener('click', function () {
+            editNote(noteId);
+        });
+    }
+}
+// Attach event listeners for existing notes
+{% for note in notes %}
+    attachDeleteEventListener({{ note.pk }});
+    attachEditEventListener({{ note.pk }});
+{% endfor %}
+
+    document.querySelector("#note-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const noteText = form.querySelector("#id_text");
+            const noteAttachment = form.querySelector("#id_attachment");
+            if (noteText.value.trim() === "" && noteAttachment.files.length === 0) {
+                const errorElement = document.createElement("p");
+                errorElement.classList.add("text-danger");
+                errorElement.textContent = "Please enter a note or select an attachment.";
+                form.appendChild(errorElement);
+                return;
+            }
+            // Show loading spinner
+            const loadingSpinner = document.createElement("div");
+            loadingSpinner.classList.add("spinner-border");
+            loadingSpinner.setAttribute("role", "status");
+            form.appendChild(loadingSpinner);
+            const formData = new FormData(form);
+            fetch("{% url 'smeApp:add_job_note' job.pk %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    noteText.value = "";
+                    noteAttachment.value = "";
+                    document.querySelector("#attachment_filename").value = "";
+                    // Remove loading spinner
+                    form.removeChild(loadingSpinner);
+                    const noteSection = document.querySelector(".notes-container");
+                    const noteDiv = document.createElement("div");
+                    noteDiv.classList.add("border-top", "border-300", "px-4", "px-lg-6", "py-4");
+                    const author = data.note.author_name;
+                    const created_at = data.note.created_at;
+                    const text = data.note.text;
+                    const attachment_url = data.note.attachment_url;
+                    let attachmentHTML = "";
+                    if (attachment_url) {
+                        attachmentHTML = `<a href="${attachment_url}" target="_blank" class="me-2">Download Attachment</a>`;
+                    }
+
+                    noteDiv.innerHTML = `
+                <div data-note-id="${data.note.id}" class="me-n3">
+                    <div class="d-flex flex-between-center">
+                        <div class="d-flex mb-1">
+                            <p class="text-1000 mb-0 lh-1">${text}</p>
+                        </div>
+                        <div class="font-sans-serif btn-reveal-trigger">
+                            <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
+                            <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!" onclick="editNote(${data.note.id})">Edit</a><a class="dropdown-item text-danger" href="#!" onclick="deleteNote(${data.note.id})">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
+
+                        </div>
+                    </div>
+                    <div class="d-flex fs--1 text-700 mb-2 flex-wrap">
+                        <a href="#!">${author} </a><span class="text-400 mx-1">| </span><span class="text-nowrap">${created_at}</span>
+                    </div>
+                    ${
+                        attachment_url
+                            ? data.note.attachment_icon === "fa-image"
+                                ? `<img class="rounded-2" src="${attachment_url}" alt="" style="max-width:130px" />`
+                                : `<div class="d-flex fs--1 text-700 mb-2 flex-wrap"><a href="${attachment_url}" target="_blank" class="me-2"><i class="fas ${data.note.attachment_icon}"></i> Download Attachment</a></div>`
+                            : ""
+                    }
+                </div>`;
+
+                  noteSection.insertAdjacentElement("beforeend", noteDiv);
+                  attachDeleteEventListener(data.note.id);
+                  attachEditEventListener(data.note.id);
+
+                } else {
+                    console.error("Error submitting note:", data.errors);
+                }
+            });
+});
+function editNote(noteId) {
+    fetch("{% url 'smeApp:get_note' 0 %}".replace('0', noteId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                const note = data.note;
+                const noteText = document.querySelector("#id_text");
+                const noteForm = document.querySelector("#note-form");
+                noteText.value = note.text;
+                // Disable the add note button
+                const addNoteBtn = document.querySelector("#add-note-btn");
+                if (addNoteBtn) {
+                    addNoteBtn.disabled = true;
+                }
+                // Remove existing update or delete buttons if any
+                const existingUpdateBtn = noteForm.querySelector("#update-note-btn");
+                if (existingUpdateBtn) existingUpdateBtn.remove();
+                const existingDeleteBtn = noteForm.querySelector("#delete-note-btn");
+                if (existingDeleteBtn) existingDeleteBtn.remove();
+                // Add an update button to the form
+                const updateBtn = document.createElement("button");
+                updateBtn.id = "update-note-btn";
+                updateBtn.type = "button";
+                updateBtn.className = "btn btn-primary";
+                updateBtn.textContent = "Update Note";
+                noteForm.appendChild(updateBtn);
+                // Set up the update button click event
+                updateBtn.addEventListener("click", function() {
+                    fetch("{% url 'smeApp:update_note' 0 %}".replace('0', noteId), {
+                        method: "POST",
+                        body: new FormData(noteForm),
+                        headers: {
+                            "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'ok') {
+                                // Update the note display
+                                const noteItem = document.querySelector(`div[data-note-id='${noteId}']`);
+                                const noteTextElement = noteItem.querySelector("p.text-1000.mb-0.lh-1");
+                                if (noteTextElement) {
+                                    noteTextElement.textContent = data.text;
+                                }
+                                // Clear the form and remove the update button
+                                noteText.value = "";
+                                updateBtn.remove();
+                                // Enable the add note button
+                                if (addNoteBtn) {
+                                    addNoteBtn.disabled = false;
+                                }
+                            } else {
+                                console.error("Error updating note:", data.errors);
+                            }
+                        });
+                });
+            }
+        });
+}
+
+function deleteNote(noteId) {
+    fetch("{% url 'smeApp:delete_note' 0 %}".replace('0', noteId), {
+        method: "DELETE",
+        headers: {
+            "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                // Remove the note item from the list
+                const noteItem = document.querySelector(`div[data-note-id='${noteId}']`);
+                if (noteItem) {
+                    noteItem.remove();
+                }
+            } else {
+                console.error("Error deleting note:", data.errors);
+            }
+        });
+}
+
+
+  </script>
+  <script>
+  document.querySelector("#id_attachment").addEventListener("change", function(event) {
+    const input = event.target;
+    const filenameDisplay = document.querySelector("#attachment_filename");
+
+    if (input.files && input.files[0]) {
+      filenameDisplay.value = input.files[0].name;
+    } else {
+      filenameDisplay.value = "";
+    }
+  });
+</script>
+
 {% endblock %}

@@ -1,0 +1,642 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load thumbnails %}
+
+{% block content %}
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+   <style>
+        .btn-chart {
+         background-color: #ccc;
+         color: #333;
+         transition: background-color 0.3s;
+        }
+
+        .btn-chart:hover {
+         background-color: #aaa;
+         color: #222;
+         text-decoration: none;
+        }
+
+        .btn-custom {
+          border-radius: 15px;
+          background: linear-gradient(135deg, #1e9ff2 0%, #3c96ff 100%);
+          color: #ffffff;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s;
+        }
+
+        .btn-custom:hover {
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          transform: translateY(-2px);
+        }
+
+        .btn-text {
+          display: inline;
+        }
+
+        .fa-camera {
+          transform: translateY(0px);
+          transform: translateX(4px);
+        }
+        .fa-plus {
+          transform: translateY(0px);
+          transform: translateX(4px);
+        }
+
+        .btn-custom .fas,
+        .btn-custom .fa-solid {
+          vertical-align: middle;
+        }
+
+        @media (max-width: 576px) {
+         .btn-chart {
+           font-size: 0.8rem;
+           padding: 0.25rem 0.5rem;
+         }
+        }
+
+        @media (max-width: 767px) {
+          .mobile-hide {
+            display: none;
+          }
+          .btn-text {
+            display: none;
+          }
+
+          .btn-custom {
+            padding: 12px 16px;
+            margin:
+          }
+        }
+</style>
+</head>
+<nav class="mb-2" aria-label="breadcrumb">
+<ol class="breadcrumb mb-0">
+  <div class="mb-3" id="editDeleteButtons" style="display:none;">
+      <button id="editExpense" class="btn btn-phoenix-secondary px-3 px-sm-5 me-2">
+          <span class="fa-solid fa-edit me-sm-2"></span><span class="d-none d-sm-inline">Edit</span>
+      </button>
+      <button id="deleteExpense" class="btn btn-phoenix-danger me-2">
+          <span class="fa-solid fa-trash me-2"></span>
+      </button>
+  </div>
+</ol>
+</nav>
+     <div class="row gx-6 gy-3 mb-4 align-items-center">
+       <div class="col-auto">
+         <h2 class="mb-0">Expenses <span class="fw-normal text-700 ms-3">({{expenses|length }})</span></h2>
+       </div>
+
+       <div class="mb-3">
+         <a href="{% url 'smeApp:add_expense' %}">
+           <button class="btn btn-custom me-4">
+             <span class="fas fa-plus me-2"></span>
+             <span class="btn-text">Add Expense</span>
+           </button>
+         </a>
+         <a href="{% url 'smeApp:upload_receipt' %}">
+           <button class="btn btn-custom me-4">
+             <span class="fa-solid fas fa-camera fs--1 me-2"></span>
+             <span class="btn-text">Scan Receipt</span>
+           </button>
+         </a>
+       </div>
+     </div>
+     <div class="row justify-content-between align-items-end mb-4 g-3">
+
+     <div class="row justify-content-between align-items-end mb-4 g-3">
+       <div class="col-12 col-sm-auto">
+
+       </div>
+       <div class="col-12 col-sm-auto">
+         <div class="d-flex align-items-center">
+           <div class="search-box me-3">
+             <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
+               <input class="form-control search-input search" type="search" placeholder="Search projects" aria-label="Search" />
+               <span class="fas fa-search search-box-icon"></span>
+             </form>
+           </div>
+            <a class="btn btn-phoenix-primary px-3 me-1 border-0 text-900 toggle-list-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="List view">
+              <span class="fa-solid fa-list fs--2"></span>
+            </a>
+            <a class="btn btn-phoenix-primary px-3 me-1 toggle-card-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Card view">
+             <svg width="9" height="9" viewbox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path d="M0 0.5C0 0.223857 0.223858 0 0.5 0H1.83333C2.10948 0 2.33333 0.223858 2.33333 0.5V1.83333C2.33333 2.10948 2.10948 2.33333 1.83333 2.33333H0.5C0.223857 2.33333 0 2.10948 0 1.83333V0.5Z" fill="currentColor"></path>
+               <path d="M3.33333 0.5C3.33333 0.223857 3.55719 0 3.83333 0H5.16667C5.44281 0 5.66667 0.223858 5.66667 0.5V1.83333C5.66667 2.10948 5.44281 2.33333 5.16667 2.33333H3.83333C3.55719 2.33333 3.33333 2.10948 3.33333 1.83333V0.5Z" fill="currentColor"></path>
+               <path d="M6.66667 0.5C6.66667 0.223857 6.89052 0 7.16667 0H8.5C8.77614 0 9 0.223858 9 0.5V1.83333C9 2.10948 8.77614 2.33333 8.5 2.33333H7.16667C6.89052 2.33333 6.66667 2.10948 6.66667 1.83333V0.5Z" fill="currentColor"></path>
+               <path d="M0 3.83333C0 3.55719 0.223858 3.33333 0.5 3.33333H1.83333C2.10948 3.33333 2.33333 3.55719 2.33333 3.83333V5.16667C2.33333 5.44281 2.10948 5.66667 1.83333 5.66667H0.5C0.223857 5.66667 0 5.44281 0 5.16667V3.83333Z" fill="currentColor"></path>
+               <path d="M3.33333 3.83333C3.33333 3.55719 3.55719 3.33333 3.83333 3.33333H5.16667C5.44281 3.33333 5.66667 3.55719 5.66667 3.83333V5.16667C5.66667 5.44281 5.44281 5.66667 5.16667 5.66667H3.83333C3.55719 5.66667 3.33333 5.44281 3.33333 5.16667V3.83333Z" fill="currentColor"></path>
+               <path d="M6.66667 3.83333C6.66667 3.55719 6.89052 3.33333 7.16667 3.33333H8.5C8.77614 3.33333 9 3.55719 9 3.83333V5.16667C9 5.44281 8.77614 5.66667 8.5 5.66667H7.16667C6.89052 5.66667 6.66667 5.44281 6.66667 5.16667V3.83333Z" fill="currentColor"></path>
+               <path d="M0 7.16667C0 6.89052 0.223858 6.66667 0.5 6.66667H1.83333C2.10948 6.66667 2.33333 6.89052 2.33333 7.16667V8.5C2.33333 8.77614 2.10948 9 1.83333 9H0.5C0.223857 9 0 8.77614 0 8.5V7.16667Z" fill="currentColor"></path>
+               <path d="M3.33333 7.16667C3.33333 6.89052 3.55719 6.66667 3.83333 6.66667H5.16667C5.44281 6.66667 5.66667 6.89052 5.66667 7.16667V8.5C5.66667 8.77614 5.44281 9 5.16667 9H3.83333C3.55719 9 3.33333 8.77614 3.33333 8.5V7.16667Z" fill="currentColor"></path>
+               <path d="M6.66667 7.16667C6.66667 6.89052 6.89052 6.66667 7.16667 6.66667H8.5C8.77614 6.66667 9 6.89052 9 7.16667V8.5C9 8.77614 8.77614 9 8.5 9H7.16667C6.89052 9 6.66667 8.77614 6.66667 8.5V7.16667Z" fill="currentColor"></path>
+             </svg></a>
+             <a class="btn btn-phoenix-primary px-3 me-1 border-0 text-900 toggle-chart-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Chart view">
+             <svg fill="#777" version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            	 width="15" height="15" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+            <g>
+            	<path d="M34,31h29c0.553,0,1-0.447,1-1C64,13.432,50.568,0,34,0c-0.553,0-1,0.447-1,1v29C33,30.553,33.447,31,34,31z"/>
+            	<path d="M63,33H36c-0.044,0-0.082,0.019-0.125,0.024c-0.084,0.011-0.168,0.019-0.248,0.05c-0.078,0.031-0.143,0.084-0.209,0.133
+            		c-0.036,0.027-0.079,0.041-0.112,0.072c-0.002,0.002-0.003,0.006-0.005,0.008c-0.086,0.084-0.152,0.185-0.203,0.295
+            		c-0.004,0.009-0.014,0.016-0.018,0.025c-0.016,0.038-0.015,0.084-0.026,0.125c-0.023,0.084-0.051,0.169-0.052,0.256L35,34
+            		c0,0.053,0.022,0.1,0.031,0.152c0.012,0.074,0.016,0.148,0.044,0.219c0.035,0.088,0.092,0.16,0.149,0.233
+            		c0.021,0.028,0.031,0.063,0.057,0.089l0.01,0.01c0,0,0.002,0.003,0.004,0.004l19.918,20.506C60.643,49.784,64,42.284,64,34l0,0
+            		C64,33.447,63.553,33,63,33z"/>
+            	<path d="M31.615,34.291C31.012,33.688,31,32.605,31,32.605V5c0-0.553-0.447-1-1-1C13.432,4,0,17.432,0,34s13.432,30,30,30
+            		c8.284,0,15.784-3.357,21.213-8.787C51.213,55.213,32.596,35.271,31.615,34.291z"/>
+            </g>
+            </svg>
+           </a>
+         </div>
+       </div>
+     </div>
+     </div>
+     <!-- List View -->
+
+<!-- List View -->
+<div class="list-view">
+    <!-- Insert ListView content here -->
+    <div class="table-responsive scrollbar">
+        <table class="table fs--1 mb-0 border-top border-200">
+            <thead>
+                <tr>
+                  <th class="white-space-nowrap fs--1 align-middle ps-0 mobile-checkbox" style="width:5%;">
+                        <div class="form-check mb-0 fs-0">
+                            <input class="form-check-input" type="checkbox" id="markAll" />
+                        </div>
+                    </th>
+                    <th class="sort white-space-nowrap align-middle ps-0" scope="col" data-sort="projectName" style="width:20%;">
+                        <i class="text-warning me-2"></i>Description
+                    </th>
+                    <th class="sort align-middle ps-3 mobile-hide" scope="col" data-sort="assigness" style="width:10%;">
+                        <i class="fas fa-user text-primary me-2"></i>Merchant
+                    </th>
+                    <th class="sort align-middle ps-3 mobile-hide" scope="col" data-sort="start" style="width:10%;">
+                        <i class="fas fa-tasks text-info me-2"></i>Category
+                    </th>
+                    <th class="sort align-middle ps-3 mobile-hide" scope="col" data-sort="deadline" style="width:15%;">
+                        <i></i>Total
+                    </th>
+                    <th class="sort align-middle ps-3 mobile-hide" scope="col" data-sort="task" style="width:12%;">
+                        <i></i>Job #
+                    </th>
+                    <th class="sort align-middle ps-3 mobile-hide" scope="col" data-sort="task" style="width:12%;">
+                      <i class="fas fa-calendar-alt text-warning me-2"></i>Date
+                    </th>
+                    <th class="sort align-middle text-end mobile-hide" scope="col" style="width:10%;">
+                        <i class="fas fa-cog text-dark me-2"></i>Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="list" id="project-list-table-body">
+                {% for expense in expenses %}
+                <tr class="position-static">
+                    <td class="fs--1 align-middle">
+                        <div class="form-check mb-0 fs-0">
+                            <input class="form-check-input" type="checkbox" />
+                        </div>
+                    </td>
+                    <td class="align-middle time white-space-nowrap ps-0 projectName py-4">
+                        <a class="text-decoration-none fw-bold fs-0" href="#">{{ expense.description|truncatewords:7 }}</a>
+                    </td>
+                    <td class="align-middle white-space-nowrap assigness ps-3 py-4 mobile-hide">{{ expense.vendor }}</td>
+                    <td class="align-middle white-space-nowrap deadline ps-3 py-4 mobile-hide">{{ expense.category }}</td>
+                    <td class="align-middle white-space-nowrap task ps-3 py-4 mobile-hide">{{ expense.amount }}</td>
+                    <td class="align-middle white-space-nowrap task ps-3 py-4 mobile-hide">{{ expense.job.po_number }}</td>
+                    <td class="align-middle white-space-nowrap ps-3 projectprogress mobile-hide">{{ expense.date_created}}</td>
+                    <td class="align-middle text-end white-space-nowrap pe-0 action mobile-hide">
+                    <div class="font-sans-serif btn-reveal-trigger position-static">
+                    <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs--2" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-v fs--2"></span></button>
+                    <div class="dropdown-menu dropdown-menu-end py-2">
+                    <a class="dropdown-item" href="#">View</a>
+                    <a class="dropdown-item" href="#">Edit</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-danger" href="#">Delete</a>
+                    </div>
+                    </div>
+                    </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                    <td colspan="8" class="text-center">No expenses found.</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+              </div>
+              <div class="d-flex flex-wrap align-items-center justify-content-between py-3 pe-0 fs--1 border-bottom border-200">
+              <div class="d-flex">
+              <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"></p><a class="fw-semi-bold" href="#!" data-list-view="*">View all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a class="fw-semi-bold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+              </div>
+              <div class="d-flex">
+              <button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
+              <ul class="mb-0 pagination"></ul>
+              <button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
+              </div>
+              </div>
+
+              </div>
+
+<div class="card-view">
+
+  <div class="row g-3 list" id="reportsList">
+    {% for expense in expenses %}
+    <div class="col-12 col-xl-6" data-id="{{ expense.id }}">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="border-bottom">
+            <div class="d-flex align-items-start mb-1">
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" data-id="{{ expense.id }}" />
+              </div>
+              <div class="d-sm-flex align-items-center ps-2"><a class="fw-bold fs-1 lh-sm text-decoration-none title line-clamp-1 me-sm-4" href="../../apps/crm/reports-details.html">{{ expense.vendor }}</a>
+                <div class="d-flex align-items-center"><span class="fw-bold fs--1 text-900 lh-2"></span></div>
+              </div>
+            </div>
+            <p class="fs--1 fw-semi-bold text-900 ms-4 text mb-4 ps-2">{{ expense.description }}</p>
+          </div>
+          <div class="row g-1 g-sm-3 mt-2 lh-1">
+          <div class="col-12 col-sm-auto flex-1 text-truncate">
+            <span class="fw-bold fs-0">
+            <span class="fa-solid fa-dollar-sign"></span> {{ expense.amount }}
+            </span>
+            </div>
+            <div class="col-12 col-sm-auto">
+              <div class="d-flex align-items-center"><span class="me-2" data-feather="grid" style="stroke-width:2;"></span>
+                <p class="mb-0 fs--1 fw-semi-bold text-700 reports">{{ expense.category}}</p>
+              </div>
+            </div>
+            <div class="col-12 col-sm-auto">
+              <div class="d-flex align-items-center"><span class="me-2" data-feather="clock" style="stroke-width:2;"></span>
+                <p class="mb-0 fs--1 fw-semi-bold text-700 date">{{expense.date_created }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-thumbnail">
+          {% if expense.receipt %}
+          <a href="{{ expense.receipt.url }}" target="_blank">
+            <img src="{{ expense.receipt.url|get_thumbnail_url }}" alt="Thumbnail" class="rounded">
+          </a>
+          {% else %}
+          <img src="{% static 'assets/img/favicons/receipt1.png' %}" alt="Thumbnail" class="rounded">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+  <p>No expenses found.</p>
+    {% endfor %}
+    <!-- <div class="mb-3" id="editDeleteButtons" style="display:none;">
+      <button id="editExpense" class="btn btn-primary me-4"><span class="fas fa-edit me-2"></span>Edit Expense</button>
+      <button id="deleteExpense" class="btn btn-danger me-4"><span class="fas fa-trash me-2"></span>Delete Expense</button>
+    </div> -->
+    <form id="csrfTokenForm" style="display:none;">
+        <input type="hidden" name="csrfmiddlewaretoken" id="csrfToken" value="{{ csrf_token }}">
+    </form>
+  </div>
+</div>
+
+<!-- Chart View -->
+<div class="chart-view" style="display: none;">
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card" style="width: 100%;">
+        <div class="card-body">
+          <h4 class="card-title">Expenses Chart</h4>
+          <div class="mb-3">
+            <button id="filter-all" class="btn btn-chart btn-sm">All</button>
+            <button id="filter-day" class="btn btn-chart btn-sm">Today</button>
+            <button id="filter-month" class="btn btn-chart btn-sm">This Month</button>
+            <button id="filter-year" class="btn btn-chart btn-sm">This Year</button>
+          </div>
+          <div class="chart-container">
+            <canvas id="expenses-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+
+
+      <script>
+    const expensesDataURL = "{% url 'smeApp:expenses_data' %}";
+    const expensesChartElement = document.getElementById('expenses-chart');
+    const filterAllButton = document.getElementById('filter-all');
+    const filterDayButton = document.getElementById('filter-day');
+    const filterMonthButton = document.getElementById('filter-month');
+    const filterYearButton = document.getElementById('filter-year');
+
+    const categoryColors = {
+      'Rent': 'hsl(40, 50%, 90%)',
+      'Repairs and Maintenance': 'hsl(80, 50%, 90%)',
+      'Payroll': 'hsl(120, 50%, 90%)',
+      'Meals and Entertainment': 'hsl(160, 50%, 90%)',
+      'Telephone': 'hsl(200, 50%, 90%)',
+      'Travel': 'hsl(240, 50%, 90%)',
+      'Utilities': 'hsl(280, 50%, 90%)',
+      'Advertising and Promotion': 'hsl(320, 50%, 90%)',
+      'Other': 'hsl(360, 50%, 90%)',
+    };
+
+    const createExpensesChart = (data) => {
+    const hasData = data.length > 0;
+    const backgroundColors = data.map((item) => categoryColors[item.category]);
+    const totalExpenses = data.reduce((total, item) => total + item.total_amount, 0);
+
+    return new Chart(expensesChartElement, {
+      type: hasData ? 'pie' : 'doughnut',
+      data: {
+        labels: hasData ? data.map((item) => item.category) : ['No Data'],
+        datasets: [
+          {
+            data: hasData ? data.map((item) => item.total_amount) : [1],
+            backgroundColor: hasData ? backgroundColors : ['#f0f0f0'],
+            borderColor: hasData ? backgroundColors : ['#f0f0f0'],
+          },
+        ],
+      },
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          tooltip: {
+            enabled: hasData,
+            callbacks: {
+              label: function (context) {
+                const label = context.label;
+                const value = context.parsed;
+                const percentage = ((value / totalExpenses) * 100).toFixed(2);
+                return `${label}: ${value}`;
+              },
+            },
+          },
+        },
+      },
+    });
+  };
+
+
+    const fetchExpensesData = async (timeFilter = 'all') => {
+      const response = await fetch(`${expensesDataURL}?time_filter=${timeFilter}`);
+      return await response.json();
+    };
+
+    let expensesChart;
+    const updateExpensesChart = async (timeFilter) => {
+      if (expensesChart) {
+        expensesChart.destroy();
+      }
+      const data = await fetchExpensesData(timeFilter);
+      expensesChart = createExpensesChart(data);
+    };
+
+    filterAllButton.addEventListener('click', () => updateExpensesChart('all'));
+    filterDayButton.addEventListener('click', () => updateExpensesChart('day'));
+    filterMonthButton.addEventListener('click', () => updateExpensesChart('month'));
+    filterYearButton.addEventListener('click', () => updateExpensesChart('year'));
+
+    updateExpensesChart();
+
+    const refreshChartButton = document.getElementById('refresh-chart');
+    refreshChartButton.addEventListener('click', () => updateExpensesChart());
+  </script>
+
+      <script>
+// Add this code below the existing JavaScript code in transactions.html
+          const profitLossDataURL = "{% url 'smeApp:profit_loss_data' %}";
+          const profitLossChartElement = document.getElementById('profit-loss-chart');
+          const filterPlAllButton = document.getElementById('filter-pl-all');
+          const filterPl12MonthsButton = document.getElementById('filter-pl-12-months');
+          const filterPl24MonthsButton = document.getElementById('filter-pl-24-months');
+
+          const createProfitLossChart = (expensesData, incomesData) => {
+          const labels = [...new Set([...expensesData.map(item => item.month), ...incomesData.map(item => item.month)])].sort();
+          const expensesDataMap = new Map(expensesData.map(item => [item.month, item.total_amount]));
+          const incomesDataMap = new Map(incomesData.map(item => [item.month, item.total_amount]));
+
+          const expenseAmounts = labels.map(month =>expensesDataMap.get(month) || 0);
+          const incomeAmounts = labels.map(month => incomesDataMap.get(month) || 0);
+
+          const profitLossChart = new Chart(profitLossChartElement, {
+                type: 'bar',
+                data: {
+                labels: labels.map(label => {
+                  const date = new Date(label);
+                  const monthName = date.toLocaleString('en-us', { month: 'short' });
+                  const year = date.getFullYear();
+                  return `${monthName} ${year}`;
+                }),
+
+          datasets: [
+              {
+              label: 'Expense',
+              data: expenseAmounts,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+              },
+              {
+              label: 'Income',
+              data: incomeAmounts,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+              }
+              ]
+              },
+              options: {
+                maintainAspectRatio: false,
+                responsive: true,
+              scales: {
+              y: {
+              beginAtZero: true
+              }
+              }
+              }
+              });
+
+            return profitLossChart;
+            };
+
+          let profitLossChart;
+
+          const loadProfitLossData = async (timeFilter = 'all') => {
+          const response = await fetch(`${profitLossDataURL}?time_filter=${timeFilter}`);
+          const data = await response.json();
+
+          if (profitLossChart) {
+              profitLossChart.destroy();
+              }
+
+              profitLossChart = createProfitLossChart(data.expenses, data.incomes);
+              };
+
+              filterPlAllButton.addEventListener('click', () => loadProfitLossData('all'));
+              filterPl12MonthsButton.addEventListener('click', () => loadProfitLossData('12_months'));
+              filterPl24MonthsButton.addEventListener('click', () => loadProfitLossData('24_months'));
+
+          loadProfitLossData();
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var listView = document.querySelector('.list-view');
+    var cardView = document.querySelector('.card-view');
+    var chartView = document.querySelector('.chart-view');
+    var toggleListViewButton = document.querySelector('.toggle-list-view');
+    var toggleCardViewButton = document.querySelector('.toggle-card-view');
+    var toggleChartViewButton = document.querySelector('.toggle-chart-view');
+
+    function showListView() {
+      listView.style.display = 'block';
+      cardView.style.display = 'none';
+      chartView.style.display = 'none';
+    }
+
+    function showCardView() {
+      listView.style.display = 'none';
+      cardView.style.display = 'block';
+      chartView.style.display = 'none';
+    }
+
+    function showChartView() {
+      listView.style.display = 'none';
+      cardView.style.display = 'none';
+      chartView.style.display = 'block';
+    }
+
+    toggleListViewButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      showListView();
+    });
+
+    toggleCardViewButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      showCardView();
+    });
+
+    toggleChartViewButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      showChartView();
+    });
+  });
+
+
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.form-check-input');
+    const editDeleteButtons = document.getElementById('editDeleteButtons');
+    const editExpenseButton = document.getElementById('editExpense');
+    const deleteExpenseButton = document.getElementById('deleteExpense');
+
+    function updateButtons() {
+      const checked = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+      if (checked.length > 0) {
+        editDeleteButtons.style.display = 'block';
+        if (checked.length > 1) {
+          editExpenseButton.disabled = true;
+        } else {
+          editExpenseButton.disabled = false;
+        }
+      } else {
+        editDeleteButtons.style.display = 'none';
+      }
+    }
+
+
+    function editExpense() {
+      const checked = Array.from(checkboxes).find(checkbox => checkbox.checked);
+      if (checked) {
+        const expenseId = checked.dataset.id;
+        window.location.href = `{% url 'smeApp:expense-update' 0 %}`.replace('0', expenseId);
+      }
+    }
+    async function deleteExpense() {
+      const checked = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+      if (checked.length > 0) {
+        const expenseIds = checked.map(checkbox => checkbox.dataset.id);
+        try {
+          const csrfToken = document.querySelector('#csrfToken').value;
+          const response = await fetch(`{% url 'smeApp:api_expense_delete' %}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ ids: expenseIds })
+          });
+
+          if (response.status === 204) {
+            // Remove the deleted expense cards from the UI
+            expenseIds.forEach(expenseId => {
+              const expenseCard = document.querySelector(`[data-id="${expenseId}"]`);
+              if (expenseCard) {
+                expenseCard.remove();
+              } else {
+                console.warn(`Could not find expense card with id ${expenseId}`);
+              }
+            });
+          } else {
+            throw new Error(`Unexpected response status: ${response.status}`);
+          }
+
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while deleting the expense");
+        }
+      }
+    }
+
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateButtons);
+    });
+
+    editExpenseButton.addEventListener('click', editExpense);
+    deleteExpenseButton.addEventListener('click', (event) => {
+      let target = event.target;
+      while (target && target !== deleteExpenseButton) {
+        target = target.parentElement;
+      }
+      if (target) {
+        deleteExpense();
+      }
+    });
+
+    const markAllCheckbox = document.getElementById('markAll');
+
+    function markAllExpenses() {
+        const isChecked = markAllCheckbox.checked;
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+        updateButtons();
+    }
+
+    markAllCheckbox.addEventListener('change', markAllExpenses);
+
+  });
+</script>
+{% endblock %}

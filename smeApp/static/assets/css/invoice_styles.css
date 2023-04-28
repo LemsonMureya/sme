@@ -1,0 +1,96 @@
+.invoice-card {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.invoice-title {
+font-size: 24px;
+font-weight: bold;
+}
+
+.header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.header-left {
+display: flex;
+align-items: center;
+}
+
+.header-right {
+text-align: right;
+}
+
+.company-logo {
+width: 150px;
+object-fit: contain;
+margin-right: 20px;
+}
+
+.client-details {
+display: flex;
+justify-content: space-between;
+margin-bottom: 20px;
+}
+
+.bill-to, .invoice-details {
+width: 45%;
+}
+
+.invoice-items {
+width: 100%;
+border-collapse: collapse;
+}
+
+.invoice-items td, .invoice-items th {
+border: 1px solid #dddddd;
+padding: 8px;
+text-align: center;
+}
+
+/* .invoice-items th {
+background-color: #0097eb;
+} */
+
+.invoice-summary {
+  text-align: right;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+.invoice-summary td {
+  text-align: right;
+  padding: 4px;
+  width: 50%;
+}
+.invoice-summary tr:last-child td {
+  font-weight: bold;
+}
+
+.totals-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 10px;
+}
+
+.footer {
+  margin-top: 100px;
+  padding-top: 10px;
+  border-top: 1px solid #dddddd;
+  text-align: center;
+}
+.footer h5 {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}

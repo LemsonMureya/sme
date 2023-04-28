@@ -1,0 +1,11 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+  <h2>Edit Company Profile</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="{% url 'smeApp:company_profile_detail' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

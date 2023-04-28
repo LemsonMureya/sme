@@ -1,0 +1,98 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% block content %}
+
+  <div class="mt-4">
+    <h1 class="text-center mb-4">Dashboard</h1>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Revenue</h5>
+            <p class="card-text">${{ total_revenue }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Net Profit</h5>
+            <p class="card-text">${{ net_profit|floatformat:2 }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Expenses</h5>
+            <p class="card-text">${{ total_expenses|floatformat:2 }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      {% if clients %}
+      <div class="col-12">
+        <h2 class="mb-4">Clients</h2>
+        <ul class="list-group">
+          {% for client in clients %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ client.name }}
+            <span class="badge bg-primary rounded-pill">{{ client.role }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% if jobs or sales_orders %}
+      <div class="col-12 mt-4">
+        <h2 class="mb-4">{{ company.business_type|title }} Orders</h2>
+        <ul class="list-group">
+          {% for job in jobs %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ job.description }}
+            <span class="badge bg-primary rounded-pill">${{ job.po_number }}</span>
+          </li>
+          {% endfor %}
+          {% for sale in sales_orders %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ sale.client.name }}
+            <span class="badge bg-primary rounded-pill">${{ sale.get_total_amount }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% if stock %}
+      <div class="col-12 mt-4">
+        <h2 class="mb-4">Stock</h2>
+        <ul class="list-group">
+          {% for item in stock %}
+<li class="list-group-item d-flex justify-content-between align-items-center">
+{{ item.name }}
+<span class="badge bg-primary rounded-pill">{{ item.quantity }}</span>
+</li>
+{% endfor %}
+</ul>
+</div>
+{% endif %}
+</div>
+<div class="row mt-4">
+<div class="col-12">
+<h2 class="mb-4">Actions</h2>
+<div class="d-grid gap-2 d-md-flex">
+<button class="btn btn-primary" type="button">
+<i class="fas fa-plus"></i> Add New
+</button>
+<button class="btn btn-success" type="button">
+<i class="fas fa-edit"></i> Edit
+</button>
+<button class="btn btn-danger" type="button">
+<i class="fas fa-trash"></i> Delete
+</button>
+</div>
+</div>
+</div>
+
+  </div>
+{% endblock %}

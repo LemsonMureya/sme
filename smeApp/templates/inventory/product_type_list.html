@@ -1,0 +1,29 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+  <h2>Product Types</h2>
+  <a href="{% url 'smeApp:product_type_create' %}" class="btn btn-primary">Add Product Type</a>
+  <table class="table mt-3">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product_type in object_list %}
+        <tr>
+          <td>{{ product_type.name }}</td>
+          <td>
+            <a href="{% url 'smeApp:product_type_update' product_type.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'smeApp:product_type_delete' product_type.pk %}" class="btn btn-danger">Delete</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="2">No product types found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
