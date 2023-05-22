@@ -1,8 +1,9 @@
-# Register your models here.
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.db.models import Sum, F, FloatField, ExpressionWrapper
+from django.db.models.functions import Coalesce
 from django.contrib.auth.admin import UserAdmin
-from .models import (CustomUser, Client, Note, Job, Expense, Supplier, StockItem, PurchaseOrder,ProductType,
+from .models import (CustomUser, Client, Note, Job, Expense, Supplier, StockItem, PurchaseOrder,ProductType, JobItem,
                     PurchaseOrderItem, Sale, SaleItem, Income, CompanyProfile, Invoice, InvoiceItem)
 
 class CustomUserAdmin(UserAdmin):
@@ -42,16 +43,38 @@ class NoteAdmin(admin.ModelAdmin):
     search_fields = ('text', 'author__email', 'related_object__client__name')
     list_filter = ('created_at', 'updated_at')
 
+class JobItemInline(admin.TabularInline):
+    model = JobItem
+    extra = 1
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('client', 'po_number', 'status', 'category', 'start_date', 'end_date', 'total_cost', 'payment_status', 'payment_type', 'assigned_worker', 'revenue_recorded', 'associated_user')
+    list_display = ('client', 'po_number', 'status', 'category', 'start_date', 'end_date', 'total_cost', 'payment_status', 'payment_type', 'assigned_worker', 'revenue_recorded', 'associated_user', 'total_cost_for_user')
     search_fields = ('client__name', 'po_number',)
     list_filter = ('status', 'category', 'payment_status', 'payment_type')
+    inlines = [JobItemInline]
 
     def associated_user(self, obj):
         user = obj.company.customuser_set.first()
         return user.email if user else None
     associated_user.short_description = 'Associated User'
+
+    def total_cost_for_user(self, obj):
+        user = obj.company.customuser_set.first()
+        if user:
+            job_items = JobItem.objects.filter(job__company=user.company)
+            total_cost = 0
+            for item in job_items:
+                total_cost += item.quantity * item.unit_price
+            return total_cost
+        else:
+            return None
+    total_cost_for_user.short_description = 'Total Cost for User'
+
+
+class JobItemAdmin(admin.ModelAdmin):
+    list_display = ('job', 'item_name', 'item_description', 'quantity', 'unit_price')
+    search_fields = ('job__client__name', 'item_name',)
+    list_filter = ('job',)
 
 class ExpenseAdmin(admin.ModelAdmin):
     list_display = ('category', 'description', 'amount', 'date_created', 'vendor', 'associated_user')
@@ -166,6 +189,7 @@ class SaleItemAdmin(admin.ModelAdmin):
     search_fields = ('stock_item__name', 'sale__client__name')
     ordering = ('sale', 'stock_item__name',)
 
+admin.site.register(JobItem, JobItemAdmin)
 admin.site.register(ProductType, ProductTypeAdmin)
 admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(StockItem, StockItemAdmin)

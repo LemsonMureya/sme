@@ -5,29 +5,24 @@
 {% block content %}
 {% block extra_styles %}
 <style>
-  .no-gutters {
-    --bs-gutter-x: 0;
-    --bs-gutter-y: 0;
-  }
 
   .full-width-mobile .card {
     border-radius: 0;
   }
-  .rounded-lg {
-      border-radius: 0.5rem;
-    }
 
     .card {
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-
+    .card p, .card a {
+          color: #666;
+      }
+      .card .icon {
+          font-size: 20px;
+          color: #007BFF;
+          margin-right: 10px;
+      }
     .nav-link {
       font-weight: 500;
-    }
-
-    .nav-link.active {
-      color: #007bff;
-      border-bottom: 2px solid #007bff;
     }
 
   @media (max-width: 575.98px) {
@@ -57,7 +52,6 @@
       text-decoration: none;
     }
   }
-
 </style>
 {% endblock %}
 
@@ -100,9 +94,8 @@
 </script>
 {% endblock %}
 
-<div class="pb-9">
+<div class="pb-9" style="margin-left:-0.5rem; margin-right:-0.5rem;">
         <div class="row">
-
         </div>
         <div class="row no-gutters g-md-4 g-xl-6">
           <div class="col-12 col-md-5 col-lg-5 col-xl-4 order-0 order-md-0 full-width-mobile">
@@ -124,8 +117,8 @@
                               </a>
                           {% endif %}
                       </div>
-
                      </div>
+
                      <div class="col-12 col-sm-auto flex-1">
                       <h3 class="fw-bolder mb-2 d-inline">{{user.first_name|title}} {{user.last_name|title}}</h3>
                       <a href="#" data-bs-toggle="modal" data-bs-target="#edit-profile-modal" class="edit-profile-btn">
@@ -133,13 +126,6 @@
                       </a>
                       <p class="mb-0">{{user.role}} at</p><a class="fw-bold" href="#!">{{user.company.name|title}}</a>
                     </div>
-
-
-
-
-
-
-
                     </div>
                    </div>
                  </div>
@@ -147,11 +133,11 @@
                    <div class="card-body">
                      <div class="d-flex align-items-center mb-5">
                        <h3>Company Info</h3>
-                       <a href="{% url 'smeApp:company_profile_edit' %}" class="btn btn-link px-3" type="button">Edit</a>
+                       <a href="{% url 'smeApp:company_profile_edit' %}" class="btn btn-link px-3" type="button"></a>
                      </div>
                      <hr>
                      <div class="mb-4">
-                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-envelope-alt">  </span>
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-envelope-alt"></span>
                          <h5 class="text-1000 mb-0">Company Email</h5>
                        </div><a href="#">{{user.company.email}}</a>
                      </div>
@@ -165,7 +151,7 @@
                      <div class="mb-4">
                        <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-globe"></span>
                          <h5 class="text-1000 mb-0">Website</h5>
-                       </div><a href="#!">www.bb.ru.com </a>
+                       </div><a href="#!">{{user.company.website }}</a>
                      </div>
                      <hr>
                      <div class="mb-4">
@@ -186,7 +172,7 @@
                        <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-clock"></span>
                          <h5 class="text-1000 mb-0">Joined </h5>
                        </div>
-                       <p class="mb-0 text-800">{{user.date_joined}}</p>
+                       <p class="mb-0 text-800">{{user.date_joined|date:"F j, Y"}}</p>
                      </div>
                    </div>
                  </div>
@@ -194,7 +180,7 @@
                    <div class="card-body">
                      <div class="d-flex align-items-center mb-5">
                         <h3>Company Address</h3>
-                        <a href="{% url 'smeApp:company_profile_edit' %}" class="btn btn-link">Edit</a>
+                        <a href="{% url 'smeApp:company_profile_edit' %}" class="btn btn-link"></a>
                     </div>
                     <hr>
                      <div class="mb-4">

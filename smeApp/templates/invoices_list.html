@@ -15,6 +15,36 @@
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
    <style>
+     .mt-4 {
+       margin-top: 1.0rem !important;
+      }
+      .mb-4 {
+        margin-bottom: 0.8rem !important;
+    }
+     .modern-button {
+       background-image: linear-gradient(90deg, #4C84FF 0%, #B768FF 100%);
+       border: none;
+       color: white;
+       text-align: center;
+       text-decoration: none;
+       display: inline-block;
+       font-size: 14px;
+       padding: 8px 16px;
+       margin: 4px 2px;
+       cursor: pointer;
+       border-radius: 25px;
+       transition: background-image 0.3s;
+     }
+
+     .modern-button:hover {
+       background-image: linear-gradient(90deg, #B768FF 0%, #4C84FF 100%);
+     }
+     .mt-4 {
+       margin-top: 1.0rem !important;
+      }
+      .mb-4 {
+        margin-bottom: 0.8rem !important;
+    }
         @media (max-width: 576px) {
          .btn-chart {
            font-size: 0.8rem;
@@ -42,28 +72,25 @@
 </ol>
 </nav>
      <div class="row gx-6 gy-3 mb-4 align-items-center">
-       <div class="col-auto">
+       <div class="col-auto d-none d-sm-block">
          <h2 class="mb-0">Invoices <span class="fw-normal text-700 ms-3">({{invoices|length }})</span></h2>
        </div>
        <div class="mb-3">
-                <button class="btn btn-primary me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-plus me-2"></span>Add Deal</button>
+                <button class="btn btn-primary modern-button icon-only me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-plus me-2"></span>Add Invoice</button>
         </div>
      </div>
-     <div class="row justify-content-between align-items-end mb-4 g-3">
-
-     <div class="row justify-content-between align-items-end mb-4 g-3">
+     <div class="row justify-content-between align-items-end mb-4 g-3" style="margin-left:-1rem;margin-right:-1rem;">
        <div class="col-12 col-sm-auto">
-
        </div>
        <div class="col-12 col-sm-auto">
          <div class="d-flex align-items-center">
            <div class="search-box me-3">
-             <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
-               <input class="form-control search-input search" type="search" placeholder="Search projects" aria-label="Search" />
-               <span class="fas fa-search search-box-icon"></span>
-             </form>
-           </div>
-            <a class="btn btn-phoenix-primary px-3 me-1 border-0 text-900 toggle-list-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="List view">
+              <form class="position-relative" data-bs-toggle="search" data-bs-display="static" method="get" action=".">
+                  <input class="form-control search-input search" type="search" name="search" placeholder="Search Invoices" aria-label="Search" />
+                  <span class="fas fa-search search-box-icon"></span>
+              </form>
+          </div>
+            <a class=" d-none btn btn-phoenix-primary px-3 me-1 border-0 text-900 toggle-list-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="List view">
               <span class="fa-solid fa-list fs--2"></span>
             </a>
             <a class="btn btn-phoenix-primary px-3 me-1 toggle-card-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Card view">
@@ -78,17 +105,59 @@
                <path d="M3.33333 7.16667C3.33333 6.89052 3.55719 6.66667 3.83333 6.66667H5.16667C5.44281 6.66667 5.66667 6.89052 5.66667 7.16667V8.5C5.66667 8.77614 5.44281 9 5.16667 9H3.83333C3.55719 9 3.33333 8.77614 3.33333 8.5V7.16667Z" fill="currentColor"></path>
                <path d="M6.66667 7.16667C6.66667 6.89052 6.89052 6.66667 7.16667 6.66667H8.5C8.77614 6.66667 9 6.89052 9 7.16667V8.5C9 8.77614 8.77614 9 8.5 9H7.16667C6.89052 9 6.66667 8.77614 6.66667 8.5V7.16667Z" fill="currentColor"></path>
              </svg></a>
-             <a class="btn btn-phoenix-primary px-3 me-1 border-0 text-900 toggle-chart-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Chart view">
+             <a class="d-none btn btn-phoenix-primary px-3 me-1 border-0 text-900 toggle-chart-view" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Chart view">
              <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                <path d="M0 0.5C0 0.223858 0.223858 0 0.5 0H3.5C3.77614 0 4 0.223858 4 0.5V3.5C4 3.77614 3.77614 4 3.5 4H0.5C0.223858 4 0 3.77614 0 3.5V0.5Z" fill="currentColor"></path>
                <path d="M0 5.5C0 5.22386 0.223858 5 0.5 5H3.5C3.77614 5 4 5.22386 4 5.5V8.5C4 8.77614 3.77614 9 3.5 9H0.5C0.223858 9 0 8.77614 0 8.5V5.5Z" fill="currentColor"></path>
                <path d="M5 0.5C5 0.223858 5.22386 0 5.5 0H8.5C8.77614 0 9 0.223858 9 0.5V3.5C9 3.77614 8.77614 4 8.5 4H5.5C5.22386 4 5 3.77614 5 3.5V0.5Z" fill="currentColor"></path>
                <path d="M5 5.5C5 5.22386 5.22386 5 5.5 5H8.5C8.77614 5 9 5.22386 9 5.5V8.5C9 8.77614 8.77614 9 8.5 9H5.5C5.22386 9 5 8.77614 5 8.5V5.5Z" fill="currentColor"></path>
-             </svg></a>
+             </svg></a><button class="btn px-3 btn-phoenix-secondary" type="button" data-bs-toggle="modal" data-bs-target="#filterModal" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa-solid fa-filter text-primary" data-fa-transform="down-3"></span></button>
+             <div class="modal fade" id="filterModal" tabindex="-1">
+         <div class="modal-dialog modal-dialog-centered">
+             <div class="modal-content">
+                 <form id="filterForm" autocomplete="off" method="get" action=".">
+                     <div class="modal-header bg-light py-4">
+                         <h5 class="modal-title fw-bold fs-3">Filter</h5>
+                         <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body py-4 px-4">
+                      <div class="mb-3">
+                          <label class="form-label fw-bold mb-2 text-dark" for="dueDate">Due Date</label>
+                          <div class="input-group custom-input-group">
+                              <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                              <select class="form-select" id="dueDate" name="due_date">
+                                  <option value="today" selected="selected">Today</option>
+                                  <option value="last7Days">Last 7 Days</option>
+                                  <option value="last30Days">Last 30 Days</option>
+                                  <option value="last6Months">Last 6 Months</option>
+                                  <option value="lastYear">Last Year</option>
+                                  <option value="all">All</option>
+                              </select>
+                          </div>
+                      </div>
+                         <div class="mb-3">
+                             <label class="form-label fw-bold mb-2 text-dark" for="paymentStatus">Payment Status</label>
+                             <div class="input-group custom-input-group">
+                                 <span class="input-group-text"><i class="fas fa-tasks"></i></span>
+                                 <select class="form-select" id="paymentStatus" name="payment_status">
+                                     {% for status in payment_status_choices %}
+                                         <option value="{{ status.0 }}">{{ status.1 }}</option>
+                                     {% endfor %}
+                                 </select>
+                             </div>
+                         </div>
+                         <!-- Add similar sections here for other filters, like invoice date and due date -->
+                     </div>
+                     <div class="modal-footer d-flex justify-content-end align-items-center px-4 pb-4 pt-3">
+                         <button class="btn btn-primary px-9 fs--2 my-0" type="submit">Done</button>
+                     </div>
+                 </form>
+             </div>
          </div>
-       </div>
      </div>
-     </div>
+    </div>
+    </div>
+
      <!-- List View -->
      <div class="list-view">
          <!-- Insert ListView content here -->
@@ -168,54 +237,68 @@
               </div>
               </div>
 
-              <div class="card-view">
+          <div class="card-view">
           <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3 mb-9">
             {% for invoice in invoices %}
               <div class="col">
+                <a href="{% url 'smeApp:update_invoice' invoice.pk %}" class="text-decoration-none text-reset">
                 <div class="card h-100 hover-actions-trigger">
                   <div class="card-body">
-                    <div class="d-flex align-items-center">
-                      <h4 class="mb-2 line-clamp-1 lh-sm flex-1 me-5">{{ invoice.invoice_number }}</h4>
-                      <div class="hover-actions top-0 end-0 mt-4 me-4">
-                  <button class="btn btn-primary btn-icon flex-shrink-0" onclick="location.href='{% url 'smeApp:update_invoice' invoice.pk %}'"><span class="fa-solid fa-chevron-right"></span></button>
+                    <div class="d-flex justify-content-between align-items-start">
+                    <h4 class="mb-2 line-clamp-1 lh-sm flex-1 me-5">{{ invoice.invoice_number }}</h4>
+                    <div class="dropdown">
+                           <a href="#" role="button" id="invoiceDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                               <i class="fas fa-ellipsis-v"></i>
+                           </a>
+
+                           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="invoiceDropdown">
+                               <li><a class="dropdown-item" href="{% url 'smeApp:view_invoice' invoice.pk %}">View</a></li>
+                               <li><a class="dropdown-item" href="{% url 'smeApp:update_invoice' invoice.pk %}">Edit</a></li>
+                               <div class="dropdown-divider"></div>
+                               <li><a class="text-danger dropdown-item" href="{% url 'smeApp:delete_invoice' invoice.pk %}">Delete</a></li>
+                           </ul>
+                       </div>
+                   </div>
+                    {% if invoice.payment_status == 'Unpaid' %}
+                  <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% elif invoice.payment_status == 'Partially Paid' %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-warning"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% elif invoice.payment_status == 'Paid' %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-success"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% elif invoice.payment_status == 'Late Payment' %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% elif invoice.payment_status == 'Pending Payment' %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-primary"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% elif invoice.payment_status == 'Overdue' %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% elif invoice.payment_status == 'Not Yet Invoiced' %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-secondary"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% elif invoice.payment_status == 'Refunded' %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-info"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% elif invoice.payment_status == 'Cancelled' %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% else %}
+                     <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-light"><span class="badge-label">{{ invoice.payment_status }}</span></span>
+                   {% endif %}
+                  <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-user me-2 text-700 fs--1 fw-extra-bold"></span>
+                    <p class="fw-bold mb-0 text-truncate lh-1">Client : <span class="fw-semi-bold ms-1">{{ invoice.client.name }}</span></p>
+                  </div>
+                  <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-dollar-sign me-2 text-700 fs--1 fw-extra-bold"></span>
+                    <p class="fw-bold mb-0 lh-1">Total : <span class="fw-semi-bold ms-1 text-1100">{{ invoice.get_total_amount|floatformat:2 }}</span></p>
+                  </div>
+                  <div class="d-flex align-items-center mt-4">
+                    <p class="mb-0 fw-bold fs--1">Invoice Date :<span class="fw-semi-bold text-600 ms-1">{{ invoice.invoice_date }}</span></p>
+                  </div>
+                  <div class="d-flex align-items-center mt-2">
+                    <p class="mb-0 fw-bold fs--1">Due Date : <span class="fw-semi-bold text-600 ms-1">{{ invoice.due_date }}</span></p>
+                  </div>
                 </div>
               </div>
-            {% if invoice.payment_status == 'Unpaid' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% elif invoice.payment_status == 'Partially Paid' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-warning"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% elif invoice.payment_status == 'Paid' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-success"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% elif invoice.payment_status == 'Late Payment' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% elif invoice.payment_status == 'Pending Payment' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-primary"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% elif invoice.payment_status == 'Overdue' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% elif invoice.payment_status == 'Not Yet Invoiced' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-secondary"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% elif invoice.payment_status == 'Refunded' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-info"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% elif invoice.payment_status == 'Cancelled' %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-danger"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% else %}
-         <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-light"><span class="badge-label">{{ invoice.payment_status }}</span></span>
-       {% endif %}
-            <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-user me-2 text-700 fs--1 fw-extra-bold"></span>
-              <p class="fw-bold mb-0 text-truncate lh-1">Client : <span class="fw-semi-bold text-primary ms-1">{{ invoice.client.name }}</span></p>
-            </div>
-            <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-dollar-sign me-2 text-700 fs--1 fw-extra-bold"></span>
-              <p class="fw-bold mb-0 lh-1">Total : <span class="ms-1 text-1100">{{ invoice.get_total_amount|floatformat:2 }}</span></p>
-            </div>
-            <div class="d-flex align-items-center mt-4">
-              <p class="mb-0 fw-bold fs--1">Invoice Date :<span class="fw-semi-bold text-600 ms-1">{{ invoice.invoice_date }}</span></p>
-            </div>
-            <div class="d-flex align-items-center mt-2">
-              <p class="mb-0 fw-bold fs--1">Due Date : <span class="fw-semi-bold text-600 ms-1">{{ invoice.due_date }}</span></p>
-            </div>
-          </div>
-        </div>
+            </a>
       </div>
+      {% empty %}
+      <svg width="200px" height="200px" viewBox="0 0 1024 1024" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M512 512m-480 0a480 480 0 1 0 960 0 480 480 0 1 0-960 0Z" fill="#FFE5CF" /><path d="M262.4 307.2c0-19.2 19.2-38.4 38.4-38.4h435.2c19.2 0 38.4 12.8 38.4 38.4 0 19.2-19.2 38.4-38.4 38.4H294.4c-19.2 0-32-19.2-32-38.4z" fill="#FF8746" /><path d="M294.4 307.2v448c0 19.2 25.6 32 38.4 19.2l32-32 32 25.6c6.4 6.4 25.6 6.4 32 0l32-32 32 32c6.4 6.4 25.6 6.4 32 0l32-32 32 32c6.4 6.4 25.6 6.4 32 0l32-32 32 32c12.8 12.8 38.4 6.4 38.4-19.2V307.2H294.4z" fill="#FF9D68" /><path d="M371.2 403.2c0-6.4 6.4-12.8 12.8-12.8h217.6c6.4 0 12.8 6.4 12.8 12.8s-6.4 12.8-12.8 12.8H377.6c-6.4 0-6.4-6.4-6.4-12.8zM371.2 473.6c0-6.4 6.4-12.8 12.8-12.8h166.4c6.4 0 12.8 6.4 12.8 12.8s-6.4 12.8-12.8 12.8H377.6c-6.4 0-6.4-6.4-6.4-12.8zM371.2 550.4c0-6.4 6.4-12.8 12.8-12.8h262.4c6.4 0 12.8 6.4 12.8 12.8s-6.4 12.8-12.8 12.8H377.6c-6.4 0-6.4-6.4-6.4-12.8zM371.2 620.8c0-6.4 6.4-12.8 12.8-12.8h217.6c6.4 0 12.8 6.4 12.8 12.8s-6.4 12.8-12.8 12.8H377.6c-6.4 0-6.4-6.4-6.4-12.8z" fill="#F27632" /></svg>
+      <p style="text-align:center;">All clear! You have no new invoices.</p>
       {% endfor %}
      </div>
    </div>

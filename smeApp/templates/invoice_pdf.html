@@ -1,77 +1,37 @@
 {% load static %}
 <head>
   {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'assets/css/invoice_styles.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/invoice_styles_new.css' %}">
     <style>
-      /* Global styles */
-      body {
-        font-family: 'Helvetica Neue', Arial, sans-serif;
-      }
-
-      h1, h2, h3, h4 {
+      @font-face {
+        font-family: 'Roboto';
+        src: url('{% static "assets/fonts/Roboto/Roboto-Light.ttf" %}') format('truetype');
         font-weight: 300;
+        font-style: normal;
       }
 
-      .header, .client-details, .totals-section {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      @font-face {
+        font-family: 'Roboto';
+        src: url('{% static "assets/fonts/Roboto/Roboto-Regular.ttf" %}') format('truetype');
+        font-weight: 400;
+        font-style: normal;
       }
 
+      @font-face {
+        font-family: 'Roboto';
+        src: url('{% static "assets/fonts/Roboto/Roboto-Medium.ttf" %}') format('truetype');
+        font-weight: 500;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: 'Roboto';
+        src: url('{% static "assets/fonts/Roboto/Roboto-Bold.ttf" %}') format('truetype');
+        font-weight: 700;
+        font-style: normal;
+      }
       .invoice-items th {
         background-color: {{ invoice.color_accent }};
-      }
-
-      /* Header styles */
-      .header {
-        margin-bottom: 1rem;
-      }
-
-      .company-logo {
-        max-height: 80px;
-      }
-
-      .invoice-title {
-        margin-bottom: 0.25rem;
-      }
-
-      /* Client details styles */
-      .bill-to {
-        margin-bottom: 1rem;
-      }
-
-      .invoice-summary {
-        width: 100%;
-      }
-
-      .invoice-summary td {
-        width: 50%;
-      }
-
-      /* Invoice items styles */
-      .invoice-items {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      .invoice-items th, .invoice-items td {
-        border: 1px solid #ddd;
-        padding: 0.5rem;
-        text-align: left;
-      }
-
-      /* Totals section styles */
-      .totals-section {
-        margin-top: 1rem;
-      }
-
-      .invoice-summary strong {
-        font-weight: 600;
-      }
-
-      /* Footer styles */
-      .footer {
-        margin-top: 2rem;
       }
     </style>
   {% endblock %}
@@ -84,99 +44,103 @@
      }
    </style>
 </head>
+<div class="invoice-content">
 
-  <div class="header">
-    <div class="header-left">
-      {% if invoice.company.logo %}
-        <img src="{{ invoice.company.logo.url }}" alt="{{ invoice.company.name }} logo" class="company-logo">
-      {% endif %}
+    <div class="header">
+      <div class="header-left">
+        {% if invoice.company.logo %}
+          <img src="{{ invoice.company.logo.url }}" alt="{{ invoice.company.name }} logo" class="company-logo">
+        {% endif %}
+      </div>
+      <div class="header-right">
+        <h1 class="invoice-title">INVOICE</h1>
+        <h3>{{ invoice.company.name }}</h3>
+        <p>{{ invoice.company.address_line_1 }}</p>
+        <p>Email: {{ invoice.company.email }}</p>
+        <p>Phone: {{ invoice.company.phone }}</p>
+      </div>
     </div>
-    <div class="header-right">
-      <h1 class="invoice-title">INVOICE</h1>
-      <h3>{{ invoice.company.name }}</h3>
-      <p>{{ invoice.company.address_line_1 }}</p>
-      <p>Email: {{ invoice.company.email }}</p>
-      <p>Phone: {{ invoice.company.phone }}</p>
+    <hr>
+    <div class="client-details">
+      <div class="bill-to">
+        <h3 class="bill-to-header">BILL TO:</h3>
+        <h3>{{ invoice.client.name }}</h3>
+        <p>{{ invoice.client.address }}</p>
+        <p>Email: {{ invoice.client.email }}</p>
+        <p>Phone: {{ invoice.client.phone }}</p>
+      </div>
+      <div class="invoice-details">
+        <table class="invoice-summary">
+          <tr>
+            <td><strong>Invoice Number:</strong></td>
+            <td>{{ invoice.invoice_number }}</td>
+          </tr>
+          <tr>
+            <td><strong>Job Number:</strong></td>
+            <td>{{ invoice.job.po_number }}</td>
+          </tr>
+          <tr>
+            <td><strong>Invoice Date:</strong></td>
+            <td>{{ invoice.invoice_date|date:"d M, Y" }}</td>
+          </tr>
+          <tr>
+            <td><strong>Payment Due:</strong></td>
+            <td>{{ invoice.due_date|date:"d M, Y" }}</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>Amount Due (USD):</strong></td>
+            <td>{{ total|floatformat:2 }}</td>
+          </tr>
+        </table>
+      </div>
     </div>
-  </div>
-  <hr>
-  <div class="client-details">
-    <div class="bill-to">
-      <h3>Bill to:</h3>
-      <h4>{{ invoice.client.name }}</h4>
-      <p>{{ invoice.client.address }}</p>
-      <p>Email: {{ invoice.client.email }}</p>
-      <p>Phone: {{ invoice.client.phone }}</p>
-    </div>
-    <div class="invoice-details">
+    <hr>
+    <table class="invoice-items">
+      <tr>
+        <th>Item</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Amount</th>
+      </tr>
+      {% for item in invoice_items %}
+        <tr>
+          <td class="lighter-text">{{ item.item_name }}</td>
+          <td class="lighter-text">{{ item.item_description }}</td>
+          <td class="lighter-text">{{ item.unit_price }}</td>
+          <td class="lighter-text">{{ item.quantity }}</td>
+          <td class="lighter-text">{{ item.total|floatformat:2 }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+    <hr>
+
+    <div class="totals-section">
       <table class="invoice-summary">
         <tr>
-          <td><strong>Invoice Number:</strong></td>
-          <td>{{ invoice.invoice_number }}</td>
+          <td><strong>Subtotal:</strong></td>
+          <td><strong>{{ subtotal|floatformat:2 }}</strong></td>
         </tr>
         <tr>
-          <td><strong>P.O./S.O. Number:</strong></td>
-          <td>{{ invoice.job.po_number }}</td>
+          <td>Tax:</td>
+          <td>{{ invoice.tax|floatformat:2 }} %</td>
         </tr>
         <tr>
-          <td><strong>Invoice Date:</strong></td>
-          <td>{{ invoice.invoice_date|date:"d M, Y" }}</td>
+          <td>Discount:</td>
+          <td>{{ invoice.discount|floatformat:2 }}</td>
         </tr>
         <tr>
-          <td><strong>Payment Due:</strong></td>
-          <td>{{ invoice.due_date|date:"d M, Y" }}</td>
-        </tr>
-        <tr>
-          <td><strong>Amount Due (USD):</strong></td>
-          <td>{{ total|floatformat:2 }}</td>
+          <td><strong>Total:</strong></td>
+          <td><strong>{{ total|floatformat:2 }}</strong></td>
         </tr>
       </table>
     </div>
-  </div>
-  <hr>
-  <table class="invoice-items">
-    <tr>
-      <th>#</th>
-      <th>Item</th>
-      <th>Description</th>
-      <th>Price</th>
-      <th>Qty</th>
-      <th>Total</th>
-    </tr>
-    {% for item in invoice_items %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ item.item_name }}</td>
-        <td>{{ item.item_description }}</td>
-        <td>{{ item.unit_price }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>{{ item.total|floatformat:2 }}</td>
-      </tr>
-    {% endfor %}
-  </table>
-  <hr>
-
-  <div class="totals-section">
-    <table class="invoice-summary">
-      <tr>
-        <td><strong>Subtotal:</strong></td>
-        <td><strong>{{ subtotal|floatformat:2 }}</strong></td>
-      </tr>
-      <tr>
-        <td>Tax:</td>
-        <td>{{ invoice.tax|floatformat:2 }} %</td>
-      </tr>
-      <tr>
-        <td>Discount:</td>
-        <td>{{ invoice.discount|floatformat:2 }}</td>
-      </tr>
-      <tr>
-        <td><strong>Total:</strong></td>
-        <td><strong>{{ total|floatformat:2 }}</strong></td>
-      </tr>
-    </table>
-  </div>
-  <div class="footer">
-    <h5>Notes</h5>
-    <p>{{ invoice.notes }}</p>
+    <div class="footer">
+      {% if invoice.notes %}
+        <h5>Notes</h5>
+        <p>{{ invoice.notes }}</p>
+      {% else %}
+        <p></p>
+      {% endif %}
+    </div>
   </div>

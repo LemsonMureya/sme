@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="main" id="top">
+  <div class="container-fluid px-0">
+    <div class="container">
+      <div class="row flex-center min-vh-100 py-5">
+        <div class="col-sm-10 col-md-8 col-lg-5 col-xl-5 col-xxl-3">
+          <a class="d-flex flex-center text-decoration-none mb-4" href="/">
+            <div class="d-flex align-items-center fw-bolder fs-5 d-inline-block">
+              <img src="{% static 'assets/img/icons/logo.png' %}" alt="phoenix" width="58" />
+            </div>
+          </a>
+          <div class="text-center mb-7">
+            <h3 class="text-1000">Sign Up</h3>
+            <p class="text-700">Create your account today</p>
+          </div>
+          <form id="wizardForm" method="POST" action="{% url 'register' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div id="step1">
+
+             <div class="mb-3 text-start">
+               <label class="form-label" for="{{ user_form.first_name.id_for_label }}">First Name *</label>
+               <input class="form-control" id="{{ user_form.first_name.id_for_label }}" name="{{ user_form.first_name.html_name }}" type="text" placeholder="First Name" required/>
+             </div>
+             <div class="mb-3 text-start">
+               <label class="form-label" for="{{ user_form.last_name.id_for_label }}">Last Name *</label>
+               <input class="form-control" id="{{user_form.last_name.id_for_label }}" name="{{ user_form.last_name.html_name }}" type="text" placeholder="Last Name" required/>
+             </div>
+             <div class="mb-3 text-start">
+               <label class="form-label" for="{{user_form.email.id_for_label }}">Email address *</label>
+               <input class="form-control" id="{{ user_form.email.id_for_label }}" name="{{user_form.email.html_name }}" type="email" placeholder="name@example.com" required/>
+             </div>
+             <div class="row g-3 mb-3">
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ user_form.password1.id_for_label }}">Password *</label>
+                 <input class="form-control form-icon-input" id="{{ user_form.password1.id_for_label }}" name="{{ user_form.password1.html_name }}" type="password" placeholder="Password" required/>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label" for="{{user_form.password2.id_for_label }}">Confirm Password *</label>
+                 <input class="form-control form-icon-input" id="{{ user_form.password2.id_for_label }}" name="{{ user_form.password2.html_name }}" type="password" placeholder="Confirm Password" required/>
+               </div>
+             </div>
+             <div class="form-check mb-3">
+               <input class="form-check-input" id="agree_to_terms" name="agree_to_terms" type="checkbox" required/>
+               <label class="form-label fs--1 text-none" for="agree_to_terms">I accept the <a href="#!">terms </a>and <a href="#!">privacy policy</a></label>
+             </div>
+             <button id="btn-next" type="button" class="mb-2 btn btn-primary">Continue</button>
+             </div>
+
+        <div id="step2" style="display: none;">
+    <!-- Company form fields -->
+             <div class="row g-3 mb-3">
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.name.id_for_label }}">Company Name *</label>
+                 <input class="form-control" id="{{ company_form.name.id_for_label }}" name="{{ company_form.name.html_name }}" type="text" placeholder="Company Name" required/>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label" for="id_company_email">Company Email *</label>
+                 <input class="form-control" id="id_company_email" name="{{ company_form.email.html_name }}" type="email" placeholder="name@example.com" required/>
+               </div>
+             </div>
+             <div class="row g-3 mb-3">
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.phone.id_for_label }}">Company Phone Number</label>
+                 <input class="form-control" id="{{ company_form.phone.id_for_label }}" name="{{ company_form.phone.html_name }}" type="text" placeholder="Phone Number(optional)"/>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.website.id_for_label }}">Website</label>
+                 <input class="form-control" id="{{ company_form.website.id_for_label }}" name="{{ company_form.website.html_name }}" type="text" placeholder="Website(optional)"/>
+               </div>
+             </div>
+             <div class="row g-3 mb-3">
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.address_line_1.id_for_label }}">Address Line 1</label>
+                 <input class="form-control" id="{{ company_form.address_line_1.id_for_label }}" name="{{ company_form.address_line_1.html_name }}" type="text" placeholder="Address Line 1(optional)"/>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.address_line_2.id_for_label }}">Address Line 2</label>
+                 <input class="form-control" id="{{ company_form.address_line_2.id_for_label }}" name="{{ company_form.address_line_2.html_name }}" type="text" placeholder="Address Line 2(optional)"/>
+               </div>
+             </div>
+             <div class="row g-3 mb-3">
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.city.id_for_label }}">City</label>
+                 <input class="form-control" id="{{ company_form.city.id_for_label }}" name="{{ company_form.city.html_name }}" type="text" placeholder="City(optional)"/>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.country.id_for_label }}">Country</label>
+                 <input class="form-control" id="{{ company_form.country.id_for_label }}" name="{{ company_form.country.html_name }}" type="text" placeholder="Country(optional)"/>
+               </div>
+             </div>
+             <div class="row g-3 mb-3">
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.zip_code.id_for_label }}">Zip Code</label>
+                 <input class="form-control" id="{{ company_form.zip_code.id_for_label }}" name="{{ company_form.zip_code.html_name }}" type="text" placeholder="Zip Code(optional)"/>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.num_employees.id_for_label }}">Number of Employees</label>
+                 <select class="form-control" id="{{ company_form.num_employees.id_for_label }}" name="{{ company_form.num_employees.html_name }}">
+                     <!-- Loop through the choices and create an option for each -->
+                     {% for value, display in company_form.num_employees.field.choices %}
+                       <option value="{{ value }}">{{ display }}</option>
+                     {% endfor %}
+                 </select>
+             </div>
+             </div>
+             <div class="row g-3 mb-3">
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.industry.id_for_label }}">Industry</label>
+                 <select class="form-control" id="{{ company_form.industry.id_for_label }}" name="{{ company_form.industry.html_name }}">
+                   <!-- Loop through the choices and create an option for each -->
+                   {% for value, display in company_form.industry.field.choices %}
+                     <option value="{{ value }}">{{ display }}</option>
+                   {% endfor %}
+                 </select>
+               </div>
+               <div class="col-md-6">
+                 <label class="form-label" for="{{ company_form.business_type.id_for_label }}">Business Type *</label>
+                 <select class="form-control" id="{{ company_form.business_type.id_for_label }}" name="{{ company_form.business_type.html_name }}" required>
+                   <!-- Loop through the choices and create an option for each -->
+                   {% for value, display in company_form.business_type.field.choices %}
+                     <option value="{{ value }}">{{ display }}</option>
+                   {% endfor %}
+                 </select>
+               </div>
+             </div>
+             <div class="mb-3 text-start">
+               <label class="form-label" for="{{ company_form.logo.id_for_label }}">Logo</label>
+               <input type="file" class="form-control" id="{{ company_form.logo.id_for_label }}" name="{{ company_form.logo.html_name }}" accept="image/png, image/jpeg">
+             </div>
+             <button class="btn btn-primary w-100 mb-3" type="submit">Register</button>
+             </div>
+        </form>
+        <div class="text-center">
+            <a class="fs--1 fw-bold" href="{% url 'login' %}">
+              Sign in to an existing account
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+let currentStep = 1;
+
+function setFormStep(step) {
+  // Show/hide the correct step
+  for (let i = 1; i <= 2; i++) {
+    document.getElementById("step" + i).style.display = (i === step) ? "block" : "none";
+  }
+  currentStep = step;
+}
+
+document.getElementById("btn-next").addEventListener("click", function() {
+  let wizardForm = document.getElementById("wizardForm");
+  let inputs = document.getElementById("step" + currentStep).getElementsByTagName("input");
+  let valid = true;
+
+  // check if all fields in the current step are valid
+  for (let j = 0; j < inputs.length; j++) {
+    if (!inputs[j].checkValidity()) {
+      valid = false;
+      inputs[j].reportValidity();
+    }
+  }
+
+  // if valid, move to next step
+  if (valid) {
+    setFormStep(2);
+  }
+});
+
+
+document.getElementById("wizardForm").addEventListener("submit", function(e) {
+  // check if the form is valid
+  if (!e.target.checkValidity()) {
+    e.preventDefault();
+    e.target.reportValidity();
+  }
+});
+
+// Initialize the form
+setFormStep(1);
+</script>
+
+  <!-- Add your existing script here -->
+  <script>
+    var navbarTopStyle = window.config.config.phoenixNavbarTopStyle;
+    var navbarTop = document.querySelector('.navbar-top');
+    if (navbarTopStyle === 'darker') {
+      navbarTop.classList.add('navbar-darker');
+    }
+
+    var navbarVerticalStyle = window.config.config.phoenixNavbarVerticalStyle;
+    var navbarVertical = document.querySelector('.navbar-vertical');
+    if (navbarVertical && navbarVerticalStyle === 'darker') {
+      navbarVertical.classList.add('navbar-darker');
+    }
+  </script>
+</main>
+{% endblock %}

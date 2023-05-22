@@ -1,3 +1,291 @@
+
+.btn-phoenix-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+.btn-phoenix-danger {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.btn-phoenix-secondary:hover,
+.btn-phoenix-danger:hover {
+    opacity: 0.8;
+}
+.client-name {
+     flex-grow: 1;
+ }
+
+ .address-link {
+     text-decoration: none;
+     color: #222;
+ }
+ .map-thumbnail {
+  width: 100%;
+  height: 200px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-bottom: 16px;
+}
+.icon-row {
+ display: flex;
+ align-items: center;
+}
+
+.icon-text {
+   margin-left: 8px;
+   font-weight: 500;
+   font-size: 16px;
+}
+
+/* .edit-icon {
+   margin-left: auto;
+   color: #6c757d;
+} */
+
+.colored-icon {
+   color: #222;
+   margin-right: 4px;
+}
+
+h2 {
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 1rem;
+}
+
+h4 {
+    font-weight: 700;
+    color: #222;
+}
+
+h5 {
+    font-weight: 700;
+    color: #222;
+}
+
+.card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+hr {
+    border-top: 1px solid #ddd;
+    margin: 1.5rem 0;
+}
+
+.fas {
+  font-size: 1.25rem;
+  color: var(--light-text-color);
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.sticky-leads-sidebar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 20px;
+}
+
+.client-name {
+    font-weight: 700;
+    color: #222;
+}
+
+.edit-icon {
+    font-size: 0.75rem;
+    color: #222;
+}
+
+.icon-row {
+    display: flex;
+    align-items: center;
+}
+
+.colored-icon {
+    color: #2222228f;
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+}
+
+.icon-text {
+    font-weight: 500;
+}
+
+.address-link {
+    color: #222;
+    text-decoration: none;
+}
+
+.map-thumbnail {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+}
+
+.info-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  margin-top:1rem;
+}
+
+.info-icon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  color: #2222228f;
+}
+
+.info-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* .info-title {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #777;
+} */
+
+.info-data {
+  font-weight: 600;
+  font-size: 1rem;
+}
+.info-separator {
+    width: 100%;
+    border-top: 1px solid #eaeaea;
+    margin: auto;
+}
+
+.table {
+    font-size: 1rem;
+    color: var(--text-color);
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 1px;
+    vertical-align: middle;
+}
+
+.table th {
+    text-align: left;
+    font-weight: 700;
+}
+
+.table td {
+    font-weight: 400;
+}
+
+.table-stats-highlight {
+    background-color: #e0e0e0;
+}
+
+.total-cost-divider td {
+    border-top: 1px solid #dee2e6;
+}
+
+<div class="card">
+        <div class="card-body">
+            <h4 class="mb-5">Billing Information</h4>
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="mb-4">
+                        <div class="d-flex flex-wrap justify-content-between mb-2">
+                            <h5 class="mb-0 text-1000 me-2">Payment Type</h5>
+                            <span class="fas fa-credit-card"></span>
+                        </div>
+                        <p class="mb-3">{{ job.get_payment_type_display }}</p>
+                    </div><hr>
+                    <div class="mb-4">
+                        <div class="d-flex flex-wrap justify-content-between mb-2">
+                            <h5 class="mb-0 text-1000 me-2">Payment Status</h5>
+                            <span class="fas fa-dollar-sign"></span>
+                        </div>
+                        <p class="mb-3">{{ job.get_payment_status_display }}</p>
+                    </div>
+                    <hr>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-0 text-1000 me-2">Job Items</h5>
+                            {% if job.jobitem_set.all %}
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Description</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for job_item in job.jobitem_set.all %}
+                                    <tr>
+                                        <td>{{ job_item.item_name }}</td>
+                                        <td>{{ job_item.item_description }}</td>
+                                        <td>{{ job_item.quantity }}</td>
+                                        <td>{{ job_item.unit_price }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <p>No job items associated with this job.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- clients -->
+<div class="row mt-4">
+{% if clients %}
+<div class="col-12">
+   <h2 class="mb-4">Top Clients</h2>
+   <div class="client-list">
+       {% for client in clients %}
+       <div class="client-item">
+           <div class="client-thumbnail">
+               <img src="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png" alt="{{ client.name }}">
+           </div>
+           <div class="client-info">
+               <h3 class="client-name">{{ client.name|title }}</h3>
+               <p class="client-role">{{ client.role|title }}</p>
+           </div>
+           <div class="client-notification">
+               <span class="notification-badge">{{ client.jobs_count }}5</span>
+           </div>
+       </div>
+       {% endfor %}
+   </div>
+</div>
+  {% endif %}
+
 <!-- profile template -->
 <!DOCTYPE html>
 <html lang="en">

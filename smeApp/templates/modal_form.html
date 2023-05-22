@@ -1,3 +1,5 @@
+{% load widget_tweaks %}
+
 <div class="modal fade" id="addDealModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addDealModal" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content bg-100 p-6">
@@ -11,46 +13,81 @@
             <form method="post" action="{% url 'smeApp:job_add' %}" enctype="multipart/form-data" class="row g-3 mb-6">
               {% csrf_token %}
               {% for field in form %}
-                  {% if field.name != 'client' %}
-                    {% if field.name == 'start_date' or field.name == 'end_date' %}
-                      <div class="col-md-6 gy-6">
-                        <div class="form-floating">
-                          <input class="form-control flatpickr-date" type="text" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}">
-                          <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                        </div>
-                      </div>
-                    {% elif field.field.widget.input_type == 'select' %}
-                      <div class="col-md-6 gy-6">
-                        <div class="form-floating">
-                          <select class="form-select" name="{{ field.html_name }}" id="{{ field.auto_id }}">
-                            {% for choice in field.field.choices %}
-                              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                            {% endfor %}
-                          </select>
-                          <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                        </div>
-                      </div>
-                    {% else %}
-                      <div class="col-md-6 gy-6">
-                        <div class="form-floating">
-                          <input class="form-control" type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}">
-                          <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                        </div>
-                      </div>
-                    {% endif %}
-                  {% else %}
-                    <div class="col-md-6 gy-6">
-                      <div class="form-floating">
-                        {{ field }}
-                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                        <span id="add-client-btn" style="cursor: pointer; margin-left: 5px; color: green;">
-                          <i class="fas fa-plus-circle" id="add-client-icon" data-bs-toggle="modal" data-bs-target="#clientModal"></i> Add new client
-                        </span>
-                      </div>
-                    </div>
-                  {% endif %}
-                {% endfor %}
-
+              {% if field.name != 'client' %}
+              {% if field.name == 'start_date' or field.name == 'end_date' %}
+            <div class="col-md-6 gy-6">
+          <div class="form-floating">
+        <input class="form-control flatpickr-date" type="text" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}">
+      <label for="{{ field.auto_id }}">{{ field.label }}</label>
+      </div>
+      </div>
+    {% elif field.field.widget.input_type == 'select' %}
+      <div class="col-md-6 gy-6">
+        <div class="form-floating">
+          <select class="form-select" name="{{ field.html_name }}" id="{{ field.auto_id }}">
+            {% for choice in field.field.choices %}
+              <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endfor %}
+          </select>
+          <label for="{{ field.auto_id }}">{{ field.label }}</label>
+        </div>
+      </div>
+    {% elif field.field.widget.input_type == 'checkbox' %}
+      <div class="col-md-6 gy-6">
+        <div class="form-check">
+          {{ field }}
+          <label class="form-check-label" for="{{ field.auto_id }}">{{ field.label }}</label>
+        </div>
+      </div>
+    {% else %}
+      <div class="col-md-6 gy-6">
+        <div class="form-floating">
+          <input class="form-control" type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}">
+          <label for="{{ field.auto_id }}">{{ field.label }}</label>
+        </div>
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="col-md-6 gy-6">
+      <div class="form-floating">
+        {{ field }}
+        <label for="{{ field.auto_id }}">{{ field.label }}</label>
+        <span id="add-client-btn" style="cursor: pointer; margin-left: 5px; color: green;">
+          <i class="fas fa-plus-circle" id="add-client-icon" data-bs-toggle="modal" data-bs-target="#clientModal"></i> Add new client
+        </span>
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}
+                <!-- Job Items -->
+  <div class="col-md-12 gy-6">
+    <h4 class="mb-3">Job Items</h4>
+    <div id="job-items-container">
+      {{ formset.management_form }}
+      {% for form in formset.forms %}
+        <div class="job-item row gy-3" style="margin-top: 1px;">
+          {% for field in form %}
+            <div class="col-md-3">
+              <div class="form-floating">
+                {{ field|add_class:"form-control" }}
+                <label for="{{ field.auto_id }}">{{ field.label }}</label>
+              </div>
+            </div>
+          {% endfor %}
+          <div class="col-md-1">
+            <button type="button" class="btn btn-danger delete-item">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="col-12 gy-6" style="padding-top:1rem;">
+      <button type="button" id="add-job-item" class="btn btn-light border">
+        <i class="fas fa-plus"></i> Add Job Item
+      </button>
+    </div>
+  </div>
               <div class="modal-footer border-0 pt-6 px-0 pb-0">
                 <button type="submit" class="btn btn-primary my-0">Create Job</button>
               </div>
@@ -61,7 +98,6 @@
     </div>
   </div>
 </div>
-
 <!-- Client Modal -->
 <div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="clientModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -84,11 +120,13 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   flatpickr(".flatpickr-date", {
-    dateFormat: "Y-m-d", // Update the format according to your preference
+    dateFormat: "Y-m-d H:i", // Update the format to include time
+    enableTime: true, // Enable time selection
     disableMobile: true
   });
 });
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -233,4 +271,37 @@ document.addEventListener("DOMContentLoaded", function() {
             setupNewClientFields();
         });
       });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  const formIdx = document.getElementById("id_jobitem_set-TOTAL_FORMS").value;
+
+  document.getElementById("add-job-item").addEventListener("click", () => {
+    const formElem = document.querySelector("#job-items-container .job-item:last-child").cloneNode(true);
+
+    const inputFields = formElem.getElementsByTagName("input");
+    for (const inputField of inputFields) {
+      inputField.name = inputField.name.replace(/jobitem_set-\d+-/g, `jobitem_set-${formIdx}-`);
+      inputField.id = inputField.id.replace(/id_jobitem_set-\d+-/g, `id_jobitem_set-${formIdx}-`);
+      inputField.value = "";
+    }
+
+    const labels = formElem.getElementsByTagName("label");
+    for (const label of labels) {
+      label.setAttribute("for", label.getAttribute("for").replace(/id_jobitem_set-\d+-/g, `id_jobitem_set-${formIdx}-`));
+    }
+
+    formElem.querySelector(".delete-item").addEventListener("click", function () {
+      this.closest(".job-item").remove();
+
+      let currentForms = parseInt(document.getElementById("id_jobitem_set-TOTAL_FORMS").value);
+      document.getElementById("id_jobitem_set-TOTAL_FORMS").value = currentForms - 1;
+    });
+
+    document.getElementById("job-items-container").appendChild(formElem);
+    document.getElementById("id_jobitem_set-TOTAL_FORMS").value = parseInt(formIdx) + 1;
+  });
+});
+
 </script>

@@ -2,6 +2,16 @@
 
 from django.db import migrations, models
 
+def update_payment_status(apps, schema_editor):
+    Job = apps.get_model('smeApp', 'Job')
+    mapping = {
+        'late': 'Late Payment',
+    }
+
+    for job in Job.objects.all():
+        if job.payment_status in mapping:
+            job.payment_status = mapping[job.payment_status]
+            job.save()
 
 class Migration(migrations.Migration):
 

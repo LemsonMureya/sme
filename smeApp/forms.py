@@ -1,9 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import (CustomUser, Income, Expense, Job, Client, CompanyProfile, Invoice, ProductType,
+from .models import (CustomUser, Income, Expense, Job, Client, CompanyProfile, Invoice, ProductType, JobItem,
                     InvoiceItem, Note, Supplier, StockItem, PurchaseOrder, PurchaseOrderItem, Sale, SaleItem)
 from django.forms import widgets, ImageField
 from django.utils.html import format_html
+from datetime import timedelta
 from django.forms import formset_factory, BaseFormSet
 
 class CustomUserCreationForm(forms.ModelForm):
@@ -50,6 +51,12 @@ class CompanyProfileForm(forms.ModelForm):
             'email',
             'logo',
             'industry',
+            'business_type',
+            'num_employees',
+            'city',
+            'country',
+            'website',
+            'zip_code',
         ]
 
 class AvatarUpdateForm(forms.ModelForm):
@@ -69,8 +76,16 @@ class JobForm(forms.ModelForm):
     status = forms.ChoiceField(choices=Job.STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
     category = forms.ChoiceField(choices=Job.CATEGORY_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
     description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    start_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
-    end_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
+    start_date = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'],
+        widget=forms.DateTimeInput(
+                attrs={'class': 'form-control flatpickr-date', 'autocomplete': 'off'}
+            )
+        )
+    end_date = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'],
+        widget=forms.DateTimeInput(
+            attrs={'class': 'form-control flatpickr-date', 'autocomplete': 'off'}
+        )
+    )
     total_cost = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
     payment_status = forms.ChoiceField(choices=Job.PAYMENT_STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
     payment_type = forms.ChoiceField(choices=Job.PAYMENT_TYPE_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
@@ -87,6 +102,20 @@ class JobForm(forms.ModelForm):
 
         if user and user.company:
             self.fields['client'].queryset = Client.objects.filter(company=user.company)
+
+    def save(self, commit=True):
+        job = super().save(commit=False)
+        if commit:
+            job.save()
+            if self.instance and self.instance.id:
+                job.notes.set(self.instance.notes.all())
+        return job
+
+class JobItemForm(forms.ModelForm):
+    class Meta:
+        model = JobItem
+        fields = ('item_name', 'item_description', 'quantity', 'unit_price')
+        exclude = ['id', 'delete', 'job']
 
 class ClientForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -146,14 +175,25 @@ class InvoiceForm(forms.ModelForm):
 
     class Meta:
         model = Invoice
-        fields = ['company', 'client', 'invoice_number', 'invoice_date', 'due_date', 'notes', 'tax', 'discount', 'color_accent', 'job', 'payment_status']
+        fields = ['company', 'client', 'invoice_number', 'invoice_date', 'due_date', 'notes', 'tax', 'discount', 'color_accent', 'payment_status']
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        job = kwargs.pop('job', None)
         super().__init__(*args, **kwargs)
+
         if user and user.company:
             self.fields['client'].queryset = Client.objects.filter(company=user.company)
             self.fields['company'].queryset = CompanyProfile.objects.filter(id=user.company.id)
-            self.fields['job'].queryset = Job.objects.filter(company=user.company)
+            invoice_count = Invoice.objects.filter(company=user.company).count()
+
+        if job:
+            self.fields['client'].initial = job.client
+            self.fields['company'].initial = job.company
+            self.fields['invoice_number'].initial = invoice_count + 1
+            self.fields['invoice_date'].initial = job.created_at
+            self.fields['due_date'].initial = job.created_at + timedelta(days=30)
+            self.fields['payment_status'].initial = job.payment_status
 
 class InvoiceItemForm(forms.ModelForm):
     class Meta:
@@ -165,6 +205,11 @@ class InvoiceItemForm(forms.ModelForm):
             'quantity': forms.NumberInput(attrs={'class': 'form-control'}),
             'unit_price': forms.NumberInput(attrs={'class': 'form-control'})
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'DELETE' in self.fields:
+            del self.fields['DELETE']
 
 class NoteForm(forms.ModelForm):
     class Meta:

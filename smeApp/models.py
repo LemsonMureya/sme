@@ -24,17 +24,18 @@ class CustomUserManager(BaseUserManager):
 
 class CompanyProfile(models.Model):
     BUSINESS_CATEGORY_CHOICES = (
-        ('art, photography & creative', 'Art, Photography & Creative Services'),
-        ('construction & home improvement', 'Construction & Home Improvement'),
-        ('consulting & professional', 'Consulting & Professional Services'),
-        ('financial services & insurance', 'Financial Services & Insurance'),
-        ('hair, spa & aesthetics', 'Hair, Spa & Aesthetics'),
-        ('non-profits, associations & groups', 'Non-profits, Associations & Groups'),
-        ('real estate', 'Real Estate'),
-        ('retailers, resellers & sales', 'Retailers, Resellers & Sales'),
-        ('web, tech & media', 'Web, Tech & Media'),
+        ('art', 'Art, Photography & Creative Services'),
+        ('construction', 'Construction & Home Improvement'),
+        ('consulting', 'Consulting & Professional Services'),
+        ('financial', 'Financial Services & Insurance'),
+        ('hair_spa', 'Hair, Spa & Aesthetics'),
+        ('non_profit', 'Non-profits, Associations & Groups'),
+        ('real_estate', 'Real Estate'),
+        ('retail', 'Retailers, Resellers & Sales'),
+        ('web_tech', 'Web, Tech & Media'),
         ('other', 'Other'),
     )
+
     BUSINESS_TYPE_CHOICES = [
         ('service', 'Service'),
         ('sales', 'Sales'),
@@ -42,10 +43,10 @@ class CompanyProfile(models.Model):
 
     NUM_EMPLOYEES_CHOICES = (
         ('1', '1'),
-        ('2-10', '2-10'),
-        ('11-50', '11-50'),
-        ('51-200', '51-199'),
-        ('200+', '200+'),
+        ('2_to_10', '2-10'),
+        ('11_to_50', '11-50'),
+        ('51_to_200', '51-199'),
+        ('200_plus', '200+'),
     )
 
     name = models.CharField(max_length=255)
@@ -155,17 +156,18 @@ class Job(models.Model):
         ('other', 'Other'),
     )
     PAYMENT_STATUS_CHOICES = (
-        ('unpaid', 'Unpaid'),
-        ('partially paid', 'Partially Paid'),
-        ('paid', 'Paid'),
-        ('late', 'Late Payment'),
-        ('pending', 'Pending Payment'),
-        ('overdue', 'Overdue'),
-        ('not invoiced', 'Not Yet Invoiced'),
-        ('refunded', 'Refunded'),
-        ('cancelled', 'Cancelled'),
-        ('other', 'Other'),
+    ('Unpaid', 'Unpaid'),
+    ('Partially Paid', 'Partially Paid'),
+    ('Paid', 'Paid'),
+    ('Late Payment', 'Late Payment'),
+    ('Pending Payment', 'Pending Payment'),
+    ('Overdue', 'Overdue'),
+    ('Not Yet Invoiced', 'Not Yet Invoiced'),
+    ('Refunded', 'Refunded'),
+    ('Cancelled', 'Cancelled'),
+    ('Other', 'Other'),
     )
+
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     po_number = models.CharField(max_length=255, blank=True, null=True)
@@ -173,8 +175,8 @@ class Job(models.Model):
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='standard')
     description = models.TextField(blank=True, null=True)
     notes = models.ManyToManyField(Note, blank=True)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     payment_status = models.CharField(max_length=20, blank=True, null=True, choices=PAYMENT_STATUS_CHOICES)
     payment_type = models.CharField(max_length=20, blank=True, null=True, choices=PAYMENT_TYPE_CHOICES)
@@ -184,8 +186,21 @@ class Job(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def calculate_total_cost(self):
+        return sum(item.quantity * item.unit_price for item in self.jobitem_set.all())
+
     def __str__(self):
         return self.client.name
+
+class JobItem(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    item_name = models.CharField(max_length=100, verbose_name='Item Name', help_text='Enter the name of the item or service.')
+    item_description = models.CharField(max_length=255, verbose_name='Item Description', help_text='Enter a brief description of the item or service.', blank=True, null=True)
+    quantity = models.IntegerField(verbose_name='Quantity', help_text='Enter the quantity of the item or service.', validators=[MinValueValidator(1)])
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Unit Price', help_text='Enter the unit price of the item or service.', validators=[MinValueValidator(0)])
+
+    def __str__(self):
+        return self.item_name
 
 class Expense(models.Model):
     RENT = 'Rent'
@@ -280,7 +295,7 @@ class Invoice(models.Model):
     ]
 
     company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE)
-    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)  
+    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
     invoice_number = models.CharField(max_length=50)
     invoice_date = models.DateField()
     due_date = models.DateField()

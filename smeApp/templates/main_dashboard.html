@@ -1,98 +1,411 @@
 {% extends 'dashboard.html' %}
 {% load static %}
 {% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+   <link rel="stylesheet" href="{% static 'assets/css/tailwind.output.css' %}">
+   <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
+   <link rel="stylesheet" href="{% static 'assets/css/dashboard.css' %}">
+   <style>
+      .nav-link.active {
+          color: black !important;
+       }
+      @media (max-width: 600px) {
+        .fc .fc-timeGridWeek-view .fc-col-header-cell-cushion {
+        width: 50px !important;
+        }
+      }
+    </style>
+</head>
 
-  <div class="mt-4">
-    <h1 class="text-center mb-4">Dashboard</h1>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Total Revenue</h5>
-            <p class="card-text">${{ total_revenue }}</p>
+<div class="mx-auto grid">
+  <!-- CTA -->
+  <span style="margin-left:-1rem; margin-right:-1rem;" class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple">
+    <div class="dashboard-navbar flex items-center">
+      <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+        </path>
+      </svg>
+      <span class="navbar-text"> Hello, {{ request.user.first_name|title }}</span>
+    </div>
+    <div class="ml-auto">
+      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#quickAccessModal">
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
+  </span>
+
+  <!-- Quick Access Modal -->
+  <div class="modal fade" id="quickAccessModal" tabindex="-1" aria-labelledby="quickAccessModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content rounded-3 shadow-lg">
+      <div class="modal-header bg-light py-3">
+        <h4 class="modal-title mb-0" id="quickAccessModalLabel">Quick Access</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4">
+        <div class="card mb-2 shadow-lg rounded-3">
+          <a href="{% url 'smeApp:job_list' %}" class="card-body d-flex align-items-center text-decoration-none text-dark">
+              <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="me-3" width="35px" height="35px" viewBox="-31.36 -31.36 126.72 126.72" enable-background="new 0 0 64 64" xml:space="preserve" fill="#fbfaff" stroke="#fbfaff" stroke-width="1.152">
+              <g id="SVGRepo_bgCarrier" stroke-width="0">
+              <rect x="-31.36" y="-31.36" width="126.72" height="126.72" rx="8.8704" fill="#9667e0" strokewidth="0"/>
+              </g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+              <g id="SVGRepo_iconCarrier"> <path fill="#fbfaff" d="M60,13H48V4c0-2.211-1.789-4-4-4H20c-2.211,0-4,1.789-4,4v9H4c-2.211,0-4,1.789-4,4v43c0,2.211,1.789,4,4,4 h56c2.211,0,4-1.789,4-4V17C64,14.789,62.211,13,60,13z M18,4c0-1.104,0.896-2,2-2h24c1.104,0,2,0.896,2,2v9h-2V5 c0-0.553-0.447-1-1-1H21c-0.553,0-1,0.447-1,1v8h-2V4z M42,6v7H22V6H42z M62,60c0,1.104-0.896,2-2,2H4c-1.104,0-2-0.896-2-2V42h10v5 c0,0.553,0.447,1,1,1h6c0.553,0,1-0.447,1-1v-5h24v5c0,0.553,0.447,1,1,1h6c0.553,0,1-0.447,1-1v-5h10V60z M14,46V36h4v10H14z M46,46V36h4v10H46z M62,40H52v-5c0-0.553-0.447-1-1-1h-6c-0.553,0-1,0.447-1,1v5H20v-5c0-0.553-0.447-1-1-1h-6 c-0.553,0-1,0.447-1,1v5H2V17c0-1.104,0.896-2,2-2h56c1.104,0,2,0.896,2,2V40z"/> </g>
+              </svg>
+              <span class="flex-grow-1">Create Job</span>
+              <i class="fa fa-chevron-right ms-auto"></i>
+            </a>
+          </div>
+
+          <div class="card mb-2 shadow-lg rounded-3">
+            <a href="{% url 'smeApp:clients_add' %}" class="card-body d-flex align-items-center text-decoration-none text-dark">
+              <svg class="me-3" width="35px" height="35px" viewBox="-12 -12 48.00 48.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ac2020">
+              <g id="SVGRepo_bgCarrier" stroke-width="0">
+              <rect x="-12" y="-12" width="48.00" height="48.00" rx="3.84" fill="#7ed0ec" strokewidth="0"/>
+              </g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+              <g id="SVGRepo_iconCarrier"> <g id="User / User_Add"> <path id="Vector" d="M15 19C15 16.7909 12.3137 15 9 15C5.68629 15 3 16.7909 3 19M19 16V13M19 13V10M19 13H16M19 13H22M9 12C6.79086 12 5 10.2091 5 8C5 5.79086 6.79086 4 9 4C11.2091 4 13 5.79086 13 8C13 10.2091 11.2091 12 9 12Z" stroke="#000000" stroke-width="1.9200000000000004" stroke-linecap="round" stroke-linejoin="round"/> </g> </g>
+              </svg>
+              <span class="flex-grow-1">Create Client</span>
+              <i class="fa fa-chevron-right ms-auto"></i>
+            </a>
+          </div>
+
+          <div class="card mb-2 shadow-lg rounded-3">
+            <a href="{% url 'smeApp:add_expense' %}" class="card-body d-flex align-items-center text-decoration-none text-dark">
+              <svg class="me-3" width="35px" height="35px" viewBox="-102.4 -102.4 1228.80 1228.80" enable-background="new 0 0 1024 1024" id="dollar-bill" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+                <g id="SVGRepo_bgCarrier" stroke-width="0">
+                <rect x="-102.4" y="-102.4" width="1228.80" height="1228.80" rx="98.304" fill="#4EC0B5" strokewidth="0"/>
+                </g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="SVGRepo_iconCarrier"> <g> <g id="dollar-bill-label"> <rect fill="#4EC0B5" height="1024" width="1024"/> </g> <g id="dollar-bill-dollar-bill"> <g> <path d="M760.4902,340.6401c-5.6601,0-10.2402-4.58-10.2402-10.2397v-47.1006h-476.5v47.1006 c0,5.6597-4.5801,10.2397-10.2402,10.2397s-10.2397-4.58-10.2397-10.2397v-57.3403c0-5.6597,4.5796-10.2398,10.2397-10.2398 h496.9804c5.6602,0,10.2403,4.5801,10.2403,10.2398v57.3403C770.7305,336.0601,766.1504,340.6401,760.4902,340.6401 L760.4902,340.6401z" fill="#FFFFFF"/> </g> <g> <path d="M798.7197,761.1797H225.2803c-5.6602,0-10.2403-4.5801-10.2403-10.2402V330.4004 c0-5.6602,4.5801-10.2402,10.2403-10.2402h573.4393c5.6602,0,10.2404,4.58,10.2404,10.2402v420.5391 C808.96,756.5996,804.3799,761.1797,798.7197,761.1797L798.7197,761.1797z M235.52,740.7002h552.9604V340.6401H235.52V740.7002 L235.52,740.7002z" fill="#FFFFFF"/> </g> <g> <path d="M645.79,684.7197H378.1899c-5.6596,0-10.2397-4.5791-10.2397-10.2392c0-39.1505-28.8506-71-64.3203-71 c-5.5899,0-10.1397-4.4805-10.2403-10.0606L291.4902,483.5c-0.0503-2.75,1.0098-5.4004,2.9395-7.3594 c1.9199-1.9609,4.5503-3.0605,7.3003-3.0605c37.1299,0,66.2202-29.0801,66.2202-66.2197c0-5.6602,4.5801-10.2403,10.2397-10.2403 H645.79c5.6602,0,10.2403,4.5801,10.2403,10.2403c0,37.1396,29.0996,66.2197,66.2392,66.2197 c5.6602,0,10.2403,4.5801,10.2403,10.2402v114.6992c0,5.6602-4.5801,10.2403-10.2403,10.2403 c-37.1396,0-66.2392,29.08-66.2392,66.2207C656.0303,680.1406,651.4502,684.7197,645.79,684.7197L645.79,684.7197z M387.8999,664.2402h248.2202c4.5497-40.2596,35.6299-71.3495,75.9102-75.8906v-95.3594 c-40.2803-4.54-71.3604-35.6298-75.9102-75.8901H387.8599c-4.5401,40.2104-35.5396,71.2603-75.7203,75.8696l1.5704,90.6709 C352.6201,588.6406,383.54,622.1699,387.8999,664.2402L387.8999,664.2402z" fill="#FFFFFF"/> </g> <g> <path d="M511.9902,608.2598c-37.2602,0-67.58-30.3203-67.58-67.5801c0-37.2793,30.3198-67.5996,67.58-67.5996 c37.2696,0,67.5996,30.3203,67.5996,67.5996C579.5898,577.9395,549.2598,608.2598,511.9902,608.2598L511.9902,608.2598z M511.9902,493.5605c-25.9702,0-47.1006,21.1397-47.1006,47.1192c0,25.9707,21.1304,47.1006,47.1006,47.1006 c25.9795,0,47.1197-21.1299,47.1197-47.1006C559.1099,514.7002,537.9697,493.5605,511.9902,493.5605L511.9902,493.5605z" fill="#FFFFFF"/> </g> <g> <g> <polygon fill="#FFFFFF" points="394.2402,546.8203 373.7598,546.8203 373.7598,526.3398 394.2402,526.3398 394.2402,546.8203 "/> </g> <g> <polygon fill="#FFFFFF" points="650.2402,546.8203 629.7598,546.8203 629.7598,526.3398 650.2402,526.3398 650.2402,546.8203 "/> </g> </g> </g> </g> </g>
+                </svg>
+                <span class="flex-grow-1">Record Expense</span>
+              <i class="fa fa-chevron-right ms-auto"></i>
+            </a>
+          </div>
+
+          <div class="card mb-1 shadow-lg rounded-3">
+            <a href="{% url 'smeApp:create_invoice' %}" class="card-body d-flex align-items-center text-decoration-none text-dark">
+              <svg class="me-3" width="35px" height="35px" viewBox="-102.4 -102.4 1228.80 1228.80" enable-background="new 0 0 1024 1024" id="receipt" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+              <g id="SVGRepo_bgCarrier" stroke-width="0">
+              <rect x="-102.4" y="-102.4" width="1228.80" height="1228.80" rx="98.304" fill="#F16750" strokewidth="0"/>
+              </g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+              <g id="SVGRepo_iconCarrier"> <g> <g id="receipt-label"> <rect fill="#F16750" height="1024" width="1024"/> </g> <g id="receipt-receipt"> <g> <path d="M311.2998,808.96c-1.3198,0-2.6499-0.25-3.9199-0.7803c-3.8252-1.5801-6.3198-5.3193-6.3198-9.46 V225.2803c0-5.6602,4.5849-10.2403,10.2397-10.2403h401.4004c5.6553,0,10.2393,4.5801,10.2393,10.2403v573.4394 c0,4.1407-2.4942,7.8799-6.3194,9.46c-3.8398,1.5898-8.2354,0.7109-11.1601-2.2197l-37.5303-37.5303l-27.3047,36.4307 c-3.8652,5.1591-12.5195,5.1591-16.3848,0l-27.33-36.4307L559.3701,805.96c-2.0898,2.1103-4.9254,3.2295-7.9702,2.9697 c-2.96-0.21-5.6851-1.6895-7.4648-4.0693l-27.3052-36.4307L479.0996,805.96c-2.0947,2.1103-4.9697,3.2295-7.9648,2.9697 c-2.96-0.21-5.6846-1.6895-7.4649-4.0693l-27.3252-36.4307L398.8198,805.96c-2.0898,2.1103-4.9399,3.2295-7.9648,2.9697 c-2.96-0.21-5.6851-1.6895-7.4654-4.0596l-27.3349-36.4404L318.54,805.96C316.585,807.9199,313.9648,808.96,311.2998,808.96 L311.2998,808.96z M357.1602,742.5996c0.2397,0,0.4794,0.0108,0.7246,0.0303c2.9599,0.2099,5.685,1.6904,7.4648,4.0596 l27.3355,36.4404l37.5249-37.5303c2.1001-2.0996,5.02-3.1699,7.9648-2.9697c2.96,0.2099,5.6851,1.6904,7.4648,4.0703 l27.3301,36.4297L510.5,745.5996c2.0947-2.0996,5.0449-3.1699,7.9648-2.9697c2.9649,0.2099,5.6905,1.6904,7.4703,4.0703 l27.3051,36.4297l37.5401-37.5303c2.0996-2.0996,5.0146-3.1699,7.9648-2.9697c2.96,0.2099,5.6846,1.6904,7.4649,4.0703 l26.2197,34.9502l26.1953-34.9502c1.7803-2.3799,4.5049-3.8604,7.4697-4.0703c2.9102-0.2393,5.8701,0.8701,7.9658,2.9697 L702.46,774V235.52H321.54v538.4702l28.3799-28.3906C351.8447,743.6699,354.4551,742.5996,357.1602,742.5996L357.1602,742.5996z" fill="#FFFFFF"/> </g> <g> <g> <polygon fill="#FFFFFF" points="649.6299,608.2803 592.2803,608.2803 592.2803,587.7998 649.6299,587.7998 649.6299,608.2803 "/> </g> <g> <polygon fill="#FFFFFF" points="649.6299,665.5996 592.2803,665.5996 592.2803,645.1201 649.6299,645.1201 649.6299,665.5996 "/> </g> <g> <polygon fill="#FFFFFF" points="652.4297,337.9199 371.5698,337.9199 371.5698,317.4399 652.4297,317.4399 652.4297,337.9199 "/> </g> <g> <polygon fill="#FFFFFF" points="649.6299,436.2197 592.2803,436.2197 592.2803,415.7402 649.6299,415.7402 649.6299,436.2197 "/> </g> <g> <polygon fill="#FFFFFF" points="649.6299,493.5605 592.2803,493.5605 592.2803,473.0801 649.6299,473.0801 649.6299,493.5605 "/> </g> <g> <polygon fill="#FFFFFF" points="649.6299,550.9199 592.2803,550.9199 592.2803,530.4395 649.6299,530.4395 649.6299,550.9199 "/> </g> <g> <polygon fill="#FFFFFF" points="534.9399,436.2197 374.3701,436.2197 374.3701,415.7402 534.9399,415.7402 534.9399,436.2197 "/> </g> <g> <polygon fill="#FFFFFF" points="534.9399,493.5605 374.3701,493.5605 374.3701,473.0801 534.9399,473.0801 534.9399,493.5605 "/> </g> <g> <polygon fill="#FFFFFF" points="534.9399,550.9199 374.3701,550.9199 374.3701,530.4395 534.9399,530.4395 534.9399,550.9199 "/> </g> <g> <polygon fill="#FFFFFF" points="534.9399,608.2803 374.3701,608.2803 374.3701,587.7998 534.9399,587.7998 534.9399,608.2803 "/> </g> <g> <polygon fill="#FFFFFF" points="534.9399,665.5996 374.3701,665.5996 374.3701,645.1201 534.9399,645.1201 534.9399,665.5996 "/> </g> </g> </g> </g> </g>
+              </svg>
+              <span class="flex-grow-1">Create Invoice</span>
+              <i class="fa fa-chevron-right ms-auto"></i>
+            </a>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Cards -->
+  <div class="grid gap-6 mb-8 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4" style="margin-bottom:2px; margin-left:-1rem; margin-right:-1rem;">
+    <!-- Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+      <div class="card-icon p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z">
+          </path>
+        </svg>
+      </div>
+      <div class="card-content">
+         <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Total Clients
+         </p>
+         <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+           {{ clients|length }}
+         </p>
+       </div>
+     </div>
+    <!-- Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+      <div class="card-icon p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
+        <svg class="w-5 h-5" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 511.999 511.999" xml:space="preserve" fill="#000000">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+        <g id="SVGRepo_iconCarrier"> <circle style="fill:#aef4d0;" cx="367.369" cy="161.604" r="84.828"/> <g> <path style="fill:#4191b4;" d="M367.367,260.348c-26.374,0-51.169-10.271-69.818-28.919c-5.429-5.429-5.429-14.233,0-19.664 c5.431-5.428,14.232-5.428,19.664,0c27.656,27.656,72.653,27.656,100.31,0c13.398-13.396,20.774-31.207,20.774-50.154 s-7.377-36.759-20.774-50.154c-27.656-27.656-72.653-27.656-100.31,0c-5.431,5.428-14.232,5.428-19.664,0 c-5.429-5.429-5.429-14.233,0-19.664c18.649-18.648,43.444-28.919,69.818-28.919s51.169,10.271,69.818,28.919 c18.648,18.649,28.919,43.444,28.919,69.818s-10.271,51.169-28.919,69.818C418.537,250.077,393.742,260.348,367.367,260.348z"/> <path style="fill:#4191b4;" d="M374.166,155.225v-24.161c9.644,1.691,11.094,7.037,11.312,10.18 c0.056,0.805,0.72,1.428,1.528,1.428h10.534c0.884,0,1.581-0.748,1.535-1.632c-0.684-13.252-9.766-21.778-24.909-23.692v-8.125 c0-0.847-0.687-1.534-1.534-1.534h-10.532c-0.847,0-1.534,0.687-1.534,1.534v8.125c-15.754,1.992-24.951,11.141-24.951,25.325 s9.195,23.332,24.951,25.325v24.161c-9.644-1.691-11.094-7.037-11.312-10.18c-0.056-0.805-0.72-1.428-1.528-1.428h-10.534 c-0.884,0-1.581,0.748-1.535,1.632c0.684,13.252,9.766,21.778,24.909,23.692v8.125c0,0.847,0.687,1.534,1.534,1.534h10.532 c0.847,0,1.534-0.687,1.534-1.534v-8.125c15.754-1.992,24.951-11.141,24.951-25.325 C399.117,166.366,389.922,157.216,374.166,155.225z M360.567,154.28c-11.348-1.99-11.351-9.04-11.351-11.608 c0-2.567,0.003-9.619,11.351-11.608V154.28z M374.166,192.157v-23.217c11.348,1.99,11.351,9.042,11.351,11.608 S385.515,190.168,374.166,192.157z"/> </g> <path style="fill:#aef4d0;" d="M60.539,186.447c25.596,0,46.346,20.75,46.346,46.346s-20.749,46.346-46.346,46.346 c-25.596,0-46.346-20.75-46.346-46.346S34.943,186.447,60.539,186.447H13.904v248.771h93.272V186.447H60.539z"/> <path style="fill:#4191b4;" d="M461.604,328.968H338.148c0.214-1.806,0.335-3.632,0.335-5.478c0-12.394-4.884-24.036-13.816-32.844 L242.851,211c-12.753-12.372-29.611-19.186-47.472-19.186h-74.302v-5.366c0-7.678-6.226-13.904-13.904-13.904H13.904 C6.226,172.545,0,178.771,0,186.449v248.773c0,7.678,6.226,13.904,13.904,13.904h93.27c7.678,0,13.904-6.226,13.904-13.904v-6.471 l178.819-0.031c7.678-0.001,13.902-6.228,13.901-13.907c-0.001-7.678-6.228-13.902-13.907-13.901l-178.814,0.031V219.622h74.302 c10.591,0,20.574,4.027,28.09,11.319l81.735,79.568c3.527,3.479,5.47,8.088,5.47,12.982c0,4.894-1.941,9.503-5.475,12.988 l-0.1,0.099c-7.412,7.309-19.471,7.308-26.88,0l-86.29-85.096c-5.467-5.393-14.272-5.332-19.663,0.138 c-5.392,5.468-5.331,14.271,0.138,19.663l58.498,57.689H175.61c-7.678,0-13.904,6.226-13.904,13.904s6.226,13.904,13.904,13.904 h81.735c0.563,0,1.114-0.043,1.659-0.108c9.05,8.762,20.848,13.152,32.653,13.15c11.761,0,23.52-4.36,32.559-13.061 c0.122,0.003,0.241,0.018,0.363,0.018h137.023c12.455,0,22.588,9.907,22.588,22.085c0,12.177-10.133,22.084-22.588,22.084h-96.172 c-7.678,0-13.904,6.226-13.904,13.904c0,7.678,6.226,13.904,13.904,13.904h96.172c27.788,0,50.396-22.381,50.396-49.891 C511.999,351.352,489.392,328.968,461.604,328.968z M60.539,200.351c17.887,0,32.441,14.553,32.441,32.442 c0,17.887-14.553,32.441-32.441,32.441c-17.889,0-32.442-14.553-32.442-32.441C28.097,214.904,42.65,200.351,60.539,200.351z M93.27,421.316H27.808V283.354c9.43,6.126,20.672,9.687,32.731,9.687s23.302-3.562,32.731-9.687V421.316z"/> </g>
+        </svg>
+      </div>
+      <div>
+        <div class="card-content">
+        <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+          Total Revenue
+        </p>
+        <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+          $ {{ total_revenue }}
+        </p>
+      </div>
+    </div>
+    </div>
+    <!-- Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+      <div class="card-icon p-3 mr-4 text-blue-500 bg-blue-100 rounded-full dark:text-blue-100 dark:bg-blue-500">
+        <svg fill="currentColor" class="w-5 h-5" viewBox="0 -64 640 640" xmlns="http://www.w3.org/2000/svg" stroke="#777">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+          <g id="SVGRepo_iconCarrier">
+          <path d="M621.16 54.46C582.37 38.19 543.55 32 504.75 32c-123.17-.01-246.33 62.34-369.5 62.34-30.89 0-61.76-3.92-92.65-13.72-3.47-1.1-6.95-1.62-10.35-1.62C15.04 79 0 92.32 0 110.81v317.26c0 12.63 7.23 24.6 18.84 29.46C57.63 473.81 96.45 480 135.25 480c123.17 0 246.34-62.35 369.51-62.35 30.89 0 61.76 3.92 92.65 13.72 3.47 1.1 6.95 1.62 10.35 1.62 17.21 0 32.25-13.32 32.25-31.81V83.93c-.01-12.64-7.24-24.6-18.85-29.47zM320 352c-44.19 0-80-42.99-80-96 0-53.02 35.82-96 80-96s80 42.98 80 96c0 53.03-35.83 96-80 96z"/>
+          </g>
+      </svg>
+      </div>
+      <div>
+        <div class="card-content">
+        <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Total Expenses</p>
+        <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+          ${{ total_expenses|floatformat:2 }}
+        </p>
+      </div>
+      </div>
+    </div>
+    <!-- Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+      <div class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
+      <svg class="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <g id="SVGRepo_iconCarrier"> <title>currency-revenue</title> <g id="Layer_2" data-name="Layer 2"> <g id="invisible_box" data-name="invisible box"> <rect width="48" height="48" fill="none"/> </g> <g id="Q3_icons" data-name="Q3 icons"> <path d="M44,7.1V14a2,2,0,0,1-2,2H35a2,2,0,0,1-2-2.3A2.1,2.1,0,0,1,35.1,12h2.3A18,18,0,0,0,6.1,22.2a2,2,0,0,1-2,1.8h0a2,2,0,0,1-2-2.2A22,22,0,0,1,40,8.9V7a2,2,0,0,1,2.3-2A2.1,2.1,0,0,1,44,7.1Z"/> <path d="M4,40.9V34a2,2,0,0,1,2-2h7a2,2,0,0,1,2,2.3A2.1,2.1,0,0,1,12.9,36H10.6A18,18,0,0,0,41.9,25.8a2,2,0,0,1,2-1.8h0a2,2,0,0,1,2,2.2A22,22,0,0,1,8,39.1V41a2,2,0,0,1-2.3,2A2.1,2.1,0,0,1,4,40.9Z"/> <path d="M24.7,22c-3.5-.7-3.5-1.3-3.5-1.8s.2-.6.5-.9a3.4,3.4,0,0,1,1.8-.4,6.3,6.3,0,0,1,3.3.9,1.8,1.8,0,0,0,2.7-.5,1.9,1.9,0,0,0-.4-2.8A9.1,9.1,0,0,0,26,15.3V13a2,2,0,0,0-4,0v2.2c-3,.5-5,2.5-5,5.2s3.3,4.9,6.5,5.5,3.3,1.3,3.3,1.8-1.1,1.4-2.5,1.4h0a6.7,6.7,0,0,1-4.1-1.3,2,2,0,0,0-2.8.6,1.8,1.8,0,0,0,.3,2.6A10.9,10.9,0,0,0,22,32.8V35a2,2,0,0,0,4,0V32.8a6.3,6.3,0,0,0,3-1.3,4.9,4.9,0,0,0,2-4h0C31,23.8,27.6,22.6,24.7,22Z"/> </g> </g> </g>
+      </svg>
+      </div>
+      <div>
+        <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+          Net Profit
+        </p>
+        <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+          ${{ net_profit|floatformat:2 }}
+        </p>
+      </div>
+    </div>
+  </div>
+<br>
+
+<ul class="shadow-md nav nav-phoenix-pills mb-5 d-xl-flex" id="clientTabMobile" role="tablist" style="margin-left:-1rem; margin-right:-1rem;padding: 0.125rem;border-radius: 0.25rem;border:none;background-color:#cfe2f0;margin-top: -0.8rem;">
+  <li class="nav-item" role="presentation">
+      <a class="nav-link cursor-pointer active" data-bs-toggle="tab" data-bs-target="#details-mobile" role="tab" aria-controls="details-mobile" aria-selected="true" style="font-weight:700;">Expenses</a>
+  </li>
+  <li class="nav-item" role="presentation">
+      <a class="nav-link cursor-pointer" data-bs-toggle="tab" data-bs-target="#jobs-mobile" role="tab" aria-controls="jobs-mobile" aria-selected="false" style="font-weight:700;">Upcoming Jobs</a>
+  </li>
+</ul>
+<div class="tab-content" id="clientTabContentMobile">
+    <div class="tab-pane fade show active" id="details-mobile" role="tabpanel" aria-labelledby="details-mobile">
+      <!-- Chart View -->
+        <div style="margin-left:-1.5rem; margin-right:-1.5rem;" class="row">
+          <div class="col-md-12">
+            <div class="shadow-md card" style="width: 100%;">
+              <div class="card-body">
+                <h5 class="mb-0 text-1100 fw-bold fs-md-2 card-title" style="padding-bottom:1rem;">Expenses</h5>
+                <div class="mb-3">
+                  <button id="filter-all" class="btn btn-chart btn-sm">All</button>
+                  <button id="filter-day" class="btn btn-chart btn-sm">Today</button>
+                  <button id="filter-month" class="btn btn-chart btn-sm">This Month</button>
+                  <button id="filter-year" class="btn btn-chart btn-sm">This Year</button>
+                </div>
+                <div class="chart-container">
+                  <canvas id="expenses-chart"></canvas>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+    </div>
+</div>
+
+<div class="tab-pane fade" id="jobs-mobile" role="tabpanel" aria-labelledby="jobs-mobile">
+  <div class="row g-0 mb-4 align-items-center">
+    <div class="col-5 col-md-6">
+      <h4 class="mb-0 text-1100 fw-bold fs-md-2"><span class="calendar-day d-block d-md-inline mb-1"></span><span class="px-3 fw-thin text-400 d-none d-md-inline">|</span><span class="calendar-date"></span></h4></div>
+  </div>
+  <div class="mx-n4 px-4 mx-lg-n6 px-lg-6 border-y border-200">
+    <div class="row py-3 gy-3 gx-0">
+      <div class="col-6 col-md-4 order-1 d-flex align-items-center">
+        <button class="btn btn-sm btn-phoenix-primary px-4" data-event="today">Today</button>
       </div>
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Net Profit</h5>
-            <p class="card-text">${{ net_profit|floatformat:2 }}</p>
-          </div>
-        </div>
+      <div class="col-12 col-md-4 order-md-1 d-flex align-items-center justify-content-center">
+        <button class="btn icon-item icon-item-sm shadow-none text-1100 p-0" type="button" data-event="prev" title="Previous"><span class="fas fa-chevron-left"></span></button>
+        <h3 class="px-3 text-1100 fw-semi-bold calendar-title mb-0"> </h3>
+        <button class="btn icon-item icon-item-sm shadow-none text-1100 p-0" type="button" data-event="next" title="Next"><span class="fas fa-chevron-right"></span></button>
       </div>
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Total Expenses</h5>
-            <p class="card-text">${{ total_expenses|floatformat:2 }}</p>
+      <div class="col-6 col-md-4 ms-auto order-1 d-flex justify-content-end">
+        <div>
+          <div class="btn-group btn-group-sm" role="group">
+            <button class="btn btn-phoenix-secondary" data-fc-view="dayGridMonth">Month</button>
+            <button class="btn btn-phoenix-secondary" data-fc-view="timeGridWeek">Week</button>
           </div>
         </div>
       </div>
     </div>
-    <div class="row mt-4">
-      {% if clients %}
-      <div class="col-12">
-        <h2 class="mb-4">Clients</h2>
-        <ul class="list-group">
-          {% for client in clients %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ client.name }}
-            <span class="badge bg-primary rounded-pill">{{ client.role }}</span>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-      {% if jobs or sales_orders %}
-      <div class="col-12 mt-4">
-        <h2 class="mb-4">{{ company.business_type|title }} Orders</h2>
-        <ul class="list-group">
-          {% for job in jobs %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ job.description }}
-            <span class="badge bg-primary rounded-pill">${{ job.po_number }}</span>
-          </li>
-          {% endfor %}
-          {% for sale in sales_orders %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ sale.client.name }}
-            <span class="badge bg-primary rounded-pill">${{ sale.get_total_amount }}</span>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-      {% if stock %}
-      <div class="col-12 mt-4">
-        <h2 class="mb-4">Stock</h2>
-        <ul class="list-group">
-          {% for item in stock %}
-<li class="list-group-item d-flex justify-content-between align-items-center">
-{{ item.name }}
-<span class="badge bg-primary rounded-pill">{{ item.quantity }}</span>
-</li>
-{% endfor %}
-</ul>
-</div>
-{% endif %}
-</div>
-<div class="row mt-4">
-<div class="col-12">
-<h2 class="mb-4">Actions</h2>
-<div class="d-grid gap-2 d-md-flex">
-<button class="btn btn-primary" type="button">
-<i class="fas fa-plus"></i> Add New
-</button>
-<button class="btn btn-success" type="button">
-<i class="fas fa-edit"></i> Edit
-</button>
-<button class="btn btn-danger" type="button">
-<i class="fas fa-trash"></i> Delete
-</button>
-</div>
-</div>
-</div>
-
   </div>
+ <div class="calendar-outline mt-6 mb-9" id="appCalendar"></div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('appCalendar');
+
+  var today = new Date();
+  var formattedDay = today.toLocaleDateString('en-US', { weekday: 'long' });
+  var formattedDate = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.querySelector('.calendar-day').textContent = formattedDay;
+  document.querySelector('.calendar-date').textContent = formattedDate;
+
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    headerToolbar: false,  // hide default toolbar
+    events: '/jobs/json/',
+    dayMaxEvents: 3,
+    height: 800,
+    stickyHeaderDates: false,
+    views: {
+      week: {
+        eventLimit: 3
+      }
+    },
+    eventTimeFormat: {
+      hour: 'numeric',
+      minute: '2-digit',
+      omitZeroMinute: true,
+      meridiem: true
+    },
+    datesSet: function(dateInfo) {
+     // This function will be called whenever the visible date range changes
+     // Format the start date of the range and update the calendar title
+     var startDate = new Date(dateInfo.start);
+     var endDate = new Date(dateInfo.end);
+
+     var formattedStartDate = startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+     var formattedEndDate = endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+     // Here we format the title depending on whether it's a single day view or a range
+     var formattedTitle = (formattedStartDate == formattedEndDate) ? formattedStartDate : formattedStartDate + ' - ' + formattedEndDate;
+
+     document.querySelector('.calendar-title').textContent = formattedTitle;
+   },
+    eventClick: function(info) {
+      window.location.href = '/jobs/' + info.event.id;
+    }
+  });
+
+  calendar.render();
+
+  // Create handlers for 'prev', 'next', and 'today' buttons
+  document.querySelectorAll('[data-event]').forEach(button => {
+    button.addEventListener('click', e => {
+      const el = e.currentTarget;
+      const type = el.getAttribute('data-event');
+      switch (type) {
+        case 'prev':
+          calendar.prev();
+          break;
+        case 'next':
+          calendar.next();
+          break;
+        case 'today':
+          calendar.today();
+          calendar.changeView('timeGridDay'); // Change view to 'Day' when 'Today' is clicked
+          break;
+      }
+      calendar.refetchEvents();  // refetch events after changing date
+    });
+  });
+  // Create handlers for 'month' and 'week' view buttons
+  document.querySelectorAll('[data-fc-view]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const el = e.currentTarget;
+      calendar.changeView(el.getAttribute('data-fc-view'));
+      calendar.refetchEvents();  // refetch events after changing view
+    });
+  });
+});
+</script>
+<script>
+    const expensesDataURL = "{% url 'smeApp:expenses_data' %}";
+    const expensesChartElement = document.getElementById('expenses-chart');
+    const filterAllButton = document.getElementById('filter-all');
+    const filterDayButton = document.getElementById('filter-day');
+    const filterMonthButton = document.getElementById('filter-month');
+    const filterYearButton = document.getElementById('filter-year');
+
+    const categoryColors = {
+      'Rent': 'hsl(40, 50%, 90%)',
+      'Repairs and Maintenance': 'hsl(80, 50%, 90%)',
+      'Payroll': 'hsl(120, 50%, 90%)',
+      'Meals and Entertainment': 'hsl(160, 50%, 90%)',
+      'Telephone': 'hsl(200, 50%, 90%)',
+      'Travel': 'hsl(240, 50%, 90%)',
+      'Utilities': 'hsl(280, 50%, 90%)',
+      'Advertising and Promotion': 'hsl(320, 50%, 90%)',
+      'Other': 'hsl(360, 50%, 90%)',
+    };
+
+    const createExpensesChart = (data) => {
+    const hasData = data.length > 0;
+    const backgroundColors = data.map((item) => categoryColors[item.category]);
+    const totalExpenses = data.reduce((total, item) => total + item.total_amount, 0);
+
+    return new Chart(expensesChartElement, {
+      type: hasData ? 'pie' : 'doughnut',
+      data: {
+        labels: hasData ? data.map((item) => item.category) : ['No Data Yet'],
+        datasets: [
+          {
+            data: hasData ? data.map((item) => item.total_amount) : [1],
+            backgroundColor: hasData ? backgroundColors : ['#f0f0f0'],
+            borderColor: hasData ? backgroundColors : ['#f0f0f0'],
+          },
+        ],
+      },
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          tooltip: {
+            enabled: hasData,
+            callbacks: {
+              label: function (context) {
+                const label = context.label;
+                const value = context.parsed;
+                const percentage = ((value / totalExpenses) * 100).toFixed(2);
+                return `${label}: ${value}`;
+              },
+            },
+          },
+        },
+      },
+    });
+  };
+
+
+    const fetchExpensesData = async (timeFilter = 'all') => {
+      const response = await fetch(`${expensesDataURL}?time_filter=${timeFilter}`);
+      return await response.json();
+    };
+
+    let expensesChart;
+    const updateExpensesChart = async (timeFilter) => {
+      if (expensesChart) {
+        expensesChart.destroy();
+      }
+      const data = await fetchExpensesData(timeFilter);
+      expensesChart = createExpensesChart(data);
+    };
+
+    filterAllButton.addEventListener('click', () => updateExpensesChart('all'));
+    filterDayButton.addEventListener('click', () => updateExpensesChart('day'));
+    filterMonthButton.addEventListener('click', () => updateExpensesChart('month'));
+    filterYearButton.addEventListener('click', () => updateExpensesChart('year'));
+
+    updateExpensesChart();
+
+    const refreshChartButton = document.getElementById('refresh-chart');
+    refreshChartButton.addEventListener('click', () => updateExpensesChart());
+  </script>
+
 {% endblock %}

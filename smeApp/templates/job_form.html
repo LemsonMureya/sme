@@ -90,6 +90,40 @@
                     </div>
                   {% endif %}
                 {% endfor %}
+                <!-- Job Items -->
+             <!-- <div class="col-md-12 gy-6">
+               <h4 class="mb-3">Job Items</h4>
+               <div id="job-items-container">
+                 <div class="job-item row">
+                   <div class="col-md-3 gy-3">
+                     <div class="form-floating">
+                       <input class="form-control" type="text" name="jobitem_set-0-item_name" placeholder="Item Name">
+                       <label for="jobitem_set-0-item_name">Item Name</label>
+                      </div>
+                    </div>
+                    <div class="col-md-3 gy-3">
+                      <div class="form-floating">
+                        <input class="form-control" type="text" name="jobitem_set-0-item_description" placeholder="Item Description">
+                        <label for="jobitem_set-0-item_description">Item Description</label>
+                      </div>
+                    </div>
+                    <div class="col-md-3 gy-3">
+                      <div class="form-floating">
+                        <input class="form-control" type="number" name="jobitem_set-0-quantity" placeholder="Quantity">
+                        <label for="jobitem_set-0-quantity">Quantity</label>
+                      </div>
+                    </div>
+                    <div class="col-md-3 gy-3">
+                      <div class="form-floating">
+                        <input class="form-control" type="number" step="0.01" name="jobitem_set-0-unit_price" placeholder="Unit Price">
+                        <label for="jobitem_set-0-unit_price">Unit Price</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-phoenix-secondary" id="add-job-item">Add Job Item</button>
+              </div> -->
+
 
               <div class="modal-footer border-0 pt-6 px-0 pb-0">
                 <button type="submit" class="btn btn-primary my-0">Create Job</button>
@@ -268,4 +302,49 @@
            });
          });
          </script>
+
+
+         {% block extra_js %}
+         <script>
+           document.addEventListener("DOMContentLoaded", () => {
+             let jobItemsCount = 1;
+
+             document.getElementById("add-job-item").addEventListener("click", () => {
+               const jobItemsContainer = document.getElementById("job-items-container");
+               const newJobItem = document.createElement("div");
+               newJobItem.classList.add("job-item", "row");
+
+               newJobItem.innerHTML = `
+                 <div class="col-md-3 gy-3">
+                   <div class="form-floating">
+                     <input class="form-control" type="text" name="jobitem_set-${jobItemsCount}-item_name" placeholder="Item Name">
+                     <label for="jobitem_set-${jobItemsCount}-item_name">Item Name</label>
+                   </div>
+                 </div>
+                 <div class="col-md-3 gy-3">
+                   <div class="form-floating">
+                     <input class="form-control" type="text" name="jobitem_set-${jobItemsCount}-item_description" placeholder="Item Description">
+                     <label for="jobitem_set-${jobItemsCount}-item_description">Item Description</label>
+                   </div>
+                 </div>
+                 <div class="col-md-3 gy-3">
+                   <div class="form-floating">
+                     <input class="form-control" type="number" name="jobitem_set-${jobItemsCount}-quantity" placeholder="Quantity">
+                     <label for="jobitem_set-${jobItemsCount}-quantity">Quantity</label>
+                   </div>
+                 </div>
+                 <div class="col-md-3 gy-3">
+                   <div class="form-floating">
+                     <input class="form-control" type="number" step="0.01" name="jobitem_set-${jobItemsCount}-unit_price" placeholder="Unit Price">
+                      <label for="jobitem_set-${jobItemsCount}-unit_price">Unit Price</label>
+                    </div>
+                  </div>
+                  `;
+        jobItemsContainer.appendChild(newJobItem);
+         jobItemsCount++;
+        });
+        });
+        </script>
+        {% endblock %}
+
  {% endblock %}

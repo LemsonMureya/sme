@@ -9,6 +9,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
 </head>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  flatpickr(".flatpickr-date", {
+    dateFormat: "Y-m-d",
+    disableMobile: true
+  });
+});
+</script>
 
 <div class="modal fade" id="addDealModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addDealModal" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -49,42 +57,41 @@
               <div id="form-set">
                 {{ invoice_item_formset.management_form }}
                 {% for form in invoice_item_formset %}
-  <div class="form-inline">
-    <div class="row gy-3" style="margin-top: 1px;">
-      <div class="col-md-3">
-        <div class="form-floating">
-          {{ form.item_name|add_class:"form-control" }}
-          <label for="{{ form.item_name.id_for_label }}">Item Name</label>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="form-floating">
-          {{ form.item_description|add_class:"form-control" }}
-          <label for="{{ form.item_description.id_for_label }}">Description</label>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-floating">
-          {{ form.quantity|add_class:"form-control" }}
-          <label for="{{ form.quantity.id_for_label }}">Quantity</label>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="form-floating">
-          {{ form.unit_price|add_class:"form-control" }}
-          <label for="{{ form.unit_price.id_for_label }}">Unit Price</label>
-        </div>
-      </div>
-      <div class="col-md-1">
-        <button type="button" class="btn btn-danger delete-item">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-{% endfor %}
+            <!-- <div class="form-inline"> -->
+              <div class="row gy-3" style="margin-top: 1px;">
+                <div class="col-md-3">
+                  <div class="form-floating">
+                    {{ form.item_name|add_class:"form-control" }}
+                    <label for="{{ form.item_name.id_for_label }}">Item Name</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ form.item_description|add_class:"form-control" }}
+                    <label for="{{ form.item_description.id_for_label }}">Description</label>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-floating">
+                    {{ form.quantity|add_class:"form-control" }}
+                    <label for="{{ form.quantity.id_for_label }}">Quantity</label>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-floating">
+                    {{ form.unit_price|add_class:"form-control" }}
+                    <label for="{{ form.unit_price.id_for_label }}">Unit Price</label>
+                  </div>
+                </div>
+                <div class="col-md-1">
+                  <button type="button" class="btn btn-danger delete-item">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            <!-- </div> -->
+          {% endfor %}
           </div>
-
           <div class="col-12 gy-6">
               <button type="button" id="add-item" class="btn btn-light border">
                   <i class="fas fa-plus"></i> Add Item
@@ -101,42 +108,41 @@
   </div>
   </div>
   <script>
-    flatpickr(".flatpickr-date", {
-      dateFormat: "Y-m-d",
-      disableMobile: true
-    });
+    document.addEventListener("DOMContentLoaded", () => {
+      let formIdx = parseInt(document.getElementById("id_invoiceitem_set-TOTAL_FORMS").value);
 
-    let formIdx = $('#id_invoiceitem_set-TOTAL_FORMS').val();
-    console.log("Initial formIdx value: " + formIdx);
-
-    $('#add-item').click(function() {
-      console.log("Add item button clicked");
-
-      const formElem = $('#form-set .form-inline:last').clone(true);
-      console.log("Form element cloned: ", formElem);
-
-      formElem.find(':input[name]').each(function() {
-        let name = $(this).attr('name').replace('-' + (formIdx - 1) + '-', '-' + formIdx + '-');
-        let id = 'id_' + name;
-        $(this).attr({'name': name, 'id': id}).val('');
-      });
-      formElem.find('label').each(function() {
-        let currentFor = $(this).attr('for');
-        let newFor = currentFor.replace('-' + (formIdx - 1) + '-', '-' + formIdx + '-');
-        $(this).attr('for', newFor);
-      });
-      // Remove previous event handler and re-attach it to the new delete button
-      formElem.find('.delete-item').off('click').on('click', function() {
-        $(this).closest('.form-inline').remove();
-
-        let currentForms = parseInt($('#id_invoiceitem_set-TOTAL_FORMS').val());
-        $('#id_invoiceitem_set-TOTAL_FORMS').val(currentForms - 1);
+      document.getElementById("add-item").addEventListener("click", addInvoiceItemEvent);
+      document.querySelectorAll(".delete-item").forEach((btn) => {
+        btn.addEventListener("click", deleteItemEvent);
       });
 
-      $('#form-set').append(formElem);
-  console.log("Form element appended: ", formElem);
-      $('.form-inline:last').after(formElem);
-      $('#id_invoiceitem_set-TOTAL_FORMS').val(parseInt(formIdx) + 1);
-      formIdx++;
+      function addInvoiceItemEvent() {
+        const formElem = document.querySelector("#form-set .row:last-child").cloneNode(true);
+
+        const inputFields = formElem.getElementsByTagName("input");
+        for (const inputField of inputFields) {
+          inputField.name = inputField.name.replace(/invoiceitem_set-\d+-/g, `invoiceitem_set-${formIdx}-`);
+          inputField.id = inputField.id.replace(/id_invoiceitem_set-\d+-/g, `id_invoiceitem_set-${formIdx}-`);
+          inputField.value = "";
+        }
+
+        const labels = formElem.getElementsByTagName("label");
+        for (const label of labels) {
+          label.setAttribute("for", label.getAttribute("for").replace(/id_invoiceitem_set-\d+-/g, `id_invoiceitem_set-${formIdx}-`));
+        }
+
+        const deleteBtn = formElem.querySelector(".delete-item");
+        deleteBtn.addEventListener("click", deleteItemEvent);
+        document.getElementById("form-set").appendChild(formElem);
+        document.getElementById("id_invoiceitem_set-TOTAL_FORMS").value = formIdx + 1;
+        formIdx++;
+      }
+
+      function deleteItemEvent() {
+        this.closest(".row").remove();
+        let currentForms = parseInt(document.getElementById("id_invoiceitem_set-TOTAL_FORMS").value);
+        document.getElementById("id_invoiceitem_set-TOTAL_FORMS").value = currentForms - 1;
+        formIdx--;
+      }
     });
   </script>

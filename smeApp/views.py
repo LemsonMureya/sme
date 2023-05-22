@@ -10,18 +10,22 @@ from django.views.generic import CreateView
 from django.utils import timezone
 from django.db.models.functions import TruncMonth
 import datetime
+from datetime import datetime, timedelta
+import requests
+import tempfile
+from django.db.models import Q
 from .forms import (CustomUserCreationForm, CustomUserForm, ExpenseForm, ProductTypeForm,
-                    IncomeForm, JobForm, ClientForm, CompanyProfileForm, InvoiceForm,
+                    IncomeForm, JobForm, JobItemForm, ClientForm, CompanyProfileForm, InvoiceForm,
                     InvoiceItemForm, NoteForm, ReceiptUploadForm, CustomUserEditForm,
                     AvatarUpdateForm, PurchaseOrderItemForm, SaleForm, SaleItemForm,  BasePurchaseOrderItemFormSet,
                     SupplierForm, StockItemForm, PurchaseOrderForm, BaseSaleItemFormSet)
 from django.contrib.auth.views import LoginView, LogoutView
-from .models import (CustomUser, Job, Client, Expense, Income, CompanyProfile, ProductType,
+from .models import (CustomUser, Job, JobItem, Client, Expense, Income, CompanyProfile, ProductType,
                     Invoice, InvoiceItem, Note, Supplier, StockItem, PurchaseOrder,
                     PurchaseOrderItem, Sale, SaleItem)
 from django.db.models import Sum, F
 from django.utils.decorators import method_decorator
-from django.http import JsonResponse, HttpResponseRedirect, FileResponse
+from django.http import JsonResponse, HttpResponseRedirect, FileResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.dates import (
     YearMixin, MonthMixin, WeekMixin,
@@ -53,12 +57,45 @@ from django.conf import settings
 from django.core.files import File
 from django.contrib import messages
 from django.core.files.base import ContentFile
+from django.template.loader import get_template
+from weasyprint import HTML
+from formtools.wizard.views import SessionWizardView
+from django.core import serializers
+from django.contrib.auth.decorators import login_required
 
 class IndexView(TemplateView):
     template_name = "base.html"
 
 class DashboardView(TemplateView):
     template_name = "dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['job_count'] = Job.objects.filter(company=self.request.user.company).count()
+        context['client_count'] = Client.objects.filter(company=self.request.user.company).count()
+        context['invoice_count'] = Invoice.objects.filter(company=self.request.user.company).count()
+        context['expense_count'] = Expense.objects.filter(company=self.request.user.company).count()
+        context['google_maps_key'] = settings.GOOGLE_MAPS_API_KEY
+
+        return context
+
+
+@login_required
+def jobs_to_json(request):
+    jobs = Job.objects.filter(company=request.user.company)
+    job_list = []
+    for job in jobs:
+        start = job.start_date.isoformat() if job.start_date else None
+        end = job.end_date.isoformat() if job.end_date else None
+        job_list.append({
+            'id': job.id,
+            'title': job.description,
+            'start': start,
+            'end': end,
+            'color': '#F0E68C',  # Here you can specify the color for this event
+            'className': 'text-success'
+        })
+    return JsonResponse(job_list, safe=False)
 
 def calculate_net_profit(company):
     incomes = 0
@@ -76,6 +113,22 @@ class MainDashboardView(LoginRequiredMixin, TemplateView):
 
     def get(self, request):
         user_company = request.user.company
+        time_filter = request.GET.get('time_filter', 'all')
+
+        # Filter expenses based on time_filter
+        if time_filter == 'today':
+            start_date = timezone.now().date()
+        elif time_filter == 'month':
+            start_date = timezone.now().date().replace(day=1)
+        elif time_filter == 'year':
+            start_date = timezone.now().date().replace(day=1, month=1)
+        else:
+            start_date = None
+
+        if start_date:
+            expenses = Expense.objects.filter(date_created__gte=start_date, company=user_company)
+        else:
+            expenses = Expense.objects.filter(company=user_company)
 
         context = {
             'company': user_company,
@@ -92,37 +145,53 @@ class MainDashboardView(LoginRequiredMixin, TemplateView):
             })
         elif user_company.business_type == 'sales':
             context.update({
-                'total_revenue': Sale.objects.filter(company=user_company, revenue_recorded=True).annotate(total_amount=Sum(F('sale_items__selling_price') * F('sale_items__quantity'))).aggregate(total_revenue=Sum('total_amount'))['total_revenue'] or 0,
-                'sales_orders': Sale.objects.filter(company=user_company),
-                'stock': StockItem.objects.filter(company=user_company),
+                'total_revenue': Job.objects.filter(company=user_company, revenue_recorded=True).aggregate(total_revenue=Sum('total_cost'))['total_revenue'] or 0,
+                'clients': Client.objects.filter(company=user_company),
+                'jobs': Job.objects.filter(company=user_company),
                 'expenses': Expense.objects.filter(company=user_company),
                 'net_profit': calculate_net_profit(user_company),
             })
 
         return render(request, 'main_dashboard.html', context)
 
-class RegisterView(CreateView):
-    form_class = CustomUserCreationForm
-    template_name = 'registration/register.html'
-    success_url = reverse_lazy('smeApp:create_company_profile')
+class RegisterView(View):
+    template_name = 'registration/register_wizard.html'
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        email = form.cleaned_data.get('email')
-        raw_password = form.cleaned_data.get('password1')
-        user = authenticate(email=email, password=raw_password)
-        login(self.request, user)
-        return response
+    def get(self, request):
+        user_form = CustomUserCreationForm()
+        company_form = CompanyProfileForm()
+        context = {
+            'user_form': user_form,
+            'company_form': company_form,
+            'navbarTopStyle': 'darker',
+            'navbarVerticalStyle': 'darker',
+        }
+        return render(request, self.template_name, context)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['navbarTopStyle'] = 'darker'
-        context['navbarVerticalStyle'] = 'darker'
-        return context
+    def post(self, request):
+        user_form = CustomUserCreationForm(request.POST)
+        company_form = CompanyProfileForm(request.POST, request.FILES)
+
+        if user_form.is_valid() and company_form.is_valid():
+            user = user_form.save(commit=False)
+            company = company_form.save()
+            user.company = company
+            user.save()
+            login(request, user)
+            return redirect(reverse_lazy('smeApp:main_dashboard'))
+
+        context = {
+            'user_form': user_form,
+            'company_form': company_form,
+            'navbarTopStyle': 'darker',
+            'navbarVerticalStyle': 'darker',
+        }
+
+        return render(request, self.template_name, context)
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
-    success_url = reverse_lazy('smeApp:job_list')
+    success_url = reverse_lazy('smeApp:main_dashboard')
 
     def form_valid(self, form):
         email = form.cleaned_data['username']
@@ -130,7 +199,7 @@ class CustomLoginView(LoginView):
         user = authenticate(self.request, email=email, password=password)
         if user is not None:
             login(self.request, user)
-            return redirect(reverse('smeApp:job_list'))
+            return redirect(reverse('smeApp:main_dashboard'))
         else:
             messages.error(self.request, 'Invalid email or password.')
             return super().form_invalid(form)
@@ -157,19 +226,15 @@ class UserProfileView(LoginRequiredMixin, DetailView):
 class EditAvatarView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         remove_photo = request.POST.get("remove_photo") == "true"
-        print("Remove photo:", remove_photo)  # Debugging print statement
         form = AvatarUpdateForm(request.POST, request.FILES, instance=request.user)
 
         if form.is_valid():
             user = form.save(commit=False)
             if remove_photo:
-                print("Removing photo...")  # Debugging print statement
                 if user.photo:
                     user.photo.delete(save=False)
                     user.photo = None
             elif request.FILES.get("photo"):
-                print("Photo exists in request.FILES:", request.FILES.get("photo"))  # Debugging print statement
-                print("Updating photo...")  # Debugging print statement
                 user.photo.save(f"{user.email}_{timezone.now().strftime('%Y%m%d_%H%M%S')}.jpg", ContentFile(request.FILES["photo"].read()))
             user.save()
 
@@ -179,7 +244,6 @@ class EditAvatarView(LoginRequiredMixin, View):
                 messages.success(request, 'Avatar updated successfully.')
                 return redirect('smeApp:user_profile')
         else:
-            print("Form errors:", form.errors)  # Debugging print statement
 
             if request.is_ajax():
                 return JsonResponse({"success": False, "errors": form.errors})
@@ -212,12 +276,10 @@ class UserProfileUpdateView(LoginRequiredMixin, View):
         if user_form.is_valid() and company_form.is_valid():
             user = user_form.save(commit=False)
             if remove_photo:
-                print("Removing photo")
                 if user.photo:
                     user.photo.delete(save=False)
                     user.photo = None
             elif request.FILES.get("photo"):
-                print("Saving new photo")
                 user.photo.save(f"{user.email}_{timezone.now().strftime('%Y%m%d_%H%M%S')}.jpg", ContentFile(request.FILES["photo"].read()))
             user.save()
             company = company_form.save(commit=False)
@@ -311,17 +373,49 @@ def client_create(request):
             return JsonResponse({"error": "Invalid form data"}, status=400)
     return JsonResponse({"error": "Invalid request method"}, status=400)
 
-class ClientsList(LoginRequiredMixin, TemplateView): #client list usinf templates
+class ClientsList(LoginRequiredMixin, TemplateView):
     model = Client
     template_name = 'client_list.html'
 
     def get_queryset(self):
         user = self.request.user
-        return Client.objects.filter(company=user.company)
+        queryset = Client.objects.filter(company=user.company)
+        role = self.request.GET.get('role')
+        create_date = self.request.GET.get('create_date')
+
+        if role:
+            queryset = queryset.filter(role=role)
+
+        if create_date == 'today':
+            queryset = queryset.filter(created_at=timezone.now().date())
+        elif create_date == 'last7Days':
+            queryset = queryset.filter(created_at__gte=timezone.now().date() - timedelta(days=7))
+        elif create_date == 'last30Days':
+            queryset = queryset.filter(created_at__gte=timezone.now().date() - timedelta(days=30))
+        elif create_date == 'last6Months':
+            queryset = queryset.filter(created_at__gte=timezone.now().date() - timedelta(days=182))
+        elif create_date == 'lastYear':
+            queryset = queryset.filter(created_at__gte=timezone.now().date() - timedelta(days=365))
+        elif create_date == 'all':
+            queryset = queryset
+
+        search_term = self.request.GET.get('search', '')
+        if search_term:
+            queryset = queryset.filter(
+                Q(name__icontains=search_term) |
+                Q(address__icontains=search_term) |
+                Q(contact_name__icontains=search_term) |
+                Q(email__icontains=search_term) |
+                Q(phone__icontains=search_term) |
+                Q(role__icontains=search_term)
+            )
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['form'] = ClientForm()
         context['clients'] = self.get_queryset()
+        context['role_choices'] = Client.ROLE_CHOICES
         return context
 
 class ClientCreateView(LoginRequiredMixin, CreateView):
@@ -335,6 +429,33 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
         client.company = self.request.user.company
         client.save()
         return HttpResponseRedirect(self.success_url)
+
+class ClientDetailView(LoginRequiredMixin, DetailView):
+    model = Client
+    template_name = 'client_detail.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Client.objects.filter(company=user.company)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        client = self.object
+        context['jobs'] = Job.objects.filter(client=client)
+        context['invoices'] = Invoice.objects.filter(client=client)
+
+        total_revenue = sum(job.total_cost for job in context['jobs'] if job.total_cost is not None)
+        total_jobs = context['jobs'].count()
+        total_invoices = context['invoices'].count()
+        average_job_cost = total_revenue / total_jobs if total_jobs else 0
+
+        context['total_revenue'] = total_revenue
+        context['average_job_cost'] = average_job_cost
+        context['total_jobs'] = total_jobs
+        context['total_invoices'] = total_invoices
+
+        return context
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
@@ -366,6 +487,7 @@ class ClientDeleteView(LoginRequiredMixin, DeleteView):
         client.delete()
         return HttpResponseRedirect(self.success_url)
 
+#formset rendered though this view too
 class JobListView(LoginRequiredMixin, ListView):
     model = Job
     template_name = 'job_list.html'
@@ -373,21 +495,52 @@ class JobListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = Job.objects.filter(company=self.request.user.company)
         status = self.request.GET.get('status')
+        search_term = self.request.GET.get('q', '')
+        payment_type = self.request.GET.get('payment_type')
+        create_date = self.request.GET.get('start_date')
+
         if status:
             queryset = queryset.filter(status=status)
+
+        if payment_type:
+            queryset = queryset.filter(payment_type=payment_type)
+
+        if create_date == 'today':
+            queryset = queryset.filter(start_date=timezone.now().date())
+        elif create_date == 'last7Days':
+            queryset = queryset.filter(start_date__gte=timezone.now().date() - timedelta(days=7))
+        elif create_date == 'last30Days':
+            queryset = queryset.filter(start_date__gte=timezone.now().date() - timedelta(days=30))
+        elif create_date == 'last6Months':
+            queryset = queryset.filter(created_at__gte=timezone.now().date() - timedelta(days=182))
+        elif create_date == 'lastYear':
+            queryset = queryset.filter(created_at__gte=timezone.now().date() - timedelta(days=365))
+        elif create_date == 'all':
+            queryset = queryset
+
+        if search_term:
+            queryset = queryset.filter(
+                Q(client__name__icontains=search_term) |
+                Q(po_number__icontains=search_term) |
+                Q(status__icontains=search_term) |
+                Q(category__icontains=search_term) |
+                Q(description__icontains=search_term) |
+                Q(notes__text__icontains=search_term) |
+                Q(payment_status__icontains=search_term) |
+                Q(payment_type__icontains=search_term) |
+                Q(assigned_worker__icontains=search_term) |
+                Q(jobitem__item_name__icontains=search_term) |
+                Q(jobitem__item_description__icontains=search_term)
+            )
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         company = self.request.user.company
-        context['all_count'] = Job.objects.filter(company=company).count()
-        context['ongoing_count'] = Job.objects.filter(status='ongoing', company=company).count()
-        context['cancelled_count'] = Job.objects.filter(status='cancelled', company=company).count()
-        context['completed_count'] = Job.objects.filter(status='completed', company=company).count()
-        context['postponed_count'] = Job.objects.filter(status='postponed', company=company).count()
-        context['work_order_count'] = Job.objects.filter(status='work order', company=company).count()
-        context['quotes_count'] = Job.objects.filter(status='quotes', company=company).count()
         context['form'] = JobForm(user=self.request.user)
+        context['formset'] = formset_factory(JobItemForm, extra=1)(prefix='jobitem_set')
+        context['status_choices'] = Job.STATUS_CHOICES
+        context['payment_type_choices'] = Job.PAYMENT_TYPE_CHOICES
         return context
 
 class JobDetailView(LoginRequiredMixin, DetailView):
@@ -401,6 +554,9 @@ class JobDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['form'] = JobForm(instance=self.object)
+        JobItemFormSet = inlineformset_factory(Job, JobItem, form=JobItemForm, extra=0)
+        context['formset'] = JobItemFormSet(instance=self.object)
         context['notes'] = Note.objects.filter(related_object=self.object, related_object__company=self.request.user.company)
         return context
 
@@ -415,16 +571,37 @@ class JobCreateView(LoginRequiredMixin, CreateView):
         kwargs['user'] = self.request.user
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = formset_factory(JobItemForm, extra=1)(self.request.POST, prefix='jobitem_set')
+        else:
+            context['formset'] = formset_factory(JobItemForm, extra=1)(prefix='jobitem_set')
+        return context
+
     def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
         job = form.save(commit=False)
         job.company = self.request.user.company
         job.save()
+
+        if formset.is_valid():
+            for item_form in formset:
+                job_item = item_form.save(commit=False)
+                job_item.job = job
+                job_item.save()
+            job.total_cost = job.calculate_total_cost()
+            job.save()
+        else:
+            return self.form_invalid(form)
+
         return HttpResponseRedirect(self.success_url)
 
 class JobUpdateView(LoginRequiredMixin, UpdateView):
     model = Job
     form_class = JobForm
-    template_name = 'job_form.html'
+    template_name = 'job_edit.html'
     success_url = reverse_lazy('smeApp:job_list')
 
     def get_queryset(self):
@@ -436,10 +613,61 @@ class JobUpdateView(LoginRequiredMixin, UpdateView):
         kwargs['user'] = self.request.user
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.get_form()
+        JobItemFormSet = formset_factory(JobItemForm, extra=0)
+        if self.request.method == 'POST':
+            context['formset'] = JobItemFormSet(self.request.POST, prefix='jobitem_set')
+        else:
+            initial_data = [{'item_name': job_item.item_name, 'item_description': job_item.item_description, 'quantity': job_item.quantity, 'unit_price': job_item.unit_price} for job_item in JobItem.objects.filter(job=self.object)]
+            context['formset'] = JobItemFormSet(initial=initial_data, prefix='jobitem_set')
+        return context
+
     def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
         job = form.save(commit=False)
         job.company = self.request.user.company
-        job.save()
+
+        if form.is_valid() and formset.is_valid():
+            job.save()
+
+            # Keep track of formset data
+            formset_data = []
+            for item_form in formset:
+                if item_form.cleaned_data:
+                    formset_data.append(item_form.cleaned_data)
+
+            # Delete JobItems that were removed in the formset
+            for job_item in job.jobitem_set.all():
+                if not any(d['item_name'] == job_item.item_name and d['item_description'] == job_item.item_description for d in formset_data):
+                    job_item.delete()
+
+            # Update and Create JobItems
+            for index, item_form in enumerate(formset):
+                if item_form.cleaned_data:
+                    if index < len(job.jobitem_set.all()):
+                        # Update existing JobItem
+                        job_item = job.jobitem_set.all()[index]
+                        job_item.item_name = item_form.cleaned_data['item_name']
+                        job_item.item_description = item_form.cleaned_data['item_description']
+                        job_item.quantity = item_form.cleaned_data['quantity']
+                        job_item.unit_price = item_form.cleaned_data['unit_price']
+                        job_item.save()
+                    else:
+                        # Create new JobItem
+                        job_item = JobItem(job=job)
+                        job_item.item_name = item_form.cleaned_data['item_name']
+                        job_item.item_description = item_form.cleaned_data['item_description']
+                        job_item.quantity = item_form.cleaned_data['quantity']
+                        job_item.unit_price = item_form.cleaned_data['unit_price']
+                        job_item.save()
+            job.total_cost = job.calculate_total_cost()
+            job.save()
+        else:
+            return self.form_invalid(form)
+
         return HttpResponseRedirect(self.success_url)
 
 class JobDeleteView(LoginRequiredMixin, DeleteView):
@@ -455,6 +683,266 @@ class JobDeleteView(LoginRequiredMixin, DeleteView):
         job = self.get_object()
         job.delete()
         return HttpResponseRedirect(self.success_url)
+
+class InvoiceListView(LoginRequiredMixin, ListView):
+    model = Invoice
+    template_name = 'invoices_list.html'
+    context_object_name = 'invoices'
+
+    def get_queryset(self):
+        queryset = Invoice.objects.filter(company=self.request.user.company)
+
+        # Handle the due date filter
+        due_date_option = self.request.GET.get('due_date', 'all')
+        if due_date_option == 'today':
+            queryset = queryset.filter(due_date=datetime.now().date())
+        elif due_date_option == 'last7Days':
+            queryset = queryset.filter(due_date__gte=datetime.now().date()-timedelta(days=7))
+        elif due_date_option == 'last30Days':
+            queryset = queryset.filter(due_date__gte=datetime.now().date()-timedelta(days=30))
+        elif due_date_option == 'last6Months':
+            queryset = queryset.filter(due_date__gte=datetime.now().date()-timedelta(days=6*30))
+        elif due_date_option == 'lastYear':
+            queryset = queryset.filter(due_date__gte=datetime.now().date()-timedelta(days=365))
+
+        return queryset
+
+        search_term = self.request.GET.get('search', '')
+        if search_term:
+            queryset = queryset.filter(
+                Q(invoice_number__icontains=search_term) |
+                Q(client__name__icontains=search_term) |
+                Q(job__po_number__icontains=search_term) |
+                Q(payment_status__icontains=search_term) |
+                Q(invoiceitem__item_name__icontains=search_term) |
+                Q(invoiceitem__item_description__icontains=search_term)
+            ).distinct()
+
+        payment_status = self.request.GET.get('payment_status', '')
+        if payment_status:
+            queryset = queryset.filter(payment_status=payment_status)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['invoice_form'] = InvoiceForm(user=self.request.user)
+        InvoiceItemFormSet = formset_factory(InvoiceItemForm, extra=1)
+        context['invoice_item_formset'] = InvoiceItemFormSet(prefix='invoiceitem_set')
+        context['payment_status_choices'] = Invoice.PAYMENT_STATUS_CHOICES
+        return context
+
+InvoiceItemFormSet = inlineformset_factory(Invoice, InvoiceItem, form=InvoiceItemForm, fields=('item_name', 'item_description', 'quantity', 'unit_price'), extra=0,can_delete=False)
+
+class UpdateInvoiceView(LoginRequiredMixin, UpdateView):
+    model = Invoice
+    form_class = InvoiceForm
+    template_name = 'update_invoice.html'
+
+    def get_queryset(self):
+        return Invoice.objects.filter(company=self.request.user.company)
+
+    def get_success_url(self):
+        return reverse_lazy('smeApp:view_invoice', kwargs={'invoice_id': self.object.pk})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['formset'] = InvoiceItemFormSet(self.request.POST, instance=self.object)
+        else:
+            data['formset'] = InvoiceItemFormSet(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        invoice = form.save(commit=False)
+        invoice.company = self.request.user.company
+
+        if form.is_valid() and formset.is_valid():
+            invoice.save()
+            # Keep track of formset data
+            formset_data = []
+            for item_form in formset:
+                if item_form.cleaned_data:
+                    formset_data.append(item_form.cleaned_data)
+
+            # Delete InvoiceItems that were removed in the formset
+            for invoice_item in invoice.invoiceitem_set.all():
+                if not any(d['item_name'] == invoice_item.item_name and d['item_description'] == invoice_item.item_description for d in formset_data):
+                    invoice_item.delete()
+
+            # Update and Create InvoiceItems
+            for index, item_form in enumerate(formset):
+                if item_form.cleaned_data:
+                    if index < len(invoice.invoiceitem_set.all()):
+                        # Update existing InvoiceItem
+                        invoice_item = invoice.invoiceitem_set.all()[index]
+                        invoice_item.item_name = item_form.cleaned_data['item_name']
+                        invoice_item.item_description = item_form.cleaned_data['item_description']
+                        invoice_item.quantity = item_form.cleaned_data['quantity']
+                        invoice_item.unit_price = item_form.cleaned_data['unit_price']
+                        invoice_item.save()
+                    else:
+                        # Create new InvoiceItem
+                        invoice_item = InvoiceItem(invoice=invoice)
+                        invoice_item.item_name = item_form.cleaned_data['item_name']
+                        invoice_item.item_description = item_form.cleaned_data['item_description']
+                        invoice_item.quantity = item_form.cleaned_data['quantity']
+                        invoice_item.unit_price = item_form.cleaned_data['unit_price']
+                        invoice_item.save()
+            invoice.total = invoice.get_total_amount()
+            invoice.save()
+        else:
+            return self.form_invalid(form)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+class DeleteInvoiceView(LoginRequiredMixin, DeleteView):
+    model = Invoice
+    template_name = 'delete_invoice.html'
+    success_url = reverse_lazy('smeApp:invoices_list')
+
+    def get_queryset(self):
+        return Invoice.objects.filter(company=self.request.user.company)
+
+class CreateJobInvoiceView(LoginRequiredMixin, View):
+    def get(self, request, job_id):
+        job = get_object_or_404(Job, id=job_id, company=request.user.company)
+        invoice_data = {
+            'company': job.company,
+            'client': job.client,
+            'invoice_number': Invoice.objects.filter(company=request.user.company).count() + 1,
+            'invoice_date': job.created_at,
+            'due_date': job.created_at + timedelta(days=30),
+            'payment_status': job.payment_status,
+            'tax': 0,
+            'discount': 0,
+            'job': job,
+        }
+        invoice_form = InvoiceForm(user=request.user, data=invoice_data, job=job)
+
+        if invoice_form.is_valid():
+            invoice = invoice_form.save(commit=False)
+            invoice.company = request.user.company
+            invoice.save()  # Save the invoice to the database, now it has an ID
+
+            job.total_cost = job.calculate_total_cost()
+            job.save()
+
+            for item in job.jobitem_set.all():
+                invoice_item_data = {
+                    'invoice': invoice,  # Use the invoice instance after saving it
+                    'item_name': item.item_name,
+                    'item_description': item.item_description,
+                    'quantity': item.quantity,
+                    'unit_price': item.unit_price,
+                }
+                invoice_item_form = InvoiceItemForm(data=invoice_item_data)
+
+                if invoice_item_form.is_valid():
+                    invoice_item = invoice_item_form.save(commit=False)
+                    invoice_item.invoice = invoice
+                    invoice_item.save()
+                else:
+                    return HttpResponse("An error occurred while creating the invoice items. Please try again.")
+
+            return redirect('smeApp:view_invoice', invoice_id=invoice.id)
+        else:
+            return HttpResponse("An error occurred while creating the invoice. Please try again.")
+
+
+class CreateInvoiceView(LoginRequiredMixin, View):
+    def get(self, request):
+        invoice_form = InvoiceForm(user=request.user)
+        InvoiceItemFormSet = formset_factory(InvoiceItemForm, extra=1)
+        formset = InvoiceItemFormSet(prefix='invoiceitem_set')
+        return render(request, 'create_invoice.html', {'invoice_form': invoice_form, 'invoice_item_formset': formset})
+
+    def post(self, request):
+        invoice_form = InvoiceForm(request.POST, user=request.user)
+        InvoiceItemFormSet = formset_factory(InvoiceItemForm, extra=1)
+        formset = InvoiceItemFormSet(request.POST, prefix='invoiceitem_set')
+
+        if invoice_form.is_valid() and formset.is_valid():
+            invoice = invoice_form.save(commit=False)
+            invoice.company = request.user.company
+            invoice.save()
+            for form in formset:
+                if form.cleaned_data:
+                    invoice_item = form.save(commit=False)
+                    invoice_item.invoice = invoice
+                    invoice_item.save()
+            return redirect('smeApp:view_invoice', invoice_id=invoice.id)
+        else:
+            return render(request, 'create_invoice.html', {'invoice_form': invoice_form, 'invoice_item_formset': formset})
+
+class ViewInvoiceView(View):
+    def get(self, request, invoice_id):
+        invoice = get_object_or_404(Invoice, id=invoice_id, company=request.user.company)
+        invoice_items = invoice.invoiceitem_set.all().annotate(total=F('quantity') * F('unit_price'))
+        # Calculate the subtotal
+        subtotal = sum(item.total for item in invoice_items)
+
+        context = {
+            'invoice': invoice,
+            'invoice_items': invoice_items,
+            'subtotal': subtotal,
+            'total': invoice.get_total_amount(),
+            'color_accent': invoice.color_accent
+        }
+        return render(request, 'view_invoice.html', context)
+
+    def post(self, request, invoice_id):
+        invoice = get_object_or_404(Invoice, id=invoice_id, company=request.user.company)
+
+        if 'download_pdf' in request.POST:
+            invoice_items = invoice.invoiceitem_set.all().annotate(total=F('quantity') * F('unit_price'))
+            subtotal = sum(item.total for item in invoice_items)
+
+            context = {
+                'invoice': invoice,
+                'invoice_items': invoice_items,
+                'subtotal': subtotal,
+                'total': invoice.get_total_amount(),
+                'MEDIA_URL': request.build_absolute_uri(settings.MEDIA_URL),
+            }
+
+            # Render the 'invoice_pdf.html' template with the given context
+            template = get_template('invoice_pdf.html')
+            html_string = template.render(context)
+
+            # Convert the HTML string to a PDF using WeasyPrint
+            html = HTML(string=html_string, base_url=request.build_absolute_uri())
+            pdf_content = html.write_pdf()
+
+            # Create a ContentFile with the PDF data
+            pdf_file = ContentFile(pdf_content)
+
+            # Return the PDF as a file response
+            return FileResponse(pdf_file, content_type='application/pdf', as_attachment=True, filename=f"Invoice-{invoice_id}.pdf")
+        else:
+            return JsonResponse({"error": "Invalid request"})
+
+class PreviewInvoiceView(View):
+    def get(self, request, invoice_id):
+        invoice = get_object_or_404(Invoice, id=invoice_id, company=request.user.company)
+        invoice_items = invoice.invoiceitem_set.all().annotate(total=F('quantity') * F('unit_price'))
+        subtotal = sum(item.total for item in invoice_items)
+
+        context = {
+            'invoice': invoice,
+            'invoice_items': invoice_items,
+            'subtotal': subtotal,
+            'total': invoice.get_total_amount(),
+            'MEDIA_URL': request.build_absolute_uri(settings.MEDIA_URL),
+        }
+        return render(request, 'invoice_pdf.html', context)
 
 def get_attachment_icon(file_url):
     if file_url:
@@ -634,6 +1122,9 @@ class ExpensesDataView(LoginRequiredMixin, View):
 class ExpenseListView(LoginRequiredMixin, View):
     def get(self, request):
         time_filter = request.GET.get('time_filter', 'all')
+        date_range = request.GET.get('date_range', 'all')
+        category_filter = request.GET.get('category_filter', 'all')
+        search_term = request.GET.get('q', '')
 
         if time_filter == 'day':
             start_date = timezone.now().date()
@@ -644,15 +1135,54 @@ class ExpenseListView(LoginRequiredMixin, View):
         else:
             start_date = None
 
+        if date_range == 'today':
+            range_start_date = timezone.now().date()
+        elif date_range == 'last7Days':
+            range_start_date = timezone.now().date() - timedelta(days=7)
+        elif date_range == 'last30Days':
+            range_start_date = timezone.now().date() - timedelta(days=30)
+        elif date_range == 'last6Months':
+            range_start_date = timezone.now().date() - timedelta(days=182)
+        elif date_range == 'lastYear':
+            range_start_date = timezone.now().date() - timedelta(days=365)
+        elif date_range == 'all':
+            range_start_date = None
+
+        expenses = Expense.objects.filter(company=request.user.company)
+
         if start_date:
-            expenses = Expense.objects.filter(date_created__gte=start_date, company=request.user.company)
-        else:
-            expenses = Expense.objects.filter(company=request.user.company)
+            expenses = expenses.filter(date_created__gte=start_date)
+
+        if range_start_date:
+            expenses = expenses.filter(date_created__gte=range_start_date)
+
+        if category_filter != 'all':
+            expenses = expenses.filter(category=category_filter)
+
+        if search_term:
+            expenses = expenses.filter(
+                Q(description__icontains=search_term) |
+                Q(notes__icontains=search_term) |
+                Q(vendor__icontains=search_term) |
+                Q(category__icontains=search_term) |
+                Q(amount__icontains=search_term)
+            )
+
+        categories = Expense.objects.values_list('category', flat=True).distinct()
 
         context = {
             'expenses': expenses,
+            'categories': categories,
         }
+
         return render(request, 'expenses.html', context)
+
+class ExpenseDetailView(LoginRequiredMixin, DetailView):
+    model = Expense
+    template_name = 'expense_detail.html'
+
+    def get_queryset(self):
+        return Expense.objects.filter(company=self.request.user.company)
 
 class ExpenseUpdateView(LoginRequiredMixin, UpdateView):
     model = Expense
@@ -716,8 +1246,6 @@ class AddExpenseView(LoginRequiredMixin, View):
         if request.GET:
             # If data is provided, pre-fill the form with the data
             data_dict = {key: request.GET[key] for key in request.GET}
-            print("Initial Data:")
-            pprint(data_dict)
             form = self._initialize_form(request, initial_data=data_dict)
             # Add the uploaded_receipt_path from the session to the form
             if 'uploaded_receipt_filename' in request.session:
@@ -745,17 +1273,11 @@ class AddExpenseView(LoginRequiredMixin, View):
                 uploaded_receipt.close()
                 # Remove the session variable
                 del request.session['uploaded_receipt_filename']
-            else:
-                print("Form is not valid")
-                print(form.errors)
-
             expense.save()
             return redirect('smeApp:expense_list')
         return render(request, 'add_expense.html', {'form': form})
 
-
-MINDEE_API_KEY = '2189f2fa766d0adcc9aa5df09e28f8a0'
-mindee_client = MindeeClient(api_key=MINDEE_API_KEY)
+mindee_client = MindeeClient(api_key=settings.MINDEE_API_KEY)
 
 MINDEE_CATEGORY_MAPPING = {
     'accommodation': 'Rent',
@@ -771,7 +1293,6 @@ MINDEE_CATEGORY_MAPPING = {
     'toll': 'Travel',
     'telecom': 'Telephone',
     'miscellaneous': 'Other',
-    # Add any other Mindee categories and subcategories that you want to map to your categories
 }
 
 def map_mindee_category(mindee_category, mindee_subcategory):
@@ -783,11 +1304,9 @@ def map_mindee_category(mindee_category, mindee_subcategory):
 def extract_data_from_receipt(image_path):
     input_doc = mindee_client.doc_from_path(image_path)
     api_response = input_doc.parse(documents.TypeReceiptV4)
-    print(api_response.document)
 
     document = api_response.document
     extracted_data = {
-        'description': document.time.value,
         'amount': round(float(document.total_amount.value), 2),
         'date_created': document.date.value,
         'vendor': document.supplier.value,
@@ -811,149 +1330,6 @@ class UploadReceiptView(LoginRequiredMixin, FormView):
         # Redirect to the AddExpenseView with the pre-filled data
         return redirect(f"{reverse('smeApp:add_expense')}?{data_str}")
 
-def pnl_data(request):
-    time_filter = request.GET.get('time_filter', 'all')
-    company = request.user.company
-    today = date.today()
-
-    if time_filter == 'year':
-        start_date = today.replace(month=1, day=1)
-        end_date = today
-    elif time_filter == 'month':
-        start_date = today.replace(day=1)
-        end_date = today
-    else:
-        start_date = today - timedelta(days=6)
-        end_date = today
-
-    # Get income and expense data based on time filter
-    if time_filter == 'all':
-        incomes = Income.objects.filter(company=company)
-        expenses = Expense.objects.filter(company=company)
-    else:
-        incomes = Income.objects.filter(date__range=[start_date, end_date], company=company)
-        expenses = Expense.objects.filter(date__range=[start_date, end_date], company=company)
-
-    # Calculate total income and expense for each day in date range
-    income_totals = {}
-    expense_totals = {}
-    date_range = [start_date + timedelta(days=x) for x in range((end_date-start_date).days + 1)]
-    for date in date_range:
-        # Calculate total income for current date
-        daily_incomes = incomes.filter(date=date)
-        if daily_incomes:
-            income_totals[date] = daily_incomes.aggregate(Sum('amount'))['amount__sum']
-        else:
-            income_totals[date] = 0
-        # Calculate total expense for current date
-        daily_expenses = expenses.filter(date=date)
-        if daily_expenses:
-            expense_totals[date] = daily_expenses.aggregate(Sum('amount'))['amount__sum']
-        else:
-            expense_totals[date] = 0
-
-    data = {
-        'date_range': [str(date) for date in date_range],
-        'income_totals': income_totals,
-        'expense_totals': expense_totals
-    }
-    return JsonResponse(data)
-
-class InvoiceListView(LoginRequiredMixin, ListView):
-    model = Invoice
-    template_name = 'invoices_list.html'
-    context_object_name = 'invoices'
-
-    def get_queryset(self):
-        return Invoice.objects.filter(company=self.request.user.company)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['invoice_form'] = InvoiceForm(user=self.request.user)
-        InvoiceItemFormSet = formset_factory(InvoiceItemForm, extra=1)
-        context['invoice_item_formset'] = InvoiceItemFormSet(prefix='invoiceitem_set')
-        return context
-
-class UpdateInvoiceView(LoginRequiredMixin, UpdateView):
-    model = Invoice
-    form_class = InvoiceForm
-    template_name = 'update_invoice.html'
-
-    def get_queryset(self):
-        return Invoice.objects.filter(company=self.request.user.company)
-
-    def get_success_url(self):
-        return reverse_lazy('smeApp:view_invoice', kwargs={'invoice_id': self.object.pk})
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-class DeleteInvoiceView(LoginRequiredMixin, DeleteView):
-    model = Invoice
-    template_name = 'delete_invoice.html'
-    success_url = reverse_lazy('smeApp:invoices_list')
-
-    def get_queryset(self):
-        return Invoice.objects.filter(company=self.request.user.company)
-
-class CreateInvoiceView(LoginRequiredMixin, View):
-    def get(self, request):
-        invoice_form = InvoiceForm(user=request.user)
-        InvoiceItemFormSet = formset_factory(InvoiceItemForm, extra=1)
-        formset = InvoiceItemFormSet(prefix='invoiceitem_set')
-        return render(request, 'create_invoice.html', {'invoice_form': invoice_form, 'invoice_item_formset': formset})
-
-    def post(self, request):
-        invoice_form = InvoiceForm(request.user, request.POST)
-        InvoiceItemFormSet = formset_factory(InvoiceItemForm, extra=1)
-        formset = InvoiceItemFormSet(request.POST, prefix='invoiceitem_set')
-
-        if invoice_form.is_valid() and formset.is_valid():
-            invoice = invoice_form.save(commit=False)
-            invoice.company = request.user.company
-            invoice.save()
-            for form in formset:
-                if form.cleaned_data:
-                    invoice_item = form.save(commit=False)
-                    invoice_item.invoice = invoice
-                    invoice_item.save()
-            return redirect('smeApp:view_invoice', invoice_id=invoice.id)
-        else:
-            return render(request, 'create_invoice.html', {'invoice_form': invoice_form, 'invoice_item_formset': formset})
-
-class ViewInvoiceView(View):
-    def get(self, request, invoice_id):
-        invoice = get_object_or_404(Invoice, id=invoice_id, company=request.user.company)
-        invoice_items = invoice.invoiceitem_set.all().annotate(total=F('quantity') * F('unit_price'))
-        # Calculate the subtotal
-        subtotal = sum(item.total for item in invoice_items)
-
-        context = {
-            'invoice': invoice,
-            'invoice_items': invoice_items,
-            'subtotal': subtotal,
-            'total': invoice.get_total_amount(),
-            'color_accent': invoice.color_accent
-        }
-        return render(request, 'view_invoice.html', context)
-
-class PreviewInvoiceView(View):
-    def get(self, request, invoice_id):
-        invoice = get_object_or_404(Invoice, id=invoice_id, company=request.user.company)
-        invoice_items = invoice.invoiceitem_set.all().annotate(total=F('quantity') * F('unit_price'))
-        subtotal = sum(item.total for item in invoice_items)
-
-        context = {
-            'invoice': invoice,
-            'invoice_items': invoice_items,
-            'subtotal': subtotal,
-            'total': invoice.get_total_amount(),
-            'MEDIA_URL': request.build_absolute_uri(settings.MEDIA_URL),
-        }
-        return render(request, 'invoice_pdf.html', context)
-
 ##Sales and Inventory Management
 
 class SupplierCreateView(LoginRequiredMixin, CreateView):
@@ -972,7 +1348,6 @@ class SupplierCreateView(LoginRequiredMixin, CreateView):
         supplier.company = self.request.user.company
         supplier.save()
         return super().form_valid(form)
-        print("Supplier created:", supplier.name)
 
 class SupplierUpdateView(LoginRequiredMixin, UpdateView):
     model = Supplier
@@ -1090,11 +1465,8 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
-        print("form errors:", form.errors)  # Debug print
         stock_item = form.save(commit=False)
         stock_item.company = self.request.user.company
-        print("form_valid called")  # Debug print
-        print("stock_item:", stock_item)  # Debug print
         stock_item.save()
         return super().form_valid(form)
 
@@ -1143,26 +1515,18 @@ class PurchaseOrderCreateView(LoginRequiredMixin, View):
         PurchaseOrderItemFormSet = formset_factory(PurchaseOrderItemForm, extra=1, formset=BasePurchaseOrderItemFormSet)
         formset = PurchaseOrderItemFormSet(request.POST, prefix='purchaseorderitem_set', user=request.user)
 
-        print("Purchase form raw data:", request.POST)
         purchase_order_form.instance.company = request.user.company
         if purchase_order_form.is_valid():
-            print("Purchase form is valid")
             if all(form.is_valid() for form in formset):
-                print("All forms in formset are valid")
-
                 purchase_order = purchase_order_form.save(commit=False)
                 purchase_order.company = request.user.company
-                print("Purchase data errors:", purchase_order_form.errors)
                 purchase_order.save()
-                print("Purchase order saved:", purchase_order)
 
                 for form in formset:
                     if form.cleaned_data:
                         purchase_order_item = form.save(commit=False)
                         purchase_order_item.purchase_order = purchase_order
-                        print("Saving purchase order item:", purchase_order_item)
                         purchase_order_item.save()
-                        print("Purchase order item saved:", purchase_order_item)
                     else:
                         print("Form has no cleaned_data.")
 
@@ -1171,11 +1535,8 @@ class PurchaseOrderCreateView(LoginRequiredMixin, View):
             else:
                 print("Some forms in formset are not valid")
         else:
-            print("Purchase form is not valid")
             print("Purchase form errors:", purchase_order_form.errors)  # Add this line to show form errors
 
-
-        print("Formset errors:", formset.errors)
         return render(request, 'inventory/purchase_order_create.html', {'purchase_order_form': purchase_order_form, 'purchase_order_item_formset': formset})
 
 class PurchaseOrderUpdateView(LoginRequiredMixin, UpdateView):
