@@ -13,6 +13,7 @@ import dj_database_url
 from pathlib import Path
 import os
 from decouple import config
+
 SECRET_KEY = config('SECRET_KEY')
 MINDEE_API_KEY = config('MINDEE_API_KEY')
 GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
