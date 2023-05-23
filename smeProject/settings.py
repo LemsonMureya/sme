@@ -110,7 +110,7 @@ AUTH_USER_MODEL = 'smeApp.CustomUser'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_AGE = 1209600  # 2 weeks, in seconds
+SESSION_COOKIE_AGE = 12209600  # 2 weeks, in seconds
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

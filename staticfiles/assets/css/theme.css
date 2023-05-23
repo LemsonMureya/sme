@@ -21889,7 +21889,6 @@ https://prismjs.com/download.html?themes#themes=prism-okaidia&languages=markup+c
  * Loosely based on Monokai textmate theme by http://www.monokai.nl/
  * @author ocodia
  */
-/* @import 'prismjs/themes/prism-okaidia.css'; */
 code[class*=language-],
 pre[class*=language-] {
   color: #f8f8f2;
@@ -31041,11 +31040,6 @@ a[href].bg-200:hover, a[href].bg-200:focus {
   transform: translateY(50%);
 }
 
-.feed-profile-cover {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(245, 246, 252, 0.52)), to(rgba(117, 19, 93, 0.73))), url("generic/59.png");
-  background-image: -o-linear-gradient(top, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url("generic/59.png");
-  background-image: linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(117, 19, 93, 0.73)), url("generic/59.png");
-}
 
 /*-----------------------------------------------
 |   Cover and profile image

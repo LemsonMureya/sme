@@ -1,0 +1,22 @@
+{
+    "name": "smeApp",
+    "short_name": "smeApp",
+    "description": "Small and medium business management app",
+    "start_url": "/",
+    "icons": [
+            {
+              "src": "/static/assets/img/icons/logo-primary.png",
+              "sizes": "192x192",
+              "type": "image/png"
+            },
+            {
+              "src": "/static/assets/img/icons/logo.png",
+              "sizes": "130x128",
+              "type": "image/png"
+            }
+    ],
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "orientation": "any"
+}
