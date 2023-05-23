@@ -156,6 +156,5 @@ MEDIA_ROOT= os.path.join(os.path.dirname(BASE_DIR), "media_root")
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 # Use Whitenoise to serve static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
