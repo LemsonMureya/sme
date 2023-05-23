@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
 import os
 from decouple import config
@@ -32,9 +32,9 @@ BASE_URL = 'http://127.0.0.1:8000'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['kaya-app.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,7 +84,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smeProject.wsgi.application'
 
-PWA_APP_NAME = 'smeApp'
+PWA_APP_NAME = 'Kaya'
 PWA_APP_DESCRIPTION = "Small and medium business management app"
 PWA_APP_THEME_COLOR = '#ffffff'
 PWA_APP_BACKGROUND_COLOR = '#ffffff'
@@ -95,16 +96,15 @@ PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICON = 'assets/img/icons/logo-primary.png'
 PWA_APP_SPLASH_ICON = 'assets/img/icons/logo.png'
 PWA_APP_SPLASH_BACKGROUND_COLOR = '#ffffff'
-PWA_APP_SPLASH_TITLE = 'smeApp'
+PWA_APP_SPLASH_TITLE = 'kaya'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+     'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
 }
 
 AUTH_USER_MODEL = 'smeApp.CustomUser'
@@ -156,5 +156,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT= os.path.join(os.path.dirname(BASE_DIR), "media_root")
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+# Use Whitenoise to serve static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
