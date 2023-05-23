@@ -7,3 +7,12 @@
 /* prettier-ignore */
 /* ----------------------------- Phoenix-buttons ---------------------------- */
 /*# sourceMappingURL=user.css.map */
+/* custom-styles.css */
+
+/* Mobile devices (max-width: 767px) */
+@media (max-width: 767px) {
+  .container {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+  }
+}

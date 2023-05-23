@@ -1,0 +1,156 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+</head>
+
+<form method="post" enctype="multipart/form-data" class="mb-9" action="{% url 'smeApp:stock_item_create' %}">
+  {% csrf_token %}
+<div class="row g-3 flex-between-end mb-5">
+<div class="col-auto">
+ <h2 class="mb-2">Add a product</h2>
+</div>
+<div class="col-auto">
+ <button class="btn btn-phoenix-secondary me-2 mb-2 mb-sm-0" type="reset">Discard</button>
+ <button class="btn btn-primary mb-2 mb-sm-0" type="submit">Add product</button>
+</div>
+</div>
+<h4 class="mb-3">Product Name</h4>
+<div class="row g-5">
+<div class="col-12 col-xl-8">
+ <input class="form-control mb-5" type="text" placeholder="Write name here..." id="{{ form.name.auto_id }}" name="{{ form.name.html_name }}" value="{{ form.name.value|default:'' }}" required />
+
+ <div class="mb-6">
+   <h4 class="mb-3">Product Description</h4>
+   <textarea class="form-control tinymce" name="content" data-tinymce='{
+       "height":"15rem",
+       "placeholder":"Write a description here...",
+       "mobile":{
+           "theme":"silver",
+           "toolbar":"undo redo | bold italic underline strikethrough | alignleft aligncenter alignright | bullist numlist | fontselect fontsizeselect link"
+       }
+   }' id="{{ form.description.auto_id }}" name="{{ form.description.html_name }}" rows="3">{{ form.description.value|default:'' }}</textarea>
+</div>
+
+ <h4 class="mb-3">Display images</h4>
+ <div class="dropzone dropzone-multiple p-0 mb-5" id="my-awesome-dropzone" data-dropzone="data-dropzone">
+   <div class="fallback">
+     <input type="file" class="form-control" id="{{ form.image.auto_id }}" name="{{ form.image.html_name }}" value="{{ form.image.value|default:'' }}" />
+   </div>
+   <div class="dz-preview d-flex flex-wrap">
+     <div class="border bg-white rounded-3 d-flex flex-center position-relative me-2 mb-2" style="height:8px;width:80px;"><img class="dz-image" src="{% static 'assets/img/products/23.png' %}" alt="..." data-dz-thumbnail="data-dz-thumbnail" /><a class="dz-remove text-400" href="#!" data-dz-remove="data-dz-remove"><span data-feather="x"></span></a></div>
+   </div>
+   <div class="dz-message text-600" data-dz-message="data-dz-message">
+     Drag your photo here<span class="text-800">or</span>
+     <button class="btn btn-link p-0" type="button">Browse from device</button><br /><img class="mt-3 me-2" src="{% static 'assets/img/icons/image-icon.png' %}" width="40" alt="" />
+   </div>
+ </div>
+
+ <h4 class="mb-3">Inventory</h4>
+ <div class="row g-0 border-top border-bottom border-300">
+   <div class="col-sm-4">
+     <div class="nav flex-sm-column border-bottom border-bottom-sm-0 border-end-sm border-300 fs--1 vertical-tab h-100 justify-content-between" role="tablist" aria-orientation="vertical"><a class="nav-link border-end border-end-sm-0 border-bottom-sm border-300 text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center active" id="pricingTab" data-bs-toggle="tab" data-bs-target="#pricingTabContent" role="tab" aria-controls="pricingTabContent" aria-selected="true"> <span class="me-sm-2 fs-4 nav-icons" data-feather="tag"></span><span class="d-none d-sm-inline">Pricing</span></a><a class="nav-link border-end border-end-sm-0 border-bottom-sm border-300 text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center" id="restockTab" data-bs-toggle="tab" data-bs-target="#restockTabContent" role="tab" aria-controls="restockTabContent" aria-selected="false"> <span class="me-sm-2 fs-4 nav-icons" data-feather="package"></span><span class="d-none d-sm-inline">Quantity</span></a><a class="nav-link border-end border-end-sm-0 border-bottom-sm border-300 text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center" id="attributesTab" data-bs-toggle="tab" data-bs-target="#attributesTabContent" role="tab" aria-controls="attributesTabContent" aria-selected="false"> <span class="me-sm-2 fs-4 nav-icons" data-feather="sliders"></span><span class="d-none d-sm-inline">Barcode</span></a><a class="nav-link text-center text-sm-start cursor-pointer outline-none d-sm-flex align-items-sm-center" id="advancedTab" data-bs-toggle="tab" data-bs-target="#advancedTabContent" role="tab" aria-controls="advancedTabContent" aria-selected="false"> <span class="me-sm-2 fs-4 nav-icons" data-feather="lock"></span><span class="d-none d-sm-inline">Product ID</span></a></div>
+   </div>
+   <div class="col-sm-8">
+  <div class="tab-content py-3 ps-sm-4 h-100">
+    <div class="tab-pane fade show active" id="pricingTabContent" role="tabpanel">
+      <h4 class="mb-3 d-sm-none">Pricing</h4>
+      <div class="row g-3">
+        <div class="col-12 col-lg-9">
+          <h5 class="mb-2 text-1000">Unit price</h5>
+          <input class="form-control" type="number" step="0.01" placeholder="$$$" id="{{ form.unit_selling_price.auto_id }}" name="{{ form.unit_selling_price.html_name }}" value="{{ form.unit_selling_price.value|default:'' }}" required />
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade h-100" id="restockTabContent" role="tabpanel" aria-labelledby="restockTab">
+      <div class="d-flex flex-column h-100">
+        <h5 class="mb-3 text-1000">Add to Stock</h5>
+        <div class="row g-3 flex-1 mb-4">
+          <div class="col-sm-7">
+            <input class="form-control" type="number" placeholder="Quantity" id="{{ form.quantity.auto_id }}" name="{{ form.quantity.html_name }}" value="{{ form.quantity.value|default:'' }}" required />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="attributesTabContent" role="tabpanel" aria-labelledby="attributesTab">
+      <h5 class="mb-3 text-1000">Barcode</h5>
+      <div class="col-12 col-lg-9">
+        <input class="form-control" type="text" placeholder="Barcode Here(optional)" id="{{ form.barcode.auto_id }}" name="{{ form.barcode.html_name }}" value="{{ form.barcode.value|default:'' }}" />
+      </div>
+    </div>
+    <div class="tab-pane fade" id="advancedTabContent" role="tabpanel" aria-labelledby="advancedTab">
+      <div class="row g-3">
+        <div class="col-12 col-lg-9">
+          <h5 class="mb-2 text-1000">Product ID</h5>
+          <input class="form-control" type="text" placeholder="Product ID" id="{{ form.item_id.auto_id }}" name="{{ form.item_id.html_name }}" value="{{ form.item_id.value|default:'' }}" required />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+<div class="col-12 col-xl-4">
+ <div class="row g-2">
+   <div class="col-12 col-xl-12">
+     <div class="card mb-3">
+       <div class="card-body">
+         <div class="row g-3">
+           <div class="col-12 col-sm-6 col-xl-12">
+             <div class="mb-4">
+                 <div class="d-flex flex-wrap mb-2">
+                     <h5 class="mb-0 text-1000 me-2">Category</h5><a class="fw-bold fs--1" href="{% url 'smeApp:product_type_create' %}">Add new category</a>
+                 </div>
+                 <select class="form-select mb-3" id="{{ form.product_type.auto_id }}" name="{{ form.product_type.html_name }}">
+                     <option value="">Choose a category...</option>
+                     {% for product_type in form.product_type.field.queryset %}
+                         <option value="{{ product_type.pk }}" {% if form.product_type.value == product_type.pk|stringformat:'s' %}selected{% endif %}>{{ product_type.name }}</option>
+                     {% endfor %}
+                 </select>
+             </div>
+         </div>
+
+           <div class="col-12 col-sm-6 col-xl-12">
+             <div class="mb-4">
+               <div class="d-flex flex-wrap mb-2">
+                 <h5 class="mb-0 text-1000 me-2">Supplier</h5><a class="fw-bold fs--1" href="{% url 'smeApp:supplier_create' %}">Add new supplier</a>
+               </div>
+               <select class="form-select mb-3" id="{{ form.supplier.auto_id }}" name="{{ form.supplier.html_name }}" required>
+              <option value="">Choose a supplier...</option>
+              {% for supplier in form.supplier.field.queryset %}
+              <option value="{{ supplier.pk }}" {% if form.supplier.value == supplier.pk|stringformat:'s' %}selected{% endif %}>{{ supplier.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        </div>
+        </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+  </form>
+<script>
+    tinymce.init({
+    selector: '.tinymce',
+    mobile: {
+        theme: 'mobile',
+        plugins: 'lists,autolink',
+        toolbar: 'undo redo | bold italic | bullist numlist'
+    },
+    height: '15rem',
+    placeholder: 'Write a description here...'
+});
+     </script>
+{% endblock %}

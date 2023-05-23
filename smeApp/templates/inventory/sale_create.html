@@ -1,0 +1,92 @@
+{% extends 'dashboard.html' %}
+{% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+
+<form method="post" enctype="multipart/form-data" action="{% url 'smeApp:sale_create' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="{{ sale_form.client.auto_id }}" class="form-label">Client</label>
+        <select class="form-select" id="{{ sale_form.client.auto_id }}" name="{{ sale_form.client.html_name }}" required>
+            <option value="">Choose a client...</option>
+            {% for client in sale_form.client.field.queryset %}
+                <option value="{{ client.pk }}" {% if sale_form.client.value == client.pk|stringformat:'s' %}selected{% endif %}>{{ client.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="{{ sale_form.sale_date.auto_id }}" class="form-label">Sale Date</label>
+    <input type="date" class="form-control" id="{{ sale_form.sale_date.auto_id }}" name="{{ sale_form.sale_date.html_name }}" value="{{ sale_form.sale_date.value|default:'' }}" required>
+    </div>
+    <h4>Sale Items</h4>
+    {{ sale_item_formset.management_form }}
+    <div id="sale-item-formset-container">
+      {% for form in sale_item_formset %}
+          <div class="row mb-3 sale-item-form">
+              <div class="col-md-6">
+                  <label for="{{ form.stock_item.auto_id }}" class="form-label">Product</label>
+                  <select class="form-select" id="{{ form.stock_item.auto_id }}" name="{{ form.stock_item.html_name }}" required>
+                      <option value="">Choose a product...</option>
+                      {% for product in form.stock_item.field.queryset %}
+                          <option value="{{ product.pk }}" {% if form.stock_item.value == product.pk|stringformat:'s' %}selected{% endif %}>{{ product.name }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="col-md-3">
+                  <label for="{{ form.quantity.auto_id }}" class="form-label">Quantity</label>
+                  <input type="number" class="form-control" id="{{ form.quantity.auto_id }}" name="{{ form.quantity.html_name }}" value="{{ form.quantity.value|default:'' }}" min="1" required>
+              </div>
+              <div class="col-md-2">
+                <label for="{{ form.selling_price.auto_id }}" class="form-label">Selling Price</label>
+                <input type="number" class="form-control" id="{{ form.selling_price.auto_id }}" name="{{ form.selling_price.html_name }}" value="{{ form.selling_price.value|default:'' }}" min="0" step="0.01" required>
+            </div>
+              <div class="col-md-2">
+                  {% if form.DELETE %}
+                      <div class="form-check mt-4">
+                          <input class="form-check-input" type="checkbox" id="{{ form.DELETE.auto_id }}" name="{{ form.DELETE.html_name }}">
+                          <label class="form-check-label" for="{{ form.DELETE.auto_id }}">Delete</label>
+                      </div>
+                  {% endif %}
+              </div>
+          </div>
+      {% endfor %}
+    </div>
+    <button type="button" class="btn btn-primary add-row" data-bs-add-row>Add Sale Item</button>
+    <button type="submit" class="btn btn-success">Create Sale Order</button>
+</form>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addRowButton = document.querySelector('.add-row');
+        const formsetContainer = document.querySelector('#sale-item-formset-container');
+        const formIdx = '{{ sale_item_formset.management_form.prefix }}-TOTAL_FORMS';
+
+        addRowButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            let formIdxVal = parseInt(document.getElementById(formIdx).value);
+            let newRow = formsetContainer.querySelector('.sale-item-form:last-child').cloneNode(true);
+
+            newRow.querySelectorAll('input, select, label').forEach(function (element) {
+                element.name = element.name.replace('-' + (formIdxVal - 1) + '-', '-' + formIdxVal + '-');
+                element.id = element.id.replace('-' + (formIdxVal - 1) + '-', '-' + formIdxVal + '-');
+                if (element.tagName.toLowerCase() !== 'label') {
+                    element.value = '';
+                }
+            });
+
+            formsetContainer.appendChild(newRow);
+            document.getElementById(formIdx).value = formIdxVal + 1;
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

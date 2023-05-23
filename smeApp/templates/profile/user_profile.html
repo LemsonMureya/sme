@@ -1,0 +1,373 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+{% block extra_styles %}
+<style>
+
+  .full-width-mobile .card {
+    border-radius: 0;
+  }
+
+    .card {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card p, .card a {
+          color: #666;
+      }
+      .card .icon {
+          font-size: 20px;
+          color: #007BFF;
+          margin-right: 10px;
+      }
+    .nav-link {
+      font-weight: 500;
+    }
+
+  @media (max-width: 575.98px) {
+    body {
+      margin: 0;
+      padding: 0;
+    }
+      h3, h4, h5, p {
+       font-size: 1em;
+     }
+    .full-width-mobile {
+      max-width: 100% !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+
+      }
+      .edit-profile-btn {
+      position: relative;
+      top: -2px;
+      margin-left: 5px;
+      color: #a0a0a0;
+      transition: color 0.3s;
+    }
+
+    .edit-profile-btn:hover {
+      color: #808080;
+      text-decoration: none;
+    }
+  }
+</style>
+{% endblock %}
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3HV5HzF6Gvk/e3I5b4fyfIFQ2lEdJd" crossorigin="anonymous">
+</head>
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3HV5HzF6Gvk/e3I5b4fyfIFQ2lEdJd" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybB8WfOcN/60AVIbpgrbCvAURHda3b1vrhtU6N/35X32s8fAA" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const avatarEditButton = document.querySelector(".avatar-edit-btn");
+    const removeAvatar = document.getElementById("remove-photo-btn");
+    const fileInput = document.getElementById("id_photo");
+    const avatarForm = document.getElementById("avatar-form");
+    const avatarModal = new bootstrap.Modal(document.getElementById("avatar-modal"));
+
+    avatarEditButton.addEventListener("click", () => {
+      avatarModal.show();
+    });
+
+    removeAvatar.addEventListener("click", (event) => {
+    event.preventDefault();
+    fileInput.value = "";
+    document.getElementById("remove_photo").value = "true";
+    avatarForm.submit(); // Submit the form after clicking the "Remove" button
+    avatarModal.hide();
+  });
+
+    fileInput.addEventListener("change", () => {
+      document.getElementById("remove_photo").value = "false";
+      avatarForm.submit(); // Submit the form after selecting a file
+      avatarModal.hide();
+    });
+  });
+</script>
+{% endblock %}
+
+<div class="pb-9" style="margin-left:-0.5rem; margin-right:-0.5rem;">
+        <div class="row">
+        </div>
+        <div class="row no-gutters g-md-4 g-xl-6">
+          <div class="col-12 col-md-5 col-lg-5 col-xl-4 order-0 order-md-0 full-width-mobile">
+                 <div class="card mb-3 rounded-lg">
+                   <div class="card-body">
+                     <div class="row align-items-center g-3 text-center text-xxl-start">
+                       <div class="col-12 col-xxl-auto avatar-container">
+                         <div class="avatar avatar-5xl" style="position: relative;">
+                          {% if user.photo and user.photo.name != 'user_photos/default-avatar.png' %}
+                              <a href="#" data-bs-toggle="modal" data-bs-target="#edit-avatar-modal">
+                                  <img class="rounded-circle avatar-edit-btn" src="{{user.photo.url|default:'user_photos/default-avatar.png'}}" alt="" />
+                              </a>
+                          {% else %}
+                              <div class="rounded-circle initials" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; text-align: center; width: 100%; height: 100%; line-height: 100px;   background-color: #A8DADC; color: #fff;">
+                                  {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                              </div>
+                              <a href="#" data-bs-toggle="modal" data-bs-target="#edit-avatar-modal">
+                                  <img class="rounded-circle avatar-edit-btn" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="opacity: 0;" alt="" />
+                              </a>
+                          {% endif %}
+                      </div>
+                     </div>
+
+                     <div class="col-12 col-sm-auto flex-1">
+                      <h3 class="fw-bolder mb-2 d-inline">{{user.first_name|title}} {{user.last_name|title}}</h3>
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#edit-profile-modal" class="edit-profile-btn">
+                        <i class="fas fa-pen text-muted"></i>
+                      </a>
+                      <p class="mb-0">{{user.role}} at</p><a class="fw-bold" href="#!">{{user.company.name|title}}</a>
+                    </div>
+                    </div>
+                   </div>
+                 </div>
+                 <div class="card mb-3 rounded-lg">
+                   <div class="card-body">
+                     <div class="d-flex align-items-center mb-5">
+                       <h3>Company Info</h3>
+                       <a href="{% url 'smeApp:company_profile_edit' %}" class="btn btn-link px-3" type="button"></a>
+                     </div>
+                     <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-envelope-alt"></span>
+                         <h5 class="text-1000 mb-0">Company Email</h5>
+                       </div><a href="#">{{user.company.email}}</a>
+                     </div>
+                     <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-phone"> </span>
+                         <h5 class="text-1000 mb-0">Company Phone</h5>
+                       </div><a href="tel:+1234567890">{{user.company.phone }} </a>
+                     </div>
+                     <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-globe"></span>
+                         <h5 class="text-1000 mb-0">Website</h5>
+                       </div><a href="#!">{{user.company.website }}</a>
+                     </div>
+                     <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-building"></span>
+                         <h5 class="text-1000 mb-0">Industry</h5>
+                       </div>
+                       <p class="mb-0 text-800">{{user.company.industry|title}}</p>
+                     </div>
+                     <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-postcard"></span>
+                         <h5 class="text-1000 mb-0">Number of employees</h5>
+                       </div>
+                       <p class="mb-0 text-800">{{user.company.num_employees}}</p>
+                     </div>
+                     <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-clock"></span>
+                         <h5 class="text-1000 mb-0">Joined </h5>
+                       </div>
+                       <p class="mb-0 text-800">{{user.date_joined|date:"F j, Y"}}</p>
+                     </div>
+                   </div>
+                 </div>
+                 <div class="card mb-3">
+                   <div class="card-body">
+                     <div class="d-flex align-items-center mb-5">
+                        <h3>Company Address</h3>
+                        <a href="{% url 'smeApp:company_profile_edit' %}" class="btn btn-link"></a>
+                    </div>
+                    <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-estate"></span>
+                         <h5 class="mb-0">Street</h5>
+                       </div>
+                       <p class="mb-0 text-800">{{ user.company.address_line_1}}</p>
+                     </div>
+                     <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-map-pin-alt"></span>
+                         <h5 class="mb-0 text-1000">Zip code</h5>
+                       </div>
+                       <p class="mb-0 text-800">{{ user.company.zip_code}}</p>
+                     </div>
+                     <hr>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-map"></span>
+                         <h5 class="mb-0 text-1000">City</h5>
+                       </div>
+                       <p class="mb-0 text-800">{{ user.company.city|title}}</p>
+                     </div>
+                     <hr>
+                     <div>
+                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-windsock"></span>
+                         <h5 class="mb-0 text-1000">Country</h5>
+                       </div>
+                       <p class="mb-0 text-800">{{ user.company.country|title}}</p>
+                     </div>
+                   </div>
+                 </div>
+               <div class="phoenix-offcanvas-backdrop d-lg-none top-0" data-phoenix-backdrop="data-phoenix-backdrop"></div>
+           </div>
+           <!-- Update the modal content -->
+           <div class="modal fade" id="avatar-modal" tabindex="-1" aria-labelledby="avatar-modal-label" aria-hidden="true">
+             <div class="modal-dialog">
+               <div class="modal-content">
+                 <div class="modal-header">
+                   <h5 class="modal-title" id="avatar-modal-label">Update Profile Picture</h5>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+                 <form id="avatar-form" method="post" enctype="multipart/form-data" action="{% url 'smeApp:edit_avatar' %}">
+                   {% csrf_token %}
+                   <div class="modal-body">
+                     <input type="file" name="photo" id="id_photo" accept="image/*" />
+                     <input type="hidden" name="remove_photo" id="remove_photo" value="false" />
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" class="btn btn-danger" id="remove-photo-btn">Remove</button>
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="submit" class="btn btn-primary">Save changes</button>
+                   </div>
+                 </form>
+               </div>
+             </div>
+           </div>
+           <!-- Toggle button for profile settings -->
+<!-- righ sidebar -->
+<div class="col-12 col-md-7 col-lg-7 col-xl-8 order-1 order-md-1">
+    <div class="lead-details-container">
+        <div class="sticky-leads-sidebar">
+            <div class="row">
+                <!--  -->
+            </div>
+            <div>
+                <div class="scrollbar">
+                    <ul class="nav nav-underline flex-nowrap mb-3 pb-1" id="myTab" role="tablist">
+                        <li class="nav-item me-3">
+                            <a class="nav-link text-nowrap active" id="company-info-tab" data-bs-toggle="tab" href="#tab-company-info" role="tab" aria-controls="tab-company-info" aria-selected="true">
+                                <span class="fas fa-building me-2"></span>Company Info
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-nowrap" id="personal-info-tab" data-bs-toggle="tab" href="#tab-personal-info" role="tab" aria-controls="tab-personal-info" aria-selected="true">
+                                <span class="fas fa-user me-2"></span>Personal info
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <form method="post" action="{% url 'smeApp:edit_profile' %}">
+                    {% csrf_token %}
+                    <div class="tab-content" id="profileTabContent">
+                        <div class="tab-pane fade show active" id="tab-company-info" role="tabpanel" aria-labelledby="company-info-tab">
+                            <div class="row g-3 mb-5">
+                                <div class="col-12 col-lg-6">
+                                    <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.name.auto_id }}">Company Name</label>
+                                    {{ company_form.name|add_class:"form-control" }}
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.email.auto_id }}">Company Email</label>
+                                    {{ company_form.email|add_class:"form-control" }}
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.phone.auto_id }}">Company Phone</label>
+                                    {{ company_form.phone|add_class:"form-control" }}
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.industry.auto_id }}">Industry</label>
+                                    {{ company_form.industry|add_class:"form-select" }}
+                                </div>
+                                <h4 class="mt-6">Company Address</h4>
+                                <div class="col-sm-6 col-md-12">
+                                    <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.address_line_1.auto_id }}">Street</label>
+                                {{ company_form.address_line_1|add_class:"form-control" }}
+                                </div>
+                                </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab-personal-info" role="tabpanel" aria-labelledby="personal-info-tab">
+                                    <div class="row g-3 mb-5">
+                                        <div class="col-12 col-lg-6">
+                                            <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ form.first_name.auto_id }}">First name</label>
+                                            {{ form.first_name|add_class:"form-control" }}
+                                        </div>
+                                        <div class="col-12 col-lg-6">
+                                            <label class="form-label text-1000 fw-bold fs-0 ps-0 text-capitalize lh-sm" for="{{ form.last_name.auto_id }}">Last Name</label>
+                                            {{ form.last_name|add_class:"form-control" }}
+                                        </div>
+                                        <div class="col-12 col-lg-6">
+                                            <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ form.role.auto_id }}">Role</label>
+                                            {{ form.role|add_class:"form-select" }}
+                                        </div>
+                                        <div class="col-12 col-lg-6">
+                                            <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ form.email.auto_id }}">Email</label>
+                                            {{ form.email|add_class:"form-control" }}
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="text-end">
+                                    <button class="btn btn-primary px-7">Save changes</button>
+                                </div>
+                                </div>
+                              </form>
+                            </div>
+                        </div>
+                    </div>
+              </div>
+       </div>
+       <!-- Edit Profile Modal -->
+       <div class="modal fade" id="edit-profile-modal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+               <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+               </button>
+             </div>
+             <div class="modal-body">
+               <form id="edit-profile-form" method="post" action="{% url 'smeApp:edit_profile' %}" enctype="multipart/form-data">
+                 {% csrf_token %}
+                 <div class="mb-3">
+                   <label for="{{ form.first_name.auto_id }}" class="form-label">First Name</label>
+                   <div class="input-group">
+                     <span class="input-group-text"><i class="fas fa-user"></i></span>
+                     {{ form.first_name|add_class:"form-control" }}
+                   </div>
+                 </div>
+                 <div class="mb-3">
+                   <label for="{{ form.last_name.auto_id }}" class="form-label">Last Name</label>
+                   <div class="input-group">
+                     <span class="input-group-text"><i class="fas fa-user"></i></span>
+                     {{ form.last_name|add_class:"form-control" }}
+                   </div>
+                 </div>
+                 <div class="mb-3">
+                   <label for="{{ form.email.auto_id }}" class="form-label">Email</label>
+                   <div class="input-group">
+                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                     {{ form.email|add_class:"form-control" }}
+                   </div>
+                 </div>
+                 <div class="mb-3">
+                   <label for="{{ form.role.auto_id }}" class="form-label">Role</label>
+                   <div class="input-group">
+                     <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                     {{ form.role|add_class:"form-select" }}
+                   </div>
+                 </div>
+                 <!-- Add other form fields as needed -->
+               </form>
+             </div>
+             <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               <button type="submit" class="btn btn-primary" form="edit-profile-form">Save Changes</button>
+             </div>
+           </div>
+         </div>
+       </div>
+
+{% endblock %}

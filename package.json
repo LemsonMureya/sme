@@ -1,0 +1,25 @@
+{
+  "name": "smeProject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/LemsonMureya/sme.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LemsonMureya/sme/issues"
+  },
+  "homepage": "https://github.com/LemsonMureya/sme#readme",
+  "dependencies": {
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.23",
+    "preline": "^1.8.0",
+  }
+}

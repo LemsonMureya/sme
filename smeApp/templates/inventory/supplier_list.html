@@ -1,0 +1,13 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+
+{% for supplier in suppliers %}
+<p>{{ supplier.name }}</p>
+
+
+{% empty %}
+<p>No suppliers yet </p>
+{% endfor %}
+
+{% endblock %}

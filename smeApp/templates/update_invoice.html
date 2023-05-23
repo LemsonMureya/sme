@@ -1,0 +1,131 @@
+{% extends 'dashboard.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  flatpickr(".flatpickr-date", {
+    dateFormat: "Y-m-d",
+    disableMobile: true
+  });
+});
+</script>
+
+<div>
+<div class="border-0 p-0 mb-2">
+  <h3 class="mb-0">Invoice Information</h3>
+</div>
+<div class="px-0">
+  <div class="row g-4">
+      <div class="col-lg-12">
+          <form method="post" class="row g-3 mb-6">
+              {% csrf_token %}
+              {{ formset.management_form }}
+              {% for field in form %}
+                  <div class="col-md-6 gy-6">
+                      <div class="form-floating">
+                          {% if field.field.widget.input_type == 'select' %}
+                              <select class="form-select" name="{{ field.html_name }}" id="{{ field.auto_id }}">
+                                  {% for choice in field.field.choices %}
+                                      <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                                  {% endfor %}
+                              </select>
+                          {% elif field.name == 'invoice_date' or field.name == 'due_date' %}
+                              <input class="form-control flatpickr-date" type="text" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}" value="{{ field.value|date:"Y-m-d" }}">
+                          {% else %}
+                              <input class="form-control" type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}" value="{{ field.value }}">
+                          {% endif %}
+                          <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                      </div>
+                  </div>
+              {% endfor %}
+              <div id="invoice-items-container">
+              {% for form in formset %}
+                  <div class="invoice-item">
+                      <div class="row gy-3">
+                        {{ form.id }}
+                          {% for field in form.visible_fields %}
+                              <div class="col-md-3 gy-6">
+                                  <div class="form-floating">
+                                      {{ field|add_class:"form-control" }}
+                                      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                  </div>
+                              </div>
+                          {% endfor %}
+                          <div class="col-md-1">
+                              <button type="button" class="btn btn-danger delete-item">
+                                  <i class="fas fa-trash"></i>
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              {% endfor %}
+          </div>
+
+              <div class="col-12 gy-6">
+                  <button type="button" id="add-invoice-item" class="btn btn-light border">
+                      <i class="fas fa-plus"></i> Add Item
+                  </button>
+                  <button type="submit" class="btn btn-light border">
+                      <i class="fas fa-file-invoice"></i> Update Invoice
+                  </button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    let formIdx = parseInt(document.getElementById("id_invoiceitem_set-TOTAL_FORMS").value);
+
+    document.getElementById("add-invoice-item").addEventListener("click", addInvoiceItemEvent);
+    document.querySelectorAll(".delete-item").forEach((btn) => {
+      btn.addEventListener("click", deleteItemEvent);
+    });
+
+    function addInvoiceItemEvent() {
+      const formElem = document.querySelector("#invoice-items-container .invoice-item:last-child").cloneNode(true);
+
+      const inputFields = formElem.getElementsByTagName("input");
+      for (const inputField of inputFields) {
+        inputField.name = inputField.name.replace(/invoiceitem_set-\d+-/g, `invoiceitem_set-${formIdx}-`);
+        inputField.id = inputField.id.replace(/id_invoiceitem_set-\d+-/g, `id_invoiceitem_set-${formIdx}-`);
+        inputField.value = "";
+      }
+
+      const labels = formElem.getElementsByTagName("label");
+      for (const label of labels) {
+        label.setAttribute("for", label.getAttribute("for").replace(/id_invoiceitem_set-\d+-/g, `id_invoiceitem_set-${formIdx}-`));
+      }
+
+      const deleteBtn = formElem.querySelector(".delete-item");
+      deleteBtn.addEventListener("click", deleteItemEvent);
+      document.getElementById("invoice-items-container").appendChild(formElem);
+      document.getElementById("id_invoiceitem_set-TOTAL_FORMS").value = formIdx + 1;
+      formIdx++;
+    }
+
+    function deleteItemEvent() {
+      this.closest(".invoice-item").remove();
+      let currentForms = parseInt(document.getElementById("id_invoiceitem_set-TOTAL_FORMS").value);
+      document.getElementById("id_invoiceitem_set-TOTAL_FORMS").value = currentForms - 1;
+      formIdx--;
+    }
+  });
+</script>
+
+{% endblock %}

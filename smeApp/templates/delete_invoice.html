@@ -1,0 +1,15 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+<h1>Delete Invoice</h1>
+
+<p>Are you sure you want to delete this invoice?</p>
+<p>Invoice number: {{ object.invoice_number }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Delete Invoice</button>
+  <a href="{% url 'smeApp:view_invoice' invoice_id=object.pk %}">Cancel</a>
+</form>
+
+{% endblock %}

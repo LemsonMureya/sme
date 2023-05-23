@@ -1,0 +1,36 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<form method="post" enctype="multipart/form-data" action="{% url 'smeApp:supplier_create' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="{{ form.name.auto_id }}" class="form-label">Supplier Name</label>
+        <input type="text" class="form-control" id="{{ form.name.auto_id }}" name="{{ form.name.html_name }}" value="{{ form.name.value|default:'' }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="{{ form.address.auto_id }}" class="form-label">Address</label>
+        <input type="text" class="form-control" id="{{ form.address.auto_id }}" name="{{ form.address.html_name }}" value="{{ form.address.value|default:'' }}" placeholder="Street address, city, and zip code.">
+    </div>
+    <div class="mb-3">
+        <label for="{{ form.phone.auto_id }}" class="form-label">Phone Number</label>
+        <input type="text" class="form-control" id="{{ form.phone.auto_id }}" name="{{ form.phone.html_name }}" value="{{ form.phone.value|default:'' }}">
+    </div>
+    <div class="mb-3">
+        <label for="{{ form.email.auto_id }}" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="{{ form.email.auto_id }}" name="{{ form.email.html_name }}" value="{{ form.email.value|default:'' }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}

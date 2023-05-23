@@ -1,0 +1,11 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+  <h2>Delete Company Profile</h2>
+  <p>Are you sure you want to delete the company profile for "{{ object.name }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'smeApp:company_profile_detail' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

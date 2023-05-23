@@ -1,0 +1,170 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+    <h2 class="mb-4">Create Invoice</h2>
+    <div class="row">
+      <div class="col-xl-12">
+        <form class="row g-3 mb-6" method="POST" id="invoice-form">
+          {% csrf_token %}
+          <div class="col-md-6">
+            <div class="form-floating">
+              {{ invoice_form.company|add_class:"form-control" }}
+              <label for="{{ invoice_form.company.id_for_label }}">Company</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-floating">
+              {{ invoice_form.client|add_class:"form-control" }}
+              <label for="{{ invoice_form.client.id_for_label }}">Client</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-floating">
+              {{ invoice_form.invoice_number|add_class:"form-control" }}
+              <label for="{{ invoice_form.invoice_number.id_for_label }}">Invoice Number</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-floating">
+                <input class="form-control flatpickr-date" type="text" name="{{ invoice_form.invoice_date.html_name }}" id="{{ invoice_form.invoice_date.auto_id }}" placeholder="{{ invoice_form.invoice_date.label }}" data-initial="{{ invoice_form.invoice_date.initial|date:"c" }}">
+                <label for="{{ invoice_form.invoice_date.auto_id }}">{{ invoice_form.invoice_date.label }}</label>              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-floating">
+                <input class="form-control flatpickr-date" type="text" name="{{ invoice_form.due_date.html_name }}" id="{{ invoice_form.due_date.auto_id }}" placeholder="{{ invoice_form.due_date.label }}" data-initial="{{ invoice_form.due_date.initial|date:"c" }}">
+                <label for="{{ invoice_form.due_date.auto_id }}">{{ invoice_form.due_date.label }}</label>
+              </div>
+          </div>
+          <div class="col-md-6">
+          <div class="form-floating">
+              {{ invoice_form.payment_status|add_class:"form-control" }}
+              <label for="{{ invoice_form.payment_status.id_for_label }}">Payment Status</label>
+          </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-floating">
+              {{ invoice_form.notes|add_class:"form-control" }}
+              <label for="{{ invoice_form.notes.id_for_label }}">Notes</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-floating">
+              {{ invoice_form.tax|add_class:"form-control" }}
+              <label for="{{ invoice_form.tax.id_for_label }}">Tax</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-floating">
+              {{ invoice_form.discount|add_class:"form-control" }}
+              <label for="{{ invoice_form.discount.id_for_label }}">Discount</label>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-floating">
+              {{ invoice_form.color_accent|add_class:"form-control" }}
+              <label for="{{ invoice_form.color_accent.id_for_label }}">Color Accent</label>
+            </div>
+          </div>
+          <div id="form-set">
+            {{ invoice_item_formset.management_form }}
+            {% for form in invoice_item_formset %}
+            <div class="form-inline">
+                <div class="row gy-3" style="margin-top: 1px;">
+                  <div class="col-md-3">
+                    <div class="form-floating">
+                      {{ form.item_name|add_class:"form-control" }}
+                      <label for="{{ form.item_name.id_for_label }}">Item Name</label>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-floating">
+                      {{ form.item_description|add_class:"form-control" }}
+                      <label for="{{ form.item_description.id_for_label }}">Description</label>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-floating">
+                      {{ form.quantity|add_class:"form-control" }}
+                      <label for="{{ form.quantity.id_for_label }}">Quantity</label>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-floating">
+                      {{ form.unit_price|add_class:"form-control" }}
+                      <label for="{{ form.unit_price.id_for_label }}">Unit Price</label>
+                    </div>
+                  </div>
+                  <div class="col-md-1">
+                      <button type="button" class="btn btn-danger delete-item">
+                          <i class="fas fa-trash"></i>
+                      </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="col-12 gy-6">
+              <button type="button" id="add-item" class="btn btn-light border">
+                  <i class="fas fa-plus"></i> Add Item
+              </button>
+              <button type="submit" class="btn btn-light border">
+                  <i class="fas fa-file-invoice"></i> Create Invoice
+              </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const dateInputs = document.querySelectorAll(".flatpickr-date");
+         dateInputs.forEach((input) => {
+           const initialValue = input.dataset.initial;
+           flatpickr(input, {
+             dateFormat: "Y-m-d",
+             defaultDate: initialValue || new Date(),
+           });
+         });
+
+        let formIdx = $('#id_invoiceitem_set-TOTAL_FORMS').val();
+
+        $('#add-item').click(function() {
+          const formElem = $('#form-set .form-inline:last').clone(true);
+          formElem.find(':input[name]').each(function() {
+            let name = $(this).attr('name').replace('-' + (formIdx - 1) + '-', '-' + formIdx + '-');
+            let id = 'id_' + name;
+            $(this).attr({'name': name, 'id': id}).val('');
+          });
+          formElem.find('label').each(function() {
+            let currentFor = $(this).attr('for');
+            let newFor = currentFor.replace('-' + (formIdx - 1) + '-', '-' + formIdx + '-');
+            $(this).attr('for', newFor);
+          });
+
+          // Remove previous event handler and re-attach it to the new delete button
+          formElem.find('.delete-item').off('click').on('click', function() {
+            $(this).closest('.form-inline').remove();
+
+            let currentForms = parseInt($('#id_invoiceitem_set-TOTAL_FORMS').val());
+            $('#id_invoiceitem_set-TOTAL_FORMS').val(currentForms - 1);
+          });
+
+          $('#form-set').append(formElem);
+          $('#id_invoiceitem_set-TOTAL_FORMS').val(parseInt(formIdx) + 1);
+          formIdx++;
+        });
+      });
+    </script>
+
+{% endblock %}

@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
+SECRET_KEY = config('SECRET_KEY')
+MINDEE_API_KEY = config('MINDEE_API_KEY')
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,6 +24,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR,"templates")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+BASE_URL = 'http://127.0.0.1:8000'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -29,7 +34,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -42,7 +47,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'smeApp',
-    'bootstrap4'
+    'bootstrap4',
+    'widget_tweaks',
+    'pwa',
+
 ]
 
 MIDDLEWARE = [
@@ -75,6 +83,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smeProject.wsgi.application'
 
+PWA_APP_NAME = 'smeApp'
+PWA_APP_DESCRIPTION = "Small and medium business management app"
+PWA_APP_THEME_COLOR = '#ffffff'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICON = 'assets/img/icons/logo-primary.png'
+PWA_APP_SPLASH_ICON = 'assets/img/icons/logo.png'
+PWA_APP_SPLASH_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_SPLASH_TITLE = 'smeApp'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -87,6 +108,10 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'smeApp.CustomUser'
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 1209600  # 2 weeks, in seconds
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -124,10 +149,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIR = os.path.join(BASE_DIR,"static")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 MEDIA_URL = '/media/'
 MEDIA_ROOT= os.path.join(os.path.dirname(BASE_DIR), "media_root")
 # Default primary key field type

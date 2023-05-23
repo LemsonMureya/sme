@@ -1,0 +1,32 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+  <h2>Add Income</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.category.auto_id }}">{{ form.category.label }}</label>
+      {{ form.category }}
+    </div>
+    <div class="mb-3">
+        {{ form.description.label_tag }} {{ form.description }}
+    </div>
+    <div class="mb-3">
+        {{ form.amount.label_tag }} {{ form.amount }}
+    </div>
+    <div class="mb-3">
+        {{ form.date_created.label_tag }} {{ form.date_created }}
+    </div>
+    <div class="mb-3">
+        {{ form.notes.label_tag }} {{ form.notes }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.invoice.label }}</label>
+        {{ form.invoice }}
+    </div>
+    <div class="mb-3">
+        {{ form.customer.label_tag }} {{ form.customer }}
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Income</button>
+  </form>
+{% endblock %}

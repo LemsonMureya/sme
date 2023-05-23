@@ -1,0 +1,64 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+<style>
+  .hide-on-desktop {
+    display: none;
+  }
+  .hide-on-mobile {
+    display: table-cell;
+  }
+
+  @media (max-width: 767px) {
+    .hide-on-mobile {
+      display: none;
+    }
+
+    .hide-on-desktop {
+      display: inline;
+    }
+  }
+</style>
+<div class="list-view">
+  <div class="table-responsive">
+    <table class="table fs--1 mb-0 border-top border-200">
+      <thead>
+        <tr>
+          <th class="white-space-nowrap align-middle ps-0 hide-on-mobile">Sale ID</th>
+          <th class="white-space-nowrap align-middle ps-0 hide-on-mobile">Client Name</th>
+          <th class="white-space-nowrap align-middle ps-0 hide-on-mobile">Sale Date</th>
+          <th class="white-space-nowrap align-middle ps-0 hide-on-mobile">Total Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sale in object_list %}
+        <tr class="position-static">
+          <td class="align-middle white-space-nowrap ps-3 py-4">
+            <a class="text-decoration-none fw-bold fs-0" href="{% url 'smeApp:sale_update' sale.pk %}">{{ sale.pk }}</a>
+            <div class="hide-on-desktop">
+              <div class="d-flex flex-wrap">
+                <div class="d-flex align-items-center me-3 mt-2">
+                  <i class="fas fa-user me-1"></i>
+                  <span>{{ sale.client.name }}</span>
+                </div>
+                <div class="d-flex align-items-center me-3 mt-2">
+                  <i class="fas fa-calendar-alt me-1"></i>
+                  <span>{{ sale.sale_date }}</span>
+                </div>
+                <div class="d-flex align-items-center me-3 mt-2">
+                  <i class="fas fa-money-bill-wave me-1"></i>
+                  <span>{{ sale.get_total_amount }}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="hide-on-mobile">{{ sale.client.name }}</td>
+          <td class="hide-on-mobile">{{ sale.sale_date }}</td>
+          <td class="hide-on-mobile">{{ sale.get_total_amount }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -20,7 +20,9 @@ from django.conf.urls.static import static
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView, LogoutView
 
-from smeApp.views import RegisterView, CustomLoginView
+from smeApp.views import RegisterView, CustomLoginView, CustomLogoutView
+from smeApp.forms import CustomUserCreationForm, CompanyProfileForm
+from pwa import urls as pwa_urls
 
 
 urlpatterns = [
@@ -28,7 +30,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', CustomLoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
 
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += [path('', include(pwa_urls))]

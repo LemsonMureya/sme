@@ -1,0 +1,42 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+</head>
+  <h2>Add Expense</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.category.auto_id }}">{{ form.category.label }}</label>
+      {{ form.category }}
+    </div>
+    <div class="mb-3">
+        {{ form.vendor.label_tag }} {{ form.vendor }}
+    </div>
+    <div class="mb-3">
+        {{ form.description.label_tag }} {{ form.description }}
+    </div>
+    <div class="mb-3">
+        {{ form.amount.label_tag }} {{ form.amount }}
+    </div>
+    <div class="mb-3">
+        {{ form.job.label_tag }} {{ form.job }}
+    </div>
+    <div class="mb-3">
+        {{ form.date_created.label_tag }} {{ form.date_created }}
+    </div>
+    <div class="mb-3">
+        {{ form.notes.label_tag }} {{ form.notes }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">{{ form.receipt.label }}</label>
+        {{ form.receipt }}
+    </div>
+    {{ form.uploaded_receipt_path }}
+    {{ form.uploaded_receipt_image }}
+    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Expense</button>
+  </form>
+
+{% endblock %}
