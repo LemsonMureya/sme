@@ -65,6 +65,17 @@
       }
     </script>
   </head>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(function(registration) {
+        console.log('ServiceWorker registration successful:', registration);
+      })
+      .catch(function(error) {
+        console.log('ServiceWorker registration failed:', error);
+      });
+  }
+</script>
 
 
   <body>
@@ -324,6 +335,15 @@
                       </li>
                       <li class="d-flex align-items-center mb-3"><span class="fa-li"><span class="fas fa-check text-primary"></span></span>
                         <p class="mb-0">Up to 500 Jobs</p>
+                      </li>
+                      <li class="d-flex align-items-center mb-3"><span class="fa-li"><span class="fas fa-check text-primary"></span></span>
+                        <p class="mb-0">Offline mode</p>
+                      </li>
+                      <li class="d-flex align-items-center mb-3"><span class="fa-li"><span class="fas fa-check text-primary"></span></span>
+                        <p class="mb-0">Integrations with Facebook Ads, Instagram and YouTube Insights</p>
+                      </li>
+                      <li class="d-flex align-items-center mb-3"><span class="fa-li"><span class="fas fa-check text-primary"></span></span>
+                        <p class="mb-0">Inventory Management</p>
                       </li>
                       <li class="d-flex align-items-center mb-0"><span class="fa-li"><span class="fas fa-check text-primary"></span></span>
                         <p class="mb-0">Priority Customer Support</p>

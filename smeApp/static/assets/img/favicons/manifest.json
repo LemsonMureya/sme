@@ -1,8 +1,8 @@
 {
-    "name": "smeApp",
-    "short_name": "smeApp",
+    "name": "Kaya",
+    "short_name": "Kaya",
     "description": "Small and medium business management app",
-    "start_url": "/",
+    "start_url": "/login",
     "icons": [
             {
               "src": "/static/assets/img/icons/logo-primary.png",
