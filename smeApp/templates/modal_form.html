@@ -32,14 +32,14 @@
           <label for="{{ field.auto_id }}">{{ field.label }}</label>
         </div>
       </div>
-    {% elif field.field.widget.input_type == 'checkbox' %}
+      {% elif field.field.widget.input_type == 'checkbox' %}
       <div class="col-md-6 gy-6">
-        <div class="form-check">
-          {{ field }}
-          <label class="form-check-label" for="{{ field.auto_id }}">{{ field.label }}</label>
-        </div>
+          <div class="form-check">
+              {{ field }}
+              <label class="form-check-label" for="{{ field.auto_id }}">{{ field.label }} <span class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Check this box if you want this job to be counted towards earned revenue."></span></label>
+          </div>
       </div>
-    {% else %}
+  {% else %}
       <div class="col-md-6 gy-6">
         <div class="form-floating">
           <input class="form-control" type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}">
