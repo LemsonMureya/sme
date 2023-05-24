@@ -3,6 +3,7 @@ self.addEventListener('install', (event) => {
     caches.open('smeApp-cache').then((cache) => {
       return cache.addAll([
         '/',
+        '/login',
         '/static/css/main.css',
         '/static/js/main.js',
         '/static/assets/img/logo.png',
