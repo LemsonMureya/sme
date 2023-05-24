@@ -102,7 +102,7 @@ def calculate_net_profit(company):
 
     if company.business_type == 'sales':
         incomes = Job.objects.filter(company=company, revenue_recorded=True).aggregate(sum=Sum('total_cost'))['sum'] or 0
-    elif company.business_type == 'services':
+    elif company.business_type == 'service':
         incomes = Job.objects.filter(company=company, revenue_recorded=True).aggregate(sum=Sum('total_cost'))['sum'] or 0
 
     return incomes - expenses
