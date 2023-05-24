@@ -48,9 +48,9 @@ class JobItemInline(admin.TabularInline):
     extra = 1
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('client', 'po_number', 'status', 'category', 'start_date', 'end_date', 'total_cost', 'payment_status', 'payment_type', 'assigned_worker', 'revenue_recorded', 'associated_user', 'total_cost_for_user')
+    list_display = ('client', 'po_number', 'status', 'start_date', 'end_date', 'total_cost', 'payment_status', 'payment_type', 'assigned_worker', 'revenue_recorded', 'associated_user', 'total_cost_for_user')
     search_fields = ('client__name', 'po_number',)
-    list_filter = ('status', 'category', 'payment_status', 'payment_type')
+    list_filter = ('status', 'payment_status', 'payment_type')
     inlines = [JobItemInline]
 
     def associated_user(self, obj):

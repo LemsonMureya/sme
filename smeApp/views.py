@@ -79,7 +79,6 @@ class DashboardView(TemplateView):
 
         return context
 
-
 @login_required
 def jobs_to_json(request):
     jobs = Job.objects.filter(company=request.user.company)
@@ -102,7 +101,7 @@ def calculate_net_profit(company):
     expenses = Expense.objects.filter(company=company).aggregate(sum=Sum('amount'))['sum'] or 0
 
     if company.business_type == 'sales':
-        incomes = Sale.objects.filter(company=company, revenue_recorded=True).annotate(total_amount=Sum(F('sale_items__selling_price') * F('sale_items__quantity'))).aggregate(sum=Sum('total_amount'))['sum'] or 0
+        incomes = Job.objects.filter(company=company, revenue_recorded=True).aggregate(sum=Sum('total_cost'))['sum'] or 0
     elif company.business_type == 'services':
         incomes = Job.objects.filter(company=company, revenue_recorded=True).aggregate(sum=Sum('total_cost'))['sum'] or 0
 
@@ -169,8 +168,14 @@ class RegisterView(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        user_form = CustomUserCreationForm(request.POST)
-        company_form = CompanyProfileForm(request.POST, request.FILES)
+        user_data = request.POST.copy()
+        user_data['email'] = request.POST.get('user_email')
+
+        company_data = request.POST.copy()
+        company_data['email'] = request.POST.get('company_email')
+
+        user_form = CustomUserCreationForm(user_data)
+        company_form = CompanyProfileForm(company_data, request.FILES)
 
         if user_form.is_valid() and company_form.is_valid():
             user = user_form.save(commit=False)
@@ -523,7 +528,6 @@ class JobListView(LoginRequiredMixin, ListView):
                 Q(client__name__icontains=search_term) |
                 Q(po_number__icontains=search_term) |
                 Q(status__icontains=search_term) |
-                Q(category__icontains=search_term) |
                 Q(description__icontains=search_term) |
                 Q(notes__text__icontains=search_term) |
                 Q(payment_status__icontains=search_term) |

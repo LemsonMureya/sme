@@ -24,6 +24,7 @@ class CustomUserCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        print("User email forms", user.email)
         user.set_password(self.cleaned_data['password1'])
         if commit:
             user.save()
@@ -74,8 +75,6 @@ class JobForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset=Client.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
     po_number = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     status = forms.ChoiceField(choices=Job.STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
-    category = forms.ChoiceField(choices=Job.CATEGORY_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
-    description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     start_date = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'],
         widget=forms.DateTimeInput(
                 attrs={'class': 'form-control flatpickr-date', 'autocomplete': 'off'}
@@ -86,7 +85,6 @@ class JobForm(forms.ModelForm):
             attrs={'class': 'form-control flatpickr-date', 'autocomplete': 'off'}
         )
     )
-    total_cost = forms.DecimalField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
     payment_status = forms.ChoiceField(choices=Job.PAYMENT_STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
     payment_type = forms.ChoiceField(choices=Job.PAYMENT_TYPE_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
     assigned_worker = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -94,7 +92,8 @@ class JobForm(forms.ModelForm):
 
     class Meta:
         model = Job
-        fields = ['client', 'po_number', 'status', 'category', 'description', 'start_date', 'end_date', 'total_cost', 'payment_status', 'payment_type', 'assigned_worker', 'revenue_recorded']
+        fields = ['client', 'po_number', 'status', 'description', 'start_date', 'end_date', 'payment_status', 'payment_type', 'assigned_worker', 'revenue_recorded']
+        exclude = ['total_cost', 'category']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
