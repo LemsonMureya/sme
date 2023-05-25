@@ -114,6 +114,14 @@ DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
+DEFAULT_FILE_STORAGE = os.environ.get('DEFAULT_FILE_STORAGE')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_S3_FILE_OVERWRITE = os.environ.get('AWS_S3_FILE_OVERWRITE') == 'True'
+AWS_DEFAULT_ACL = os.environ.get('AWS_DEFAULT_ACL')
+
 AUTH_USER_MODEL = 'smeApp.CustomUser'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
@@ -138,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-GA_MEASUREMENT_ID = os.environ['GA_MEASUREMENT_ID']
+GA_MEASUREMENT_ID = os.environ.get('GA_MEASUREMENT_ID')
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
