@@ -19,7 +19,6 @@
           <form id="wizardForm" method="POST" action="{% url 'register' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div id="step1">
-
              <div class="mb-3 text-start">
                <label class="form-label" for="{{ user_form.first_name.id_for_label }}">First Name *</label>
                <input class="form-control" id="{{ user_form.first_name.id_for_label }}" name="{{ user_form.first_name.html_name }}" type="text" placeholder="First Name" required/>
@@ -126,10 +125,10 @@
                  </select>
                </div>
              </div>
-             <div class="mb-3 text-start">
+             <!-- <div class="mb-3 text-start">
                <label class="form-label" for="{{ company_form.logo.id_for_label }}">Logo</label>
                <input type="file" class="form-control" id="{{ company_form.logo.id_for_label }}" name="{{ company_form.logo.html_name }}" accept="image/png, image/jpeg">
-             </div>
+             </div> -->
              <button class="btn btn-primary w-100 mb-3" type="submit">Register</button>
              </div>
         </form>
