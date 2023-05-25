@@ -94,10 +94,12 @@ PWA_APP_SCOPE = '/'
 PWA_APP_ORIENTATION = 'any'
 PWA_APP_START_URL = '/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
-PWA_APP_ICON = 'assets/img/icons/logo-primary.png'
-PWA_APP_SPLASH_ICON = 'assets/img/icons/logo.png'
+PWA_APP_ICON = '/static/assets/img/icons/logo-primary.png'
+PWA_APP_SPLASH_ICON = 'static/assets/img/icons/logo.png'
 PWA_APP_SPLASH_BACKGROUND_COLOR = '#ffffff'
 PWA_APP_SPLASH_TITLE = 'kaya'
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/serviceworker.js')
+
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

@@ -26,11 +26,11 @@ from pwa import urls as pwa_urls
 
 
 urlpatterns = [
-    path('', include('smeApp.urls')),
     path('admin/', admin.site.urls),
     path('login/', CustomLoginView.as_view(template_name='registration/login.html'), name='login'),
     path('register/', RegisterView.as_view(), name='register'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('', include('smeApp.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
