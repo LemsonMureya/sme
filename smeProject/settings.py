@@ -168,8 +168,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-MEDIA_URL = '/media/'
-MEDIA_ROOT= os.path.join(os.path.dirname(BASE_DIR), "media_root")
+MEDIA_URL = 'https://kaya-app.s3.amazonaws.com/media/'
+# MEDIA_ROOT= os.path.join(os.path.dirname(BASE_DIR), "media_root")
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 # Use Whitenoise to serve static files
