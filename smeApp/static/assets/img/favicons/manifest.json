@@ -2,7 +2,7 @@
     "name": "Kaya",
     "short_name": "Kaya",
     "description": "Small and medium business management app",
-    "start_url": "/login",
+    "start_url": "/",
     "icons": [
             {
               "src": "/static/assets/img/icons/logo-primary.png",
