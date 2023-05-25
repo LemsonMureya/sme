@@ -98,7 +98,7 @@ PWA_APP_ICON = '/static/assets/img/icons/logo-primary.png'
 PWA_APP_SPLASH_ICON = 'static/assets/img/icons/logo.png'
 PWA_APP_SPLASH_BACKGROUND_COLOR = '#ffffff'
 PWA_APP_SPLASH_TITLE = 'kaya'
-PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/serviceworker.js')
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static', 'serviceworker.js')
 
 
 # Database
@@ -138,6 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+GA_MEASUREMENT_ID = os.environ['GA_MEASUREMENT_ID']
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
