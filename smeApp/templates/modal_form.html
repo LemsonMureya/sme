@@ -34,11 +34,18 @@
       </div>
       {% elif field.field.widget.input_type == 'checkbox' %}
       <div class="col-md-6 gy-6">
-          <div class="form-check">
-              {{ field }}
-              <label class="form-check-label" for="{{ field.auto_id }}">{{ field.label }} <span class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Check this box if you want this job to be counted towards earned revenue."></span></label>
-          </div>
-      </div>
+  <div class="form-check d-flex align-items-center">
+    <div>
+      {{ field }}
+      <label class="form-check-label" for="{{ field.auto_id }}">{{ field.label }}</label>
+    </div>
+    <div class="ms-2">
+      <a style="color: black;" class="btn-sm" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="Check this box if you want this job to be counted towards earned revenue.">
+        <i class="fas fa-question-circle"></i>
+      </a>
+        </div>
+  </div>
+</div>
   {% else %}
       <div class="col-md-6 gy-6">
         <div class="form-floating">
@@ -118,13 +125,13 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  flatpickr(".flatpickr-date", {
-    dateFormat: "Y-m-d H:i", // Update the format to include time
-    enableTime: true, // Enable time selection
-    disableMobile: true
+  document.addEventListener("DOMContentLoaded", function() {
+      var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+      var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+          return new bootstrap.Popover(popoverTriggerEl)
+      })
   });
-});
+
 </script>
 
 

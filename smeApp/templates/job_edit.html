@@ -20,12 +20,13 @@
       {% for field in form %}
         {% if field.name != 'client' %}
         {% if field.name == 'start_date' or field.name == 'end_date' %}
-          <div class="col-md-6 gy-6">
-            <div class="form-floating">
-              <input class="form-control flatpickr-date" type="text" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}" value="{{ field.value|date:"Y-m-d"|default_if_none:"" }}">
-              <label for="{{ field.auto_id }}">{{ field.label }}</label>
-            </div>
+        <div class="col-md-6 gy-6">
+          <div class="form-floating">
+            <input class="form-control" type="datetime-local" name="{{ field.html_name }}" id="{{ field.auto_id }}" placeholder="{{ field.label }}" value="{% if field.value %}{{ field.value|date:"Y-m-d\TH:i" }}{% endif %}">
+            <label for="{{ field.auto_id }}">{{ field.label }}</label>
           </div>
+        </div>
+
           {% elif field.field.widget.input_type == 'select' %}
             <div class="col-md-6 gy-6">
               <div class="form-floating">

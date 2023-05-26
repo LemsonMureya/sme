@@ -72,22 +72,18 @@ class AvatarUpdateForm(forms.ModelForm):
     )
 
 class JobForm(forms.ModelForm):
-    client = forms.ModelChoiceField(queryset=Client.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
-    po_number = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    status = forms.ChoiceField(choices=Job.STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+    client = forms.ModelChoiceField(queryset=Client.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}), required=True)
+    po_number = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), required=True)
+    status = forms.ChoiceField(choices=Job.STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}), required=True)
     start_date = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'],
-        widget=forms.DateTimeInput(
-                attrs={'class': 'form-control flatpickr-date', 'autocomplete': 'off'}
-            )
-        )
+                                     widget=forms.DateTimeInput(attrs={'class': 'form-control flatpickr-date', 'autocomplete': 'off'}),
+                                     required=True)
     end_date = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'],
-        widget=forms.DateTimeInput(
-            attrs={'class': 'form-control flatpickr-date', 'autocomplete': 'off'}
-        )
-    )
-    payment_status = forms.ChoiceField(choices=Job.PAYMENT_STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
-    payment_type = forms.ChoiceField(choices=Job.PAYMENT_TYPE_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
-    assigned_worker = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                   widget=forms.DateTimeInput(attrs={'class': 'form-control flatpickr-date', 'autocomplete': 'off'}),
+                                   required=True)
+    payment_status = forms.ChoiceField(choices=Job.PAYMENT_STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}), required=True)
+    payment_type = forms.ChoiceField(choices=Job.PAYMENT_TYPE_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}), required=True)
+    assigned_worker = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), required=True)
     revenue_recorded = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
     class Meta:
