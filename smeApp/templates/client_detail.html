@@ -298,7 +298,7 @@
                     Total Revenue
                   </p>
                   <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                    ${{ total_revenue }}
+                    ${{ total_revenue|floatformat:2 }}
                   </p>
                 </div>
               </div>
@@ -317,7 +317,7 @@
                     Average Job Cost
                   </p>
                   <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                    ${{ average_job_cost }}
+                    ${{ average_job_cost|floatformat:2 }}
                   </p>
                 </div>
               </div>
