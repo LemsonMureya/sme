@@ -527,7 +527,7 @@
           <div class="row gx-2">
             <div class="col-6">
               <input class="btn-check" id="themeSwitcherLight" name="theme-color" type="radio" value="light" data-theme-control="phoenixTheme" />
-              <label class="btn d-inline-block btn-navbar-style fs--1" for="themeSwitcherLight"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype mb-0" src=" {% static 'assets/img/generic/default-light.png' %}" alt=""/></span><span class="label-text">Light</span></label>
+              <label class="btn d-inline-block btn-navbar-style fs--1" for="themeSwitcherLight"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype mb-0" src="{% static 'assets/img/generic/default-light.png' %}" alt=""/></span><span class="label-text">Light</span></label>
             </div>
             <div class="col-6">
               <input class="btn-check" id="themeSwitcherDark" name="theme-color" type="radio" value="dark" data-theme-control="phoenixTheme" />
@@ -558,15 +558,15 @@
           <div class="row gx-2">
             <div class="col-6">
               <input class="btn-check" id="navbarPositionVertical" name="navigation-type" type="radio" value="vertical" data-theme-control="phoenixNavbarPosition" data-page-url="../../documentation/layouts/vertical-navbar.html" disabled="disabled" />
-              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarPositionVertical"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none" src="../../assets/img/generic/default-light.png" alt=""/><img class="img-fluid img-prototype d-light-none" src="../../assets/img/generic/default-dark.png" alt=""/></span><span class="label-text">Vertical</span></label>
+              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarPositionVertical"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none" src="{% static 'assets/img/generic/default-light.png' %}" alt=""/><img class="img-fluid img-prototype d-light-none" src="{% static 'assets/img/generic/default-dark.png' %}" alt=""/></span><span class="label-text">Vertical</span></label>
             </div>
             <div class="col-6">
               <input class="btn-check" id="navbarPositionHorizontal" name="navigation-type" type="radio" value="horizontal" data-theme-control="phoenixNavbarPosition" data-page-url="../../documentation/layouts/horizontal-navbar.html" disabled="disabled" />
-              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarPositionHorizontal"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none" src="../../assets/img/generic/top-default.png" alt=""/><img class="img-fluid img-prototype d-light-none" src="../../assets/img/generic/top-default-dark.png" alt=""/></span><span class="label-text"> Horizontal</span></label>
+              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarPositionHorizontal"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none" src="{% static 'assets/img/generic/top-default.png' %}" alt=""/><img class="img-fluid img-prototype d-light-none" src="{% static 'assets/img/generic/top-default-dark.png' %}" alt=""/></span><span class="label-text"> Horizontal</span></label>
             </div>
             <div class="col-6">
               <input class="btn-check" id="navbarPositionCombo" name="navigation-type" type="radio" value="combo" data-theme-control="phoenixNavbarPosition" disabled="disabled" data-page-url="../../documentation/layouts/combo-navbar.html" />
-              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarPositionCombo"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none" src="../../assets/img/generic/nav-combo-light.png" alt=""/><img class="img-fluid img-prototype d-light-none" src="../../assets/img/generic/nav-combo-dark.png" alt=""/></span><span class="label-text"> Combo</span></label>
+              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarPositionCombo"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none" src="{% static 'assets/img/generic/nav-combo-light.png' %}" alt=""/><img class="img-fluid img-prototype d-light-none" src="{% static 'assets/img/generic/nav-combo-dark.png' %}" alt=""/></span><span class="label-text"> Combo</span></label>
             </div>
           </div>
           <p class="text-warning-500 font-medium"> <span class="fa-solid fa-triangle-exclamation me-2 text-warning"></span>You can't update navigation type in this page</p>
@@ -576,11 +576,11 @@
           <div class="row gx-2">
             <div class="col-6">
               <input class="btn-check" id="navbar-style-default" type="radio" name="config.name" value="default" data-theme-control="phoenixNavbarVerticalStyle" disabled="disabled" />
-              <label class="btn d-block w-100 btn-navbar-style fs--1" for="navbar-style-default"> <img class="img-fluid img-prototype d-dark-none" src="../../assets/img/generic/default-light.png" alt="" /><img class="img-fluid img-prototype d-light-none" src="../../assets/img/generic/default-dark.png" alt="" /><span class="label-text d-dark-none"> Default</span><span class="label-text d-light-none">Default</span></label>
+              <label class="btn d-block w-100 btn-navbar-style fs--1" for="navbar-style-default"> <img class="img-fluid img-prototype d-dark-none" src="{% static 'assets/img/generic/default-light.png' %}" alt="" /><img class="img-fluid img-prototype d-light-none" src="{% static 'assets/img/generic/default-dark.png' %}" alt="" /><span class="label-text d-dark-none"> Default</span><span class="label-text d-light-none">Default</span></label>
             </div>
             <div class="col-6">
               <input class="btn-check" id="navbar-style-dark" type="radio" name="config.name" value="darker" data-theme-control="phoenixNavbarVerticalStyle" disabled="disabled" />
-              <label class="btn d-block w-100 btn-navbar-style fs--1" for="navbar-style-dark"> <img class="img-fluid img-prototype d-dark-none" src="../../assets/img/generic/vertical-darker.png" alt="" /><img class="img-fluid img-prototype d-light-none" src="../../assets/img/generic/vertical-lighter.png" alt="" /><span class="label-text d-dark-none"> Darker</span><span class="label-text d-light-none">Lighter</span></label>
+              <label class="btn d-block w-100 btn-navbar-style fs--1" for="navbar-style-dark"> <img class="img-fluid img-prototype d-dark-none" src="{% static 'assets/img/generic/vertical-darker.png' %}" alt="" /><img class="img-fluid img-prototype d-light-none" src="{% static 'assets/img/generic/vertical-lighter.png' %}" alt="" /><span class="label-text d-dark-none"> Darker</span><span class="label-text d-light-none">Lighter</span></label>
             </div>
           </div>
           <p class="text-warning-500 font-medium"> <span class="fa-solid fa-triangle-exclamation me-2 text-warning"></span>You can't update vertical navbar appearance type in this page</p>
@@ -590,11 +590,11 @@
           <div class="row gx-2">
             <div class="col-6">
               <input class="btn-check" id="navbarShapeDefault" name="navbar-shape" type="radio" value="default" data-theme-control="phoenixNavbarTopShape" data-page-url="../../documentation/layouts/horizontal-navbar.html" disabled="disabled" />
-              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarShapeDefault"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none mb-0" src="../../assets/img/generic/top-default.png" alt=""/><img class="img-fluid img-prototype d-light-none mb-0" src="../../assets/img/generic/top-default-dark.png" alt=""/></span><span class="label-text">Default</span></label>
+              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarShapeDefault"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none mb-0" src="{% static 'assets/img/generic/top-default.png' %}" alt=""/><img class="img-fluid img-prototype d-light-none mb-0" src="{% static 'assets/img/generic/top-default-dark.png' %}" alt=""/></span><span class="label-text">Default</span></label>
             </div>
             <div class="col-6">
               <input class="btn-check" id="navbarShapeSlim" name="navbar-shape" type="radio" value="slim" data-theme-control="phoenixNavbarTopShape" data-page-url="../../documentation/layouts/vertical-navbar.html#horizontal-navbar-slim" disabled="disabled" />
-              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarShapeSlim"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none mb-0" src="../../assets/img/generic/top-slim.png" alt=""/><img class="img-fluid img-prototype d-light-none mb-0" src="../../assets/img/generic/top-slim-dark.png" alt=""/></span><span class="label-text"> Slim</span></label>
+              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarShapeSlim"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none mb-0" src="{% static 'assets/img/generic/top-slim.png' %}" alt=""/><img class="img-fluid img-prototype d-light-none mb-0" src="{% static 'assets/img/generic/top-slim-dark.png' %}" alt=""/></span><span class="label-text"> Slim</span></label>
             </div>
           </div>
           <p class="text-warning-500 font-medium"> <span class="fa-solid fa-triangle-exclamation me-2 text-warning"></span>You can't update vertical navbar appearance type in this page</p>
@@ -604,11 +604,11 @@
           <div class="row gx-2">
             <div class="col-6">
               <input class="btn-check" id="navbarTopDefault" name="navbar-top-style" type="radio" value="default" data-theme-control="phoenixNavbarTopStyle" disabled="disabled" />
-              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarTopDefault"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none mb-0" src="../../assets/img/generic/top-default.png" alt=""/><img class="img-fluid img-prototype d-light-none mb-0" src="../../assets/img/generic/top-style-darker.png" alt=""/></span><span class="label-text">Default</span></label>
+              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarTopDefault"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none mb-0" src="{% static 'assets/img/generic/top-default.png' %}" alt=""/><img class="img-fluid img-prototype d-light-none mb-0" src="{% static 'assets/img/generic/top-style-darker.png' %}" alt=""/></span><span class="label-text">Default</span></label>
             </div>
             <div class="col-6">
               <input class="btn-check" id="navbarTopDarker" name="navbar-top-style" type="radio" value="darker" data-theme-control="phoenixNavbarTopStyle" disabled="disabled" />
-              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarTopDarker"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none mb-0" src="../../assets/img/generic/navbar-top-style-light.png" alt=""/><img class="img-fluid img-prototype d-light-none mb-0" src="../../assets/img/generic/top-style-lighter.png" alt=""/></span><span class="label-text d-dark-none">Darker</span><span class="label-text d-light-none">Lighter</span></label>
+              <label class="btn d-inline-block btn-navbar-style fs--1" for="navbarTopDarker"> <span class="mb-2 rounded d-block"><img class="img-fluid img-prototype d-dark-none mb-0" src="{% static 'assets/img/generic/navbar-top-style-light.png' %}" alt=""/><img class="img-fluid img-prototype d-light-none mb-0" src="{% static 'assets/img/generic/top-style-lighter.png' %}" alt=""/></span><span class="label-text d-dark-none">Darker</span><span class="label-text d-light-none">Lighter</span></label>
             </div>
           </div>
           <p class="text-warning-500 font-medium"> <span class="fa-solid fa-triangle-exclamation me-2 text-warning"></span>You can't update vertical navbar appearance type in this page</p>
@@ -634,7 +634,6 @@
     <script src="{% static 'vendors/fontawesome/all.min.js' %}"></script>
     <script src="{% static 'vendors/lodash/lodash.min.js' %}"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
-    <script src="{% static 'vendors/list.js/list.min.js' %}"></script>
     <script src="{% static 'vendors/feather-icons/feather.min.js' %}"></script>
     <script src="{% static 'vendors/dayjs/dayjs.min.js' %}"></script>
     <script src="{% static 'assets/js/phoenix.js' %}"></script>

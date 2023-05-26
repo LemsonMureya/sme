@@ -76,7 +76,13 @@
          <h2 class="mb-0">Invoices <span class="fw-normal text-700 ms-3">({{invoices|length }})</span></h2>
        </div>
        <div class="mb-3">
-                <button class="btn btn-primary modern-button icon-only me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-plus me-2"></span>Add Invoice</button>
+                <button class="btn btn-primary modern-button icon-only me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">
+                  <svg class="me-2" width="17" height="17" viewBox="0 0 24.00 24.00" xmlns="http://www.w3.org/2000/svg" fill="#ffffff">
+                   <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                   <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                   <g id="SVGRepo_iconCarrier"> <title/> <g id="Complete"> <g data-name="add" id="add-2"> <g> <line fill="none" stroke="#ffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" x1="12" x2="12" y1="19" y2="5"/> <line fill="none" stroke="#ffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" x1="5" x2="19" y1="12" y2="12"/> </g> </g> </g> </g>
+                   </svg>
+                   Add Invoice</button>
         </div>
      </div>
      <div class="row justify-content-between align-items-end mb-4 g-3" style="margin-left:-1rem;margin-right:-1rem;">
@@ -111,7 +117,15 @@
                <path d="M0 5.5C0 5.22386 0.223858 5 0.5 5H3.5C3.77614 5 4 5.22386 4 5.5V8.5C4 8.77614 3.77614 9 3.5 9H0.5C0.223858 9 0 8.77614 0 8.5V5.5Z" fill="currentColor"></path>
                <path d="M5 0.5C5 0.223858 5.22386 0 5.5 0H8.5C8.77614 0 9 0.223858 9 0.5V3.5C9 3.77614 8.77614 4 8.5 4H5.5C5.22386 4 5 3.77614 5 3.5V0.5Z" fill="currentColor"></path>
                <path d="M5 5.5C5 5.22386 5.22386 5 5.5 5H8.5C8.77614 5 9 5.22386 9 5.5V8.5C9 8.77614 8.77614 9 8.5 9H5.5C5.22386 9 5 8.77614 5 8.5V5.5Z" fill="currentColor"></path>
-             </svg></a><button class="btn px-3 btn-phoenix-secondary" type="button" data-bs-toggle="modal" data-bs-target="#filterModal" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa-solid fa-filter text-primary" data-fa-transform="down-3"></span></button>
+             </svg></a><button class="btn px-3 btn-phoenix-secondary" type="button" data-bs-toggle="modal" data-bs-target="#filterModal" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">
+               <svg fill="#3874ff" width="15" height="15" viewBox="0 0 24 24" id="filter-alt-3" data-name="Flat Color" xmlns="http://www.w3.org/2000/svg" class="icon flat-color" stroke="#3874ff">
+               <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+               <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+               <g id="SVGRepo_iconCarrier">
+               <path id="primary" d="M20.62,3.17A2,2,0,0,0,18.8,2H5.2A2,2,0,0,0,3.7,5.32L9,11.38V21a1,1,0,0,0,.47.85A1,1,0,0,0,10,22a1,1,0,0,0,.45-.11l4-2A1,1,0,0,0,15,19V11.38l5.3-6.06A2,2,0,0,0,20.62,3.17Z" style="fill: #3874ff;"/>
+               </g>
+               </svg>
+             </button>
              <div class="modal fade" id="filterModal" tabindex="-1">
          <div class="modal-dialog modal-dialog-centered">
              <div class="modal-content">
@@ -248,9 +262,12 @@
                     <h4 class="mb-2 line-clamp-1 lh-sm flex-1 me-5">{{ invoice.invoice_number }}</h4>
                     <div class="dropdown">
                            <a href="#" role="button" id="invoiceDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                               <i class="fas fa-ellipsis-v"></i>
-                           </a>
-
+                             <svg width="19" height="19" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+                             <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                             <g id="SVGRepo_iconCarrier"> <title>elipsis-v</title> <desc>Created with sketchtool.</desc> <g id="web-app" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="elipsis-v" fill="#000000"> <path d="M12,20 C10.8954305,20 10,19.1045695 10,18 C10,16.8954305 10.8954305,16 12,16 C13.1045695,16 14,16.8954305 14,18 C14,19.1045695 13.1045695,20 12,20 Z M12,14 C10.8954305,14 10,13.1045695 10,12 C10,10.8954305 10.8954305,10 12,10 C13.1045695,10 14,10.8954305 14,12 C14,13.1045695 13.1045695,14 12,14 Z M12,8 C10.8954305,8 10,7.1045695 10,6 C10,4.8954305 10.8954305,4 12,4 C13.1045695,4 14,4.8954305 14,6 C14,7.1045695 13.1045695,8 12,8 Z" id="Shape"> </path> </g> </g> </g>
+                             </svg>
+                            </a>
                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="invoiceDropdown">
                                <li><a class="dropdown-item" href="{% url 'smeApp:view_invoice' invoice.pk %}">View</a></li>
                                <li><a class="dropdown-item" href="{% url 'smeApp:update_invoice' invoice.pk %}">Edit</a></li>
@@ -280,10 +297,23 @@
                    {% else %}
                      <span class="badge badge-phoenix fs--2 mb-4 badge-phoenix-light"><span class="badge-label">{{ invoice.payment_status }}</span></span>
                    {% endif %}
-                  <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-user me-2 text-700 fs--1 fw-extra-bold"></span>
+                  <div class="d-flex align-items-center mb-2">
+                    <svg class="me-2 text-700 fs--1 fw-extra-bold" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="User / User_01">
+                    <path id="Vector" d="M19 21C19 17.134 15.866 14 12 14C8.13401 14 5 17.134 5 21M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="#31374A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                    </svg>
                     <p class="fw-bold mb-0 text-truncate lh-1">Client : <span class="fw-semi-bold ms-1">{{ invoice.client.name }}</span></p>
                   </div>
-                  <div class="d-flex align-items-center mb-2"><span class="fa-solid fa-dollar-sign me-2 text-700 fs--1 fw-extra-bold"></span>
+                  <div class="d-flex align-items-center mb-2">
+                    <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    	 class="me-2 text-300 fs--1 fw-bold" width="18" height="18" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+                    <g>
+                    	<path fill="#31374A" d="M0,32v20c0,2.211,1.789,4,4,4h56c2.211,0,4-1.789,4-4V32H0z M24,44h-8c-2.211,0-4-1.789-4-4s1.789-4,4-4h8
+                    		c2.211,0,4,1.789,4,4S26.211,44,24,44z"/>
+                    	<path fill="#31374A" d="M64,24V12c0-2.211-1.789-4-4-4H4c-2.211,0-4,1.789-4,4v12H64z"/>
+                    </g>
+                    </svg>
                     <p class="fw-bold mb-0 lh-1">Total : <span class="fw-semi-bold ms-1 text-1100">{{ invoice.get_total_amount|floatformat:2 }}</span></p>
                   </div>
                   <div class="d-flex align-items-center mt-4">

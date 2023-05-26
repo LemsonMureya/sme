@@ -103,13 +103,23 @@
        <div class="mb-3">
          <a href="{% url 'smeApp:add_expense' %}">
            <button class="btn btn-custom me-4">
-             <span class="fas fa-plus me-2"></span>
+             <svg class="me-2" width="17" height="17" viewBox="0 0 24.00 24.00" xmlns="http://www.w3.org/2000/svg" fill="#ffffff">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+              <g id="SVGRepo_iconCarrier"> <title/> <g id="Complete"> <g data-name="add" id="add-2"> <g> <line fill="none" stroke="#ffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" x1="12" x2="12" y1="19" y2="5"/> <line fill="none" stroke="#ffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" x1="5" x2="19" y1="12" y2="12"/> </g> </g> </g> </g>
+              </svg>
              <span class="btn-text">Add Expense</span>
            </button>
          </a>
          <a href="{% url 'smeApp:upload_receipt' %}">
            <button class="btn btn-custom me-4">
-             <span class="fa-solid fas fa-camera fs--1 me-2"></span>
+               <svg class="me-2" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+               <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+               <g id="SVGRepo_iconCarrier">
+               <path fill-rule="evenodd" clip-rule="evenodd" d="M7.342 4.985c.422-.724.633-1.085.927-1.348a2.5 2.5 0 0 1 .898-.516C9.542 3 9.96 3 10.797 3h2.405c.838 0 1.256 0 1.631.121a2.5 2.5 0 0 1 .898.516c.294.263.505.624.927 1.348L17.25 6H18c1.4 0 2.1 0 2.635.272a2.5 2.5 0 0 1 1.092 1.093C22 7.9 22 8.6 22 10v6c0 1.4 0 2.1-.273 2.635a2.5 2.5 0 0 1-1.092 1.092C20.1 20 19.4 20 18 20H6c-1.4 0-2.1 0-2.635-.273a2.5 2.5 0 0 1-1.093-1.092C2 18.1 2 17.4 2 16v-6c0-1.4 0-2.1.272-2.635a2.5 2.5 0 0 1 1.093-1.093C3.9 6 4.6 6 6 6h.75l.592-1.015zM12 17.05a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5zm2.7-4.75a2.7 2.7 0 1 1-5.4 0 2.7 2.7 0 0 1 5.4 0z" fill="#fff"/>
+               </g>
+               </svg>
              <span class="btn-text">Scan Receipt</span>
            </button>
          </a>
@@ -157,7 +167,15 @@
             		c8.284,0,15.784-3.357,21.213-8.787C51.213,55.213,32.596,35.271,31.615,34.291z"/>
             </g>
             </svg>
-           </a><button class="btn px-3 btn-phoenix-secondary" type="button" data-bs-toggle="modal" data-bs-target="#filterModal" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa-solid fa-filter text-primary" data-fa-transform="down-3"></span></button>
+           </a><button class="btn px-3 btn-phoenix-secondary" type="button" data-bs-toggle="modal" data-bs-target="#filterModal" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">
+             <svg fill="#3874ff" width="15" height="15" viewBox="0 0 24 24" id="filter-alt-3" data-name="Flat Color" xmlns="http://www.w3.org/2000/svg" class="icon flat-color" stroke="#3874ff">
+             <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+             <g id="SVGRepo_iconCarrier">
+             <path id="primary" d="M20.62,3.17A2,2,0,0,0,18.8,2H5.2A2,2,0,0,0,3.7,5.32L9,11.38V21a1,1,0,0,0,.47.85A1,1,0,0,0,10,22a1,1,0,0,0,.45-.11l4-2A1,1,0,0,0,15,19V11.38l5.3-6.06A2,2,0,0,0,20.62,3.17Z" style="fill: #3874ff;"/>
+             </g>
+             </svg>
+           </button>
            <!-- Filter Modal -->
             <div class="modal fade" id="filterModal" tabindex="-1">
               <div class="modal-dialog modal-dialog-centered">
@@ -313,16 +331,25 @@ No expenses yet!</td>
           <div class="row g-1 g-sm-3 mt-2 lh-1">
           <div class="col-12 col-sm-auto flex-1 text-truncate">
             <span class="fw-semi-bold text-700 fs-0">
-            <span class="fa-solid fa-dollar-sign"></span> {{ expense.amount }}
+            ${{ expense.amount }}
             </span>
             </div>
             <div class="col-12 col-sm-auto">
-              <div class="d-flex align-items-center"><span class="me-2" data-feather="grid" style="stroke-width:2;"></span>
+              <div class="d-flex align-items-center">
+                <svg class="me-2 fw-semi-bold text-700" fill="#525B75" width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" stroke="##525B75" stroke-width="0.00016">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="SVGRepo_iconCarrier"> <path d="M0 0h7v7H0V0zm2 2v3h3V2H2zM0 9h7v7H0V9zm9-9h7v7H9V0zm2 2v3h3V2h-3zM9 9h7v7H9V9zm2 2v3h3v-3h-3zm-9 0v3h3v-3H2z" fill-rule="evenodd"/> </g>
+                </svg>
                 <p class="mb-0 fs--1 fw-semi-bold text-700 reports">{{ expense.category}}</p>
               </div>
             </div>
             <div class="col-12 col-sm-auto">
-              <div class="d-flex align-items-center"><span class="me-2" data-feather="clock" style="stroke-width:2;"></span>
+              <div class="d-flex align-items-center">
+                <svg class="me-2 fw-semi-bold text-700" width="15" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title/><g id="Complete">
+                  <g id="Clock"><g><polyline fill="none" points="11.9 5.9 11.9 11.9 12 12 14.1 14.1" stroke="#525B75" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    <circle cx="12" cy="12" data-name="Circle" fill="none" id="Circle-2" r="10" stroke="#525B75" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></g></g></g>
+                  </svg>
                 <p class="mb-0 fs--1 fw-semi-bold text-700 date">{{expense.date_created }}</p>
               </div>
             </div>

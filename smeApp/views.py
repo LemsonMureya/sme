@@ -567,7 +567,7 @@ class JobDetailView(LoginRequiredMixin, DetailView):
 class JobCreateView(LoginRequiredMixin, CreateView):
     model = Job
     form_class = JobForm
-    template_name = 'job_form.html'
+    template_name = 'job_list.html'
     success_url = reverse_lazy('smeApp:job_list')
 
     def get_form_kwargs(self):
