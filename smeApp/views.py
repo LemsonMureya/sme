@@ -66,6 +66,11 @@ from django.contrib.auth.decorators import login_required
 class IndexView(TemplateView):
     template_name = "base.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['GA_MEASUREMENT_ID'] = settings.GA_MEASUREMENT_ID
+        return context
+
 class DashboardView(TemplateView):
     template_name = "dashboard.html"
 
@@ -76,7 +81,7 @@ class DashboardView(TemplateView):
         context['invoice_count'] = Invoice.objects.filter(company=self.request.user.company).count()
         context['expense_count'] = Expense.objects.filter(company=self.request.user.company).count()
         context['google_maps_key'] = settings.GOOGLE_MAPS_API_KEY
-
+        context['GA_MEASUREMENT_ID'] = settings.GA_MEASUREMENT_ID
         return context
 
 @login_required
