@@ -30,7 +30,7 @@
     </button>
 
     <!-- Tooltip Button for mobile, hidden on larger screens -->
-    <button type="button" class="btn btn-phoenix-secondary me-2 flex-fill" id="download-pdf-mobile">
+    <button type="button" class="btn btn-phoenix-secondary me-2 d-block d-md-none flex-fill" id="download-pdf-mobile" data-bs-toggle="tooltip" data-bs-placement="right" title="The invoice download feature is currently available only on desktop!">
       <span class="fa-solid fa-download me-sm-2"></span>
       <span class="d-none d-sm-inline-block">Download Invoice</span>
     </button>
@@ -167,25 +167,6 @@
   var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
   })
-</script>
-
-<script>
-  document.querySelector('#download-pdf-mobile').addEventListener('click', () => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Invoice',
-        text: 'Here is the invoice.',
-        url: window.location.href,
-      })
-      .then(() => console.log('Successful share'))
-      .catch((error) => console.log('Error sharing', error));
-    }
-    else {
-      // fallback for browsers that do not support navigator.share
-      // for example, you can download the file directly if the share API is not supported
-      console.log('Your browser does not support the Share API');
-    }
-  });
 </script>
 
 <!-- <script>

@@ -101,14 +101,15 @@ def jobs_to_json(request):
         })
     return JsonResponse(job_list, safe=False)
 
-def calculate_net_profit(company):
-    incomes = 0
-    expenses = Expense.objects.filter(company=company).aggregate(sum=Sum('amount'))['sum'] or 0
-
-    if company.business_type == 'sales':
-        incomes = Job.objects.filter(company=company, revenue_recorded=True).aggregate(sum=Sum('total_cost'))['sum'] or 0
-    elif company.business_type == 'service':
-        incomes = Job.objects.filter(company=company, revenue_recorded=True).aggregate(sum=Sum('total_cost'))['sum'] or 0
+def calculate_net_profit(company, start_date=None):
+    if start_date:
+        expenses = Expense.objects.filter(company=company, date_created__gte=start_date).aggregate(sum=Sum('amount'))['sum'] or 0
+        if company.business_type in ['sales', 'service']:
+            incomes = Job.objects.filter(company=company, revenue_recorded=True, created_at__date__gte=start_date).aggregate(sum=Sum('total_cost'))['sum'] or 0
+    else:
+        expenses = Expense.objects.filter(company=company).aggregate(sum=Sum('amount'))['sum'] or 0
+        if company.business_type in ['sales', 'service']:
+            incomes = Job.objects.filter(company=company, revenue_recorded=True).aggregate(sum=Sum('total_cost'))['sum'] or 0
 
     return incomes - expenses
 
@@ -119,44 +120,40 @@ class MainDashboardView(LoginRequiredMixin, TemplateView):
         user_company = request.user.company
         time_filter = request.GET.get('time_filter', 'all')
 
-        # Filter expenses based on time_filter
         if time_filter == 'today':
             start_date = timezone.now().date()
+        elif time_filter == 'week':
+            start_date = timezone.now().date() - timedelta(days=7)
         elif time_filter == 'month':
-            start_date = timezone.now().date().replace(day=1)
+            start_date = timezone.now().date() - timedelta(days=30)
+        elif time_filter == '6 months':
+            start_date = timezone.now().date() - timedelta(days=182)
         elif time_filter == 'year':
-            start_date = timezone.now().date().replace(day=1, month=1)
-        else:
+            start_date = timezone.now().date() - timedelta(days=365)
+        else:  # 'all' or any other unexpected value
             start_date = None
 
         if start_date:
-            expenses = Expense.objects.filter(date_created__gte=start_date, company=user_company)
+            jobs = Job.objects.filter(company=user_company, created_at__date__gte=start_date)
+            expenses = Expense.objects.filter(company=user_company, date_created__gte=start_date)
         else:
+            jobs = Job.objects.filter(company=user_company)
             expenses = Expense.objects.filter(company=user_company)
+
+        total_revenue = jobs.filter(revenue_recorded=True).aggregate(total_revenue=Sum('total_cost'))['total_revenue'] or 0
+        total_expenses = expenses.aggregate(sum=Sum('amount'))['sum'] or 0
 
         context = {
             'company': user_company,
-            'total_expenses': Expense.objects.filter(company=user_company).aggregate(sum=Sum('amount'))['sum'] or 0,
+            'total_expenses': total_expenses,
+            'total_revenue': total_revenue,
+            'clients': Client.objects.filter(company=user_company),
+            'jobs': jobs,
+            'expenses': expenses,
+            'net_profit': calculate_net_profit(user_company, start_date),
         }
 
-        if user_company.business_type == 'service':
-            context.update({
-                'total_revenue': Job.objects.filter(company=user_company, revenue_recorded=True).aggregate(total_revenue=Sum('total_cost'))['total_revenue'] or 0,
-                'clients': Client.objects.filter(company=user_company),
-                'jobs': Job.objects.filter(company=user_company),
-                'expenses': Expense.objects.filter(company=user_company),
-                'net_profit': calculate_net_profit(user_company),
-            })
-        elif user_company.business_type == 'sales':
-            context.update({
-                'total_revenue': Job.objects.filter(company=user_company, revenue_recorded=True).aggregate(total_revenue=Sum('total_cost'))['total_revenue'] or 0,
-                'clients': Client.objects.filter(company=user_company),
-                'jobs': Job.objects.filter(company=user_company),
-                'expenses': Expense.objects.filter(company=user_company),
-                'net_profit': calculate_net_profit(user_company),
-            })
-
-        return render(request, 'main_dashboard.html', context)
+        return render(request, self.template_name, context)
 
 class RegisterView(View):
     template_name = 'registration/register_wizard.html'
