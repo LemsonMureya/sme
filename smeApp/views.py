@@ -192,6 +192,8 @@ class RegisterView(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
+        print(request.POST)  # output form data
+        print(request.FILES)  # output uploaded files
         user_data = request.POST.copy()
         user_data['email'] = request.POST.get('user_email')
 
@@ -202,6 +204,7 @@ class RegisterView(View):
         company_form = CompanyProfileForm(company_data, request.FILES)
 
         if user_form.is_valid() and company_form.is_valid():
+            print(company_form.cleaned_data)  # output cleaned form data
             user = user_form.save(commit=False)
             company = company_form.save()
             user.company = company
