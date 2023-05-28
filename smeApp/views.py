@@ -62,6 +62,8 @@ from weasyprint import HTML
 from formtools.wizard.views import SessionWizardView
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+
 
 class IndexView(TemplateView):
     template_name = "base.html"
@@ -104,12 +106,22 @@ def jobs_to_json(request):
 def calculate_net_profit(company, start_date=None):
     if start_date:
         expenses = Expense.objects.filter(company=company, date_created__gte=start_date).aggregate(sum=Sum('amount'))['sum'] or 0
-        if company.business_type in ['sales', 'service']:
-            incomes = Job.objects.filter(company=company, revenue_recorded=True, created_at__date__gte=start_date).aggregate(sum=Sum('total_cost'))['sum'] or 0
+        invoices = Invoice.objects.filter(company=company, invoice_date__gte=start_date)
+        jobs = Job.objects.filter(company=company, revenue_recorded=True, created_at__date__gte=start_date)
     else:
         expenses = Expense.objects.filter(company=company).aggregate(sum=Sum('amount'))['sum'] or 0
-        if company.business_type in ['sales', 'service']:
-            incomes = Job.objects.filter(company=company, revenue_recorded=True).aggregate(sum=Sum('total_cost'))['sum'] or 0
+        invoices = Invoice.objects.filter(company=company)
+        jobs = Job.objects.filter(company=company, revenue_recorded=True)
+
+    incomes = sum(invoice.get_total_amount() for invoice in invoices)
+
+    for job in jobs:
+        try:
+            # Check if an invoice associated with the job exists
+            job.invoices
+        except ObjectDoesNotExist:
+            # If it doesn't exist, add job total cost to the incomes
+            incomes += job.total_cost
 
     return incomes - expenses
 
@@ -136,11 +148,21 @@ class MainDashboardView(LoginRequiredMixin, TemplateView):
         if start_date:
             jobs = Job.objects.filter(company=user_company, created_at__date__gte=start_date)
             expenses = Expense.objects.filter(company=user_company, date_created__gte=start_date)
+            invoices = Invoice.objects.filter(company=user_company, invoice_date__gte=start_date)
         else:
             jobs = Job.objects.filter(company=user_company)
             expenses = Expense.objects.filter(company=user_company)
+            invoices = Invoice.objects.filter(company=user_company)
 
-        total_revenue = jobs.filter(revenue_recorded=True).aggregate(total_revenue=Sum('total_cost'))['total_revenue'] or 0
+        total_revenue = sum(invoice.get_total_amount() for invoice in invoices)
+        for job in jobs.filter(revenue_recorded=True):
+            try:
+                # Check if an invoice associated with the job exists
+                job.invoices
+            except ObjectDoesNotExist:
+                # If it doesn't exist, add job total cost to the total revenue
+                total_revenue += job.total_cost
+
         total_expenses = expenses.aggregate(sum=Sum('amount'))['sum'] or 0
 
         context = {
@@ -820,48 +842,42 @@ class DeleteInvoiceView(LoginRequiredMixin, DeleteView):
 class CreateJobInvoiceView(LoginRequiredMixin, View):
     def get(self, request, job_id):
         job = get_object_or_404(Job, id=job_id, company=request.user.company)
-        invoice_data = {
+        invoice, created = Invoice.objects.get_or_create(job=job, defaults={
             'company': job.company,
             'client': job.client,
-            'invoice_number': Invoice.objects.filter(company=request.user.company).count() + 1,
+            # pad the invoice number with zeros, so it's always at least 4 digits
+            'invoice_number': "{:04d}".format(Invoice.objects.filter(company=request.user.company).count() + 1),
             'invoice_date': job.created_at,
             'due_date': job.created_at + timedelta(days=30),
             'payment_status': job.payment_status,
             'tax': 0,
             'discount': 0,
-            'job': job,
-        }
-        invoice_form = InvoiceForm(user=request.user, data=invoice_data, job=job)
-
-        if invoice_form.is_valid():
-            invoice = invoice_form.save(commit=False)
-            invoice.company = request.user.company
-            invoice.save()  # Save the invoice to the database, now it has an ID
-
-            job.total_cost = job.calculate_total_cost()
-            job.save()
-
-            for item in job.jobitem_set.all():
-                invoice_item_data = {
-                    'invoice': invoice,  # Use the invoice instance after saving it
-                    'item_name': item.item_name,
-                    'item_description': item.item_description,
-                    'quantity': item.quantity,
-                    'unit_price': item.unit_price,
-                }
-                invoice_item_form = InvoiceItemForm(data=invoice_item_data)
-
-                if invoice_item_form.is_valid():
-                    invoice_item = invoice_item_form.save(commit=False)
-                    invoice_item.invoice = invoice
-                    invoice_item.save()
-                else:
-                    return HttpResponse("An error occurred while creating the invoice items. Please try again.")
-
+        })
+        if not created:
+            # If an invoice for the job already exists, redirect to the existing invoice
             return redirect('smeApp:view_invoice', invoice_id=invoice.id)
-        else:
-            return HttpResponse("An error occurred while creating the invoice. Please try again.")
 
+        # no invoice exists for this job, we just created a new one
+        job.total_cost = job.calculate_total_cost()
+        job.save()
+
+        for item in job.jobitem_set.all():
+            invoice_item_data = {
+                'invoice': invoice,  # Use the invoice instance after saving it
+                'item_name': item.item_name,
+                'item_description': item.item_description,
+                'quantity': item.quantity,
+                'unit_price': item.unit_price,
+            }
+            invoice_item_form = InvoiceItemForm(data=invoice_item_data)
+
+            if invoice_item_form.is_valid():
+                invoice_item = invoice_item_form.save(commit=False)
+                invoice_item.invoice = invoice
+                invoice_item.save()
+            else:
+                return HttpResponse("An error occurred while creating the invoice items. Please try again.")
+        return redirect('smeApp:view_invoice', invoice_id=invoice.id)
 
 class CreateInvoiceView(LoginRequiredMixin, View):
     def get(self, request):

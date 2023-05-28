@@ -303,7 +303,7 @@ class Invoice(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Discount in currency value
     notes = models.TextField(blank=True, null=True)
     color_accent = models.CharField(max_length=7, default='#0097eb')
-    job = models.ForeignKey(Job, on_delete=models.SET_NULL, blank=True, null=True, related_name='invoices')  # New field added
+    job = models.OneToOneField(Job, on_delete=models.SET_NULL, blank=True, null=True, related_name='invoices')
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default=UNPAID)
 
     def get_total_amount(self):
