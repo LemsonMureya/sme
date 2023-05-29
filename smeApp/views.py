@@ -124,7 +124,6 @@ def calculate_net_profit(company, start_date=None):
             incomes += job.total_cost
 
     return incomes - expenses
-
 class MainDashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'main_dashboard.html'
 
@@ -149,10 +148,12 @@ class MainDashboardView(LoginRequiredMixin, TemplateView):
             jobs = Job.objects.filter(company=user_company, created_at__date__gte=start_date)
             expenses = Expense.objects.filter(company=user_company, date_created__gte=start_date)
             invoices = Invoice.objects.filter(company=user_company, invoice_date__gte=start_date)
+            clients = Client.objects.filter(company=user_company, created_at__date__gte=start_date)
         else:
             jobs = Job.objects.filter(company=user_company)
             expenses = Expense.objects.filter(company=user_company)
             invoices = Invoice.objects.filter(company=user_company)
+            clients = Client.objects.filter(company=user_company)
 
         total_revenue = sum(invoice.get_total_amount() for invoice in invoices)
         for job in jobs.filter(revenue_recorded=True):
@@ -169,12 +170,11 @@ class MainDashboardView(LoginRequiredMixin, TemplateView):
             'company': user_company,
             'total_expenses': total_expenses,
             'total_revenue': total_revenue,
-            'clients': Client.objects.filter(company=user_company),
+            'clients': clients,
             'jobs': jobs,
             'expenses': expenses,
             'net_profit': calculate_net_profit(user_company, start_date),
         }
-
         return render(request, self.template_name, context)
 
 class RegisterView(View):
