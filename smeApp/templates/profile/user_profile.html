@@ -168,13 +168,18 @@
                        <p class="mb-0 text-800">{{user.company.num_employees}}</p>
                      </div>
                      <hr>
-                     <!-- <div class="mb-4">
-                       <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-postcard"></span>
-                         <h5 class="text-1000 mb-0">Current Logo</h5>
+                     <div class="mb-4">
+                       <div class="d-flex align-items-center mb-1">
+                           <span class="me-2 uil uil-postcard"></span>
+                           <h5 class="text-1000 mb-0">Current Logo</h5>
                        </div>
-                      <img src="{{ user.company.logo.url }}" id="logo-preview" class="rounded-circle" style="height: 100px; width: 100px; object-fit: cover;">
-                  </div> -->
-                    <!-- <hr> -->
+                       {% if user.company.logo %}
+                           <img src="{{ user.company.logo.url }}" id="logo-preview" class="rounded-circle" style="height: 100px; width: 100px; object-fit: cover;">
+                       {% else %}
+                           <p>No logo available.</p>
+                       {% endif %}
+                   </div>
+                    <hr>
                      <div class="mb-4">
                        <div class="d-flex align-items-center mb-1"><span class="me-2 uil uil-clock"></span>
                          <h5 class="text-1000 mb-0">Joined </h5>
@@ -267,7 +272,7 @@
                         </li>
                     </ul>
                 </div>
-                <form method="post" action="{% url 'smeApp:edit_profile' %}">
+                <form method="post" action="{% url 'smeApp:edit_profile' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="tab-content" id="profileTabContent">
                         <div class="tab-pane fade show active" id="tab-company-info" role="tabpanel" aria-labelledby="company-info-tab">
@@ -296,6 +301,14 @@
                                     <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.industry.auto_id }}">Industry</label>
                                     {{ company_form.industry|add_class:"form-select" }}
                                 </div>
+                                <div class="col-12 col-lg-6">
+                                    <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.business_type.auto_id }}">Business Type</label>
+                                    {{ company_form.business_type|add_class:"form-select" }}
+                                </div>
+                                <div class="col-12">
+                                  <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.logo.auto_id }}">Company Logo</label>
+                                  {{ company_form.logo|add_class:"form-control" }}
+                              </div>
                                 <h4 class="mt-6">Company Address</h4>
                                 <div class="col-sm-6 col-md-12">
                                     <label class="form-label text-1000 fs-0 ps-0 text-capitalize lh-sm" for="{{ company_form.address_line_1.auto_id }}">Street</label>

@@ -304,7 +304,6 @@ class UserProfileUpdateView(LoginRequiredMixin, View):
             company_form = CompanyProfileForm(request.POST, request.FILES, instance=self.request.user.company)
         else:
             company_form = CompanyProfileForm(request.POST, request.FILES)
-
         if user_form.is_valid() and company_form.is_valid():
             user = user_form.save(commit=False)
             if remove_photo:
