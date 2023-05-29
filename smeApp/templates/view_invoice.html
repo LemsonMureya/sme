@@ -59,12 +59,27 @@
   </div>
 </div>
 
+{% if not invoice.company.logo %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div class="d-flex align-items-center text-white">
+      <i class="fas fa-exclamation-triangle me-2" style="font-size: 24px;"></i>
+      <div>
+        <strong>No logo uploaded!</strong>
+        <p class="mb-0">
+          You currently do not have a logo for your invoice. Enhance your professional appearance by adding a logo.
+          Please visit your <a href="{% url 'smeApp:edit_profile' %}" class="alert-link text-white">profile page</a> to add a logo.
+        </p>
+      </div>
+    </div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endif %}
 
 <div class="invoice-card">
   <div class="header">
     <div class="header-left">
       {% if invoice.company.logo %}
-        <img src="{{ invoice.company.logo.url }}" alt="{{ invoice.company.name }} logo" class="company-logo">
+        <img src="{{ invoice.company.logo.url }}" class="company-logo">
       {% endif %}
     </div>
     <div class="header-right">
