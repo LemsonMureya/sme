@@ -20,7 +20,7 @@
   <div class="d-flex flex-wrap justify-content-end align-items-center">
     <a href="{% url 'smeApp:update_invoice' pk=invoice.id %}" class="btn btn-phoenix-secondary me-2 flex-fill">
       <span class="fa-solid fa-pencil me-sm-2"></span>
-      <span class="d-none d-sm-inline-block">Edit Invoice</span>
+      <span class="d-sm-inline-block">Edit Invoice</span>
     </a>
 
     <!-- Download Invoice Button -->
@@ -30,10 +30,32 @@
     </button>
 
     <!-- Tooltip Button for mobile, hidden on larger screens -->
-    <button type="button" class="btn btn-phoenix-secondary me-2 d-block d-md-none flex-fill" id="download-pdf-mobile" data-bs-toggle="tooltip" data-bs-placement="right" title="The invoice download feature is currently available only on desktop!">
+    <button type="button" class="btn btn-phoenix-secondary me-2 d-block d-md-none flex-fill" id="download-pdf-desktop" data-bs-toggle="modal" data-bs-target="#alertModal">
       <span class="fa-solid fa-download me-sm-2"></span>
-      <span class="d-none d-sm-inline-block">Download Invoice</span>
+      <span class="d-sm-inline-block">Download Invoice</span>
     </button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title" id="alertModalLabel">
+          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          Invoice Download
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><i class="fa fa-info-circle" aria-hidden="true"></i> Downloading invoices within the app may cause a new page to open, especially on iOS devices. For a seamless invoice download experience, consider using our application in the browser.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="confirmDownload">Download Anyway</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -162,11 +184,33 @@
     document.body.appendChild(form);
     form.submit();
   });
+</script>
+<script>
+  document.getElementById("confirmDownload").addEventListener("click", function(e) {
+  e.preventDefault();
+  // Close modal
+  var modal = bootstrap.Modal.getInstance(document.getElementById('alertModal'));
+  modal.hide();
 
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
+  // Download logic here
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.style.display = "none";
+  // add csrf token to form
+  var csrfInput = document.createElement("input");
+  csrfInput.type = "hidden";
+  csrfInput.name = "csrfmiddlewaretoken";
+  csrfInput.value = '{{ csrf_token }}';
+  form.appendChild(csrfInput);
+  // add download_pdf to form
+  var downloadPdfInput = document.createElement("input");
+  downloadPdfInput.type = "hidden";
+  downloadPdfInput.name = "download_pdf";
+  downloadPdfInput.value = "";
+  form.appendChild(downloadPdfInput);
+  document.body.appendChild(form);
+  form.submit();
+});
 </script>
 
 <!-- <script>
